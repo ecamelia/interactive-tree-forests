@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>Visualisation d'arbres</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <h1>Visualisation d'arbres et de forets</h1>
+    </header>
+
+    <main>
+        <section class="toolbar">
+            <button id="forest-view-button">Vue foret</button>
+            <button id="single-tree-button">Arbre simple</button>
+            <button id="export-tree-button">Exporter SVG</button>
+            <button id="export-tree-png">Exporter PNG</button>
+        </section>
+
+        <section id = "node-options-panel">
+            <h2>Noeud sélectionné</h2>
+
+            <label>
+                <input type="checkbox" id="node-show-condition">
+                condition
+            </label>
+            <label>
+                <input type="checkbox" id="node-show-gini">
+                gini
+            </label>
+            <label>
+                <input type="checkbox" id="node-show-samples">
+                samples
+            </label>
+            <label>
+                <input type="checkbox" id="node-show-value">
+                value
+            </label>
+            <label>
+                <input type="checkbox" id="node-show-class">
+                class
+            </label>
+        </section>
+
+        <svg id="tree-view" width="3000" height="900"></svg>
+        <div id="tooltip"></div>
+    </main>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="js/tree-viz.js"></script>
+    <script src="js/export-utils.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

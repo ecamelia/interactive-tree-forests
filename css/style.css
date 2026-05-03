@@ -1,0 +1,112 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: #111;
+    background: #f7f7f7;
+}
+
+header {
+    padding: 24px 32px;
+    background: white;
+    border-bottom: 1px solid #ddd;
+}
+
+h1 {
+    margin: 0;
+    font-size: 32px;
+}
+
+main {
+    overflow-x: auto;
+    padding: 24px;
+}
+
+.toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+#node-options-panel {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+    padding: 12px;
+    background: white;
+    border: 1px solid #ddd;
+}
+
+#node-options-panel h2 {
+    margin: 0;
+    font-size: 18px;
+}
+
+label {
+    font-weight: bold;
+}
+
+button {
+    min-width: 130px;
+    padding: 8px 10px;
+    font-size: 16px;
+    border: 1px solid #aaa;
+    background: white;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+svg {
+    background: white;
+    border: 1px solid #ddd;
+    cursor: grab;
+}
+
+.link {
+    stroke: #111;
+    stroke-width: 2;
+}
+
+.node-box {
+   
+    stroke: #111;
+    stroke-width: 2;
+}
+
+.node {
+    cursor: pointer;
+}
+
+.selected-node .node-box {
+    stroke: #ff8c00;
+    stroke-width: 9;
+}
+
+.node-text {
+    font-size: 16px;
+    pointer-events: none;
+}
+
+.branch-label {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.tree-title {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#tooltip {
+    display: none;
+    position: fixed;
+    max-width: 260px;
+    padding: 10px 12px;
+    color: white;
+    background: #222;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.4;
+    pointer-events: none;
+}

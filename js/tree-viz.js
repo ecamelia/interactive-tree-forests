@@ -1,0 +1,174 @@
+function drawDecisionTree(data, group, config, options = {}) {
+    const root = d3.hierarchy(data, function(d) {
+        return [d.left, d.right].filter(Boolean);
+    });
+
+    const layout = d3.tree().size([config.layoutWidth, config.layoutHeight]);
+    layout(root);
+    const idPrefix = options.idPrefix || "tree";
+    const treeKey = options.treeKey || idPrefix;
+
+    root.descendants().forEach(function(d, index){
+        d.nodeId = idPrefix + "-node-" + index;
+        d.treeKey = treeKey;
+    });
+
+    group.selectAll(".link")
+        .data(root.links())
+        .enter()
+        .append("line")
+        .attr("class", "link")
+        .attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y + config.boxHeight / 2; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y - config.boxHeight / 2; });
+
+    group.selectAll(".branch-label")
+        .data(root.links())
+        .enter()
+        .append("text")
+        .attr("class", "branch-label")
+        .attr("x", function(d) {
+            const middle = (d.source.x + d.target.x) / 2;
+            const offset = d.source.children[0] === d.target ? -22 : 22;
+
+            return middle + offset;
+        })
+        .attr("y", function(d) { return (d.source.y + d.target.y) / 2 - 18; })
+        .attr("text-anchor", "middle")
+        .text(function(d) {
+            return d.source.children[0] === d.target ? "True" : "False";
+        });
+
+    const nodes = group.selectAll(".node")
+        .data(root.descendants())
+        .enter()
+        .append("g")
+        .attr("class", "node")
+        .classed("selected-node", function(d) {
+            return options.isNodeSelected ? options.isNodeSelected(d) : false;
+        })
+        .attr("transform", function(d) {
+            return "translate(" + d.x + "," + d.y + ")";
+        });
+
+    nodes.append("rect")
+        .attr("class", "node-box")
+        .attr("fill", getNodeColor)
+        .attr("x", -config.boxWidth / 2)
+        .attr("y", -config.boxHeight / 2)
+        .attr("width", config.boxWidth)
+        .attr("height", config.boxHeight);
+
+    if (options.onNodeMouseOver) {
+        nodes
+            .on("mouseover", function(event, d) {
+                options.onNodeMouseOver(event, d.data);
+            })
+            .on("mousemove", function(event, d) {
+                options.onNodeMouseMove(event, d.data);
+            })
+            .on("mouseout", function(event, d) {
+                options.onNodeMouseOut(event, d.data);
+            });
+    }
+
+    if (options.onNodeClick){
+        nodes.on("pointerdown", function(event, d) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            options.onNodeClick(event, d);
+        });
+    }
+
+    nodes.each(function(d) {
+        const displayOptions = options.getNodeDisplayOptions
+            ? options.getNodeDisplayOptions(d)
+            : getDefaultNodeDisplayOptions(d.data);
+
+        const lines = getNodeText(d.data, displayOptions);
+
+        d3.select(this)
+            .selectAll(".node-text")
+            .data(lines)
+            .enter()
+            .append("text")
+            .attr("class", "node-text")
+            .attr("x", 0)
+            .attr("y", function(_, index) {
+                return config.textStartY + index * config.textStep;
+            })
+            .attr("text-anchor", "middle")
+            .text(function(line) {
+                return line;
+            });
+    });
+}
+
+function getRootX(data, config) {
+    const root = d3.hierarchy(data, function(d) {
+        return [d.left, d.right].filter(Boolean);
+    });
+
+    const layout = d3.tree().size([config.layoutWidth, config.layoutHeight]);
+    layout(root);
+
+    return root.x;
+}
+
+function getNodeColor(d) {
+    if (d.data.type !== "leaf") {
+        return "white";
+    }
+
+    if (d.data.class === 0) {
+        return "#a6cee3";
+    }
+
+    if (d.data.class === 1) {
+        return "#fb9a99";
+    }
+
+    return "white";
+}
+
+function getDefaultNodeDisplayOptions(node) {
+    return {
+        condition: node.type !== "leaf",
+        gini: true,
+        samples: true,
+        value: true,
+        class: node.type === "leaf"
+    };
+}
+
+function getNodeText(node, displayOptions) {
+    const lines = [];
+
+    if (displayOptions.condition && node.type !== "leaf") {
+        lines.push(node.feature + " <= " + node.threshold);
+    }
+
+    if (displayOptions.gini) {
+        lines.push("gini = " + node.gini);
+    }
+
+    if (displayOptions.samples) {
+        lines.push("samples = " + node.samples);
+    }
+
+    if (displayOptions.value) {
+        lines.push("value = " + formatValue(node.value));
+    }
+
+    if (displayOptions.class && node.type === "leaf") {
+        lines.push("classe " + node.class);
+    }
+
+    return lines;
+}
+
+function formatValue(value) {
+    return "[" + value.join(", ") + "]";
+}
