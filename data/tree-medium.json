@@ -1,0 +1,52 @@
+{
+  "type": "node",
+  "feature": "x1",
+  "threshold": 0.45,
+  "gini": 0.49,
+  "samples": 20,
+  "value": [11, 9],
+  "left": {
+    "type": "node",
+    "feature": "x2",
+    "threshold": 0.25,
+    "gini": 0.32,
+    "samples": 10,
+    "value": [8, 2],
+    "left": {
+      "type": "leaf",
+      "gini": 0.0,
+      "samples": 6,
+      "value": [6, 0],
+      "class": 0
+    },
+    "right": {
+      "type": "leaf",
+      "gini": 0.5,
+      "samples": 4,
+      "value": [2, 2],
+      "class": 0
+    }
+  },
+  "right": {
+    "type": "node",
+    "feature": "x2",
+    "threshold": 0.75,
+    "gini": 0.42,
+    "samples": 10,
+    "value": [3, 7],
+    "left": {
+      "type": "leaf",
+      "gini": 0.375,
+      "samples": 4,
+      "value": [1, 3],
+      "class": 1
+    },
+    "right": {
+      "type": "leaf",
+      "gini": 0.0,
+      "samples": 6,
+      "value": [0, 6],
+      "class": 1
+    }
+  }
+}

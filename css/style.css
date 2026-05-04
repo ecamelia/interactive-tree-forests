@@ -47,7 +47,8 @@ label {
     font-weight: bold;
 }
 
-button {
+button,
+.file-button {
     min-width: 130px;
     padding: 8px 10px;
     font-size: 16px;
@@ -55,6 +56,15 @@ button {
     background: white;
     cursor: pointer;
     font-weight: bold;
+}
+
+#json-file-input {
+    display: none;
+}
+
+#file-status {
+    color: #444;
+    font-size: 15px;
 }
 
 svg {

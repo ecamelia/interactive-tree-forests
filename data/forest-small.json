@@ -1,0 +1,58 @@
+{
+  "model_type": "random_forest",
+  "classes": [0, 1],
+  "trees": [
+    {
+      "id": 1,
+      "weight": 1,
+      "root": {
+        "type": "node",
+        "feature": "x1",
+        "threshold": 0.5,
+        "gini": 0.5,
+        "samples": 12,
+        "value": [6, 6],
+        "left": {
+          "type": "leaf",
+          "gini": 0.0,
+          "samples": 6,
+          "value": [6, 0],
+          "class": 0
+        },
+        "right": {
+          "type": "leaf",
+          "gini": 0.0,
+          "samples": 6,
+          "value": [0, 6],
+          "class": 1
+        }
+      }
+    },
+    {
+      "id": 2,
+      "weight": 1,
+      "root": {
+        "type": "node",
+        "feature": "x2",
+        "threshold": 0.6,
+        "gini": 0.444,
+        "samples": 12,
+        "value": [8, 4],
+        "left": {
+          "type": "leaf",
+          "gini": 0.219,
+          "samples": 8,
+          "value": [7, 1],
+          "class": 0
+        },
+        "right": {
+          "type": "leaf",
+          "gini": 0.375,
+          "samples": 4,
+          "value": [1, 3],
+          "class": 1
+        }
+      }
+    }
+  ]
+}
