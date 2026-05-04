@@ -41,6 +41,7 @@ visualisation-arbres/
 │   ├── data-loader.js
 │   ├── display-options.js
 │   ├── interactions.js
+│   ├── path-tools.js
 │   ├── renderer.js
 │   ├── tree-viz.js
 │   └── export-utils.js
@@ -165,7 +166,15 @@ Ce fichier gere les interactions avec les noeuds :
 
 - le tooltip au survol;
 - la selection d'un noeud;
-- le mode chemin, qui permet de colorer plusieurs noeuds et les liens entre eux;
+
+### `js/path-tools.js`
+
+Ce fichier gere le mode chemin :
+
+- activation ou desactivation du mode chemin;
+- ajout ou suppression d'un noeud dans le chemin;
+- effacement du chemin;
+- detection des noeuds et liens qui doivent etre colores.
 
 ### `js/display-options.js`
 
