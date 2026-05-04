@@ -130,6 +130,10 @@ function getNodeColor(d) {
         return "#fb9a99";
     }
 
+    if (d.data.class === 2) {
+        return "#c7b9ff";
+    }
+
     return "white";
 }
 

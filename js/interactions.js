@@ -1,0 +1,77 @@
+function getTreeInteractions() {
+    return {
+        onNodeMouseOver: showTooltip,
+        onNodeMouseMove: moveTooltip,
+        onNodeMouseOut: hideTooltip,
+        onNodeClick: selectNodeForOptions,
+        getNodeDisplayOptions: getNodeDisplayOptions,
+        isNodeSelected: isNodeSelected
+    };
+}
+
+function showTooltip(event, node) {
+    tooltip
+        .style("display", "block")
+        .html(getTooltipText(node));
+
+    moveTooltip(event);
+}
+
+function moveTooltip(event) {
+    tooltip
+        .style("left", (event.clientX + 14) + "px")
+        .style("top", (event.clientY + 14) + "px");
+}
+
+function hideTooltip() {
+    tooltip.style("display", "none");
+}
+
+function getTooltipText(node) {
+    if (node.type === "leaf") {
+        return (
+            "<strong>Feuille</strong><br>" +
+            "gini : " + node.gini + "<br>" +
+            "samples : " + node.samples + "<br>" +
+            "value : " + formatValue(node.value) + "<br>" +
+            "classe : " + node.class
+        );
+    }
+
+    return (
+        "<strong>Noeud de decision</strong><br>" +
+        "condition : " + node.feature + " <= " + node.threshold + "<br>" +
+        "gini : " + node.gini + "<br>" +
+        "samples : " + node.samples + "<br>" +
+        "value : " + formatValue(node.value)
+    );
+}
+
+function selectNodeForOptions(event, d) {
+    selectedNode = d;
+
+    if (!nodeDisplayOptions[d.nodeId]) {
+        nodeDisplayOptions[d.nodeId] = createNodeDisplayOptions(d);
+    }
+
+    updateOptionInputsState();
+
+    if (optionScope === OPTION_SCOPE.NODE) {
+        updateOptionsPanel(nodeDisplayOptions[d.nodeId]);
+    }
+}
+
+function isNodeSelected(d) {
+    return selectedNode && selectedNode.nodeId === d.nodeId;
+}
+
+function resetNodeSelection() {
+    selectedNode = null;
+
+    Object.keys(nodeDisplayOptions).forEach(function(nodeId) {
+        delete nodeDisplayOptions[nodeId];
+    });
+
+    updateOptionsPanel(globalDisplayOptions);
+    updateOptionInputsState();
+}

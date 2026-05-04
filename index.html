@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>Visualisation d'arbres</title>
-    <link rel="stylesheet" href="css/style.css?v=3">
+    <link rel="stylesheet" href="css/style.css?v=7">
 </head>
 <body>
     <header>
@@ -16,6 +16,7 @@
             <input type="file" id="json-file-input" accept=".json,application/json">
             <button id="export-tree-button">Exporter SVG</button>
             <button id="export-tree-png">Exporter PNG</button>
+            <button id="export-d3-code-button">Exporter code D3.js</button>
             <span id="file-status">Aucun fichier chargé</span>
         </section>
 
@@ -51,6 +52,17 @@
                 <input type="checkbox" id="node-show-class">
                 class
             </label>
+
+            <label>
+                niveaux
+                <select id="max-depth-select">
+                    <option value="all">tous</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </label>
         </section>
 
         <svg id="tree-view" width="3000" height="900"></svg>
@@ -58,8 +70,13 @@
     </main>
 
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="js/tree-viz.js?v=3"></script>
-    <script src="js/export-utils.js?v=3"></script>
-    <script src="js/app.js?v=3"></script>
+    <script src="js/tree-viz.js?v=8"></script>
+    <script src="js/export-utils.js?v=8"></script>
+    <script src="js/app-state.js?v=8"></script>
+    <script src="js/renderer.js?v=8"></script>
+    <script src="js/interactions.js?v=8"></script>
+    <script src="js/display-options.js?v=8"></script>
+    <script src="js/data-loader.js?v=8"></script>
+    <script src="js/app.js?v=8"></script>
 </body>
 </html>

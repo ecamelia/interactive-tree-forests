@@ -19,7 +19,8 @@ but est de construire progressivement un outil reutilisable qui pourra :
 - lire une foret contenant plusieurs arbres;
 - afficher automatiquement le bon type de visualisation selon le fichier JSON;
 - personnaliser les informations visibles dans les noeuds;
-- exporter la visualisation en SVG ou en PNG.
+- exporter la visualisation en SVG ou en PNG;
+- exporter un fichier JavaScript contenant le code D3.js de la visualisation.
 
 Le principe general est :
 
@@ -35,7 +36,12 @@ visualisation-arbres/
 ├── css/
 │   └── style.css
 ├── js/
+│   ├── app-state.js
 │   ├── app.js
+│   ├── data-loader.js
+│   ├── display-options.js
+│   ├── interactions.js
+│   ├── renderer.js
 │   ├── tree-viz.js
 │   └── export-utils.js
 ├── data/
@@ -59,7 +65,7 @@ visualisation-arbres/
 C'est la page de demonstration. Elle contient :
 
 - un bouton pour charger un fichier JSON;
-- les boutons d'export SVG et PNG;
+- les boutons d'export SVG, PNG et code D3.js;
 - un panneau pour choisir les informations affichees dans les noeuds;
 - le SVG principal ou les arbres sont dessines;
 - le chargement des fichiers JavaScript.
@@ -100,26 +106,72 @@ la position des noeuds avec `d3.tree`, puis dessine :
 
 Ce fichier est la base de la future librairie.
 
+### Organisation du JavaScript
+
+La partie JavaScript est separee en plusieurs fichiers pour eviter d'avoir un
+seul fichier trop long.
+
+L'ordre de chargement dans `index.html` est important, car les fichiers
+partagent des fonctions globales simples.
+
+### `js/app-state.js`
+
+Ce fichier contient l'etat general de la page :
+
+- les constantes `VIEW_TYPE` et `OPTION_SCOPE`;
+- les elements HTML recuperes avec `document.getElementById`;
+- les configurations de taille des arbres;
+- les options d'affichage globales;
+- l'etat courant : arbre affiche, foret affichee, noeud selectionne, niveau
+  maximal affiche.
+
 ### `js/app.js`
 
-Ce fichier gere la page de demonstration et les interactions.
+Ce fichier sert seulement au demarrage de l'application.
 
-Il fait notamment :
+Il fait :
+
+- l'initialisation du zoom;
+- la connexion des boutons aux fonctions;
+- le lancement du chargement des donnees par defaut.
+
+### `js/data-loader.js`
+
+Ce fichier gere les donnees JSON :
 
 - le chargement du fichier JSON choisi par l'utilisateur;
 - la detection automatique entre arbre simple et foret;
-- l'affichage d'un arbre simple;
-- l'affichage d'une foret;
-- le zoom et le deplacement dans le SVG;
-- le tooltip au survol;
-- la selection d'un noeud;
-- les options d'affichage pour tout l'arbre;
-- les options d'affichage pour un seul noeud selectionne.
+- le chargement des fichiers par defaut;
+- la verification du format JSON.
 
 La detection se fait simplement :
 
 - si le JSON contient `trees`, c'est une foret;
 - si le JSON contient `type: "node"` ou `type: "leaf"`, c'est un arbre.
+
+### `js/renderer.js`
+
+Ce fichier gere l'affichage principal :
+
+- l'affichage d'un arbre simple;
+- l'affichage d'une foret;
+- le zoom et le deplacement dans le SVG;
+- l'ajustement automatique de l'espace pour les arbres plus grands;
+- le choix du nombre de niveaux affiches.
+
+### `js/interactions.js`
+
+Ce fichier gere les interactions avec les noeuds :
+
+- le tooltip au survol;
+- la selection d'un noeud;
+
+### `js/display-options.js`
+
+Ce fichier gere les cases du panneau d'affichage :
+
+- les options d'affichage pour tout l'arbre;
+- les options d'affichage pour un seul noeud selectionne.
 
 ### `js/export-utils.js`
 
@@ -128,6 +180,7 @@ Ce fichier contient les fonctions d'export :
 ```js
 exportSVG()
 exportPNG()
+exportCurrentD3Code(...)
 ```
 
 L'export SVG copie le SVG affiche dans la page et ajoute les styles utiles pour
@@ -135,6 +188,9 @@ garder les lignes, les couleurs et les textes.
 
 L'export PNG transforme d'abord le SVG en image, puis le dessine dans un
 `canvas` avant de telecharger le fichier.
+
+L'export D3.js telecharge un fichier `.js` qui contient les donnees affichees et
+un exemple de code D3 pour redessiner l'arbre ou la foret dans un autre SVG.
 
 ### `data/`
 
@@ -202,7 +258,7 @@ chargement de fichiers JSON si on ouvre seulement le fichier HTML directement.
 3. Choisir un fichier dans le dossier `data/`.
 4. Le programme affiche automatiquement un arbre ou une foret.
 5. Utiliser les cases pour choisir les informations visibles dans les noeuds.
-6. Utiliser `Exporter SVG` ou `Exporter PNG` si besoin.
+6. Utiliser `Exporter SVG`, `Exporter PNG` ou `Exporter code D3.js` si besoin.
 
 ## Personnalisation des noeuds
 
@@ -221,6 +277,10 @@ Les informations que l'on peut afficher ou cacher sont :
 
 Cela permet de commencer avec une visualisation complete, puis de simplifier
 l'affichage si l'arbre devient trop charge.
+
+Pour les grands arbres, le menu `niveaux` permet d'afficher seulement les
+premiers niveaux de l'arbre. Par exemple, choisir `3` affiche la racine et les
+deux niveaux suivants. L'option `tous` affiche l'arbre entier.
 
 ## Format JSON d'un arbre
 
@@ -283,8 +343,11 @@ simple.
 - Couleur des feuilles selon la classe.
 - Personnalisation globale de l'affichage.
 - Personnalisation d'un noeud selectionne.
+- Ajustement automatique de l'espacement selon la taille de l'arbre.
+- Affichage limite aux premiers niveaux pour les grands arbres.
 - Export SVG.
 - Export PNG.
+- Export du code D3.js de la visualisation courante.
 
 ## Limites actuelles
 
@@ -292,9 +355,9 @@ Le projet fonctionne comme prototype, mais il reste encore plusieurs choses a
 ameliorer pour avoir une vraie librairie :
 
 - l'API publique n'est pas encore definie;
-- les tres grands arbres ne sont pas encore affiches avec un mode special;
+- les tres grands arbres peuvent encore necessiter des modes plus avances;
 - les forets avec beaucoup d'arbres devront avoir un systeme de filtrage;
-- l'export du code D3.js n'est pas encore fait;
+- l'export du code D3.js est un premier exemple, pas encore une API complete;
 - les zones de decision ne sont pas encore implementees.
 
 ## Prochaines etapes
@@ -303,7 +366,7 @@ Les prochaines ameliorations possibles sont :
 
 - separer encore plus la partie librairie et la partie demonstration;
 - creer une API simple, par exemple `TreeViz.drawTree(...)`;
-- ajouter un mode pour afficher seulement les premiers niveaux d'un arbre;
+- ameliorer le mode grands arbres avec recherche, mini-carte ou focus sur une branche;
 - ajouter un champ pour choisir les indices des arbres a afficher dans une foret;
 - ajouter les zones de decision;
 - documenter le format JSON attendu;
