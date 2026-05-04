@@ -18,6 +18,9 @@ function drawDecisionTree(data, group, config, options = {}) {
         .enter()
         .append("line")
         .attr("class", "link")
+        .classed("path-link", function(d) {
+            return options.isPathLink ? options.isPathLink(d) : false;
+        })
         .attr("x1", function(d) { return d.source.x; })
         .attr("y1", function(d) { return d.source.y + config.boxHeight / 2; })
         .attr("x2", function(d) { return d.target.x; })
@@ -47,6 +50,9 @@ function drawDecisionTree(data, group, config, options = {}) {
         .attr("class", "node")
         .classed("selected-node", function(d) {
             return options.isNodeSelected ? options.isNodeSelected(d) : false;
+        })
+        .classed("path-node", function(d) {
+            return options.isPathNode ? options.isPathNode(d) : false;
         })
         .attr("transform", function(d) {
             return "translate(" + d.x + "," + d.y + ")";

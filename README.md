@@ -165,6 +165,7 @@ Ce fichier gere les interactions avec les noeuds :
 
 - le tooltip au survol;
 - la selection d'un noeud;
+- le mode chemin, qui permet de colorer plusieurs noeuds et les liens entre eux;
 
 ### `js/display-options.js`
 
@@ -282,6 +283,10 @@ Pour les grands arbres, le menu `niveaux` permet d'afficher seulement les
 premiers niveaux de l'arbre. Par exemple, choisir `3` affiche la racine et les
 deux niveaux suivants. L'option `tous` affiche l'arbre entier.
 
+Le mode `chemin` permet de cliquer sur plusieurs noeuds pour les colorer. Si
+deux noeuds selectionnes sont relies directement, le lien entre eux est colore
+aussi. Le bouton `Effacer chemin` remet le chemin a zero.
+
 ## Format JSON d'un arbre
 
 Un noeud interne contient une condition :
@@ -343,6 +348,7 @@ simple.
 - Couleur des feuilles selon la classe.
 - Personnalisation globale de l'affichage.
 - Personnalisation d'un noeud selectionne.
+- Creation d'un chemin colore en selectionnant plusieurs noeuds.
 - Ajustement automatique de l'espacement selon la taille de l'arbre.
 - Affichage limite aux premiers niveaux pour les grands arbres.
 - Export SVG.

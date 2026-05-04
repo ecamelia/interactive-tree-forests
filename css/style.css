@@ -84,6 +84,11 @@ svg {
     stroke-width: 2;
 }
 
+.path-link {
+    stroke: #ff8c00;
+    stroke-width: 6;
+}
+
 .node-box {
    
     stroke: #111;
@@ -96,6 +101,15 @@ svg {
 
 .selected-node .node-box {
     stroke: #ff8c00;
+    stroke-width: 9;
+}
+
+.path-node .node-box {
+    stroke: #ff8c00;
+    stroke-width: 6;
+}
+
+.selected-node.path-node .node-box {
     stroke-width: 9;
 }
 

@@ -61,6 +61,7 @@ function downloadUrl(url, filename) {
 
 function buildD3CodeExport(visualization) {
     const dataString = JSON.stringify(visualization.data, null, 4);
+    const pathString = JSON.stringify(visualization.pathNodeIds || [], null, 4);
     const isForest = visualization.type === "forest";
 
     return `// Code D3.js exporte depuis le projet visualisation-arbres.
@@ -70,6 +71,7 @@ function buildD3CodeExport(visualization) {
 // <svg id="tree-view" width="3000" height="900"></svg>
 
 const exportedData = ${dataString};
+const exportedPathNodeIds = new Set(${pathString});
 
 const svg = d3.select("#tree-view");
 const layer = svg.append("g");
@@ -118,7 +120,11 @@ function drawForest(forest) {
             .attr("text-anchor", "middle")
             .text("Arbre " + treeId);
 
-        drawTreeInGroup(treeRoot, treeGroup.append("g").attr("transform", "translate(0, 60)"));
+        drawTreeInGroup(
+            treeRoot,
+            treeGroup.append("g").attr("transform", "translate(0, 60)"),
+            "forest-" + treeId
+        );
     });
 }
 
@@ -129,16 +135,20 @@ function drawTree(tree) {
         .append("g")
         .attr("transform", "translate(200, 80)");
 
-    drawTreeInGroup(tree.root || tree, group);
+    drawTreeInGroup(tree.root || tree, group, "single");
 }
 
-function drawTreeInGroup(data, group) {
+function drawTreeInGroup(data, group, idPrefix) {
     const root = d3.hierarchy(data, function(d) {
         return [d.left, d.right].filter(Boolean);
     });
 
     const layout = d3.tree().size([config.layoutWidth, config.layoutHeight]);
     layout(root);
+
+    root.descendants().forEach(function(d, index) {
+        d.nodeId = idPrefix + "-node-" + index;
+    });
 
     group.selectAll(".link")
         .data(root.links())
@@ -149,8 +159,12 @@ function drawTreeInGroup(data, group) {
         .attr("y1", function(d) { return d.source.y + config.boxHeight / 2; })
         .attr("x2", function(d) { return d.target.x; })
         .attr("y2", function(d) { return d.target.y - config.boxHeight / 2; })
-        .attr("stroke", "#111")
-        .attr("stroke-width", 2);
+        .attr("stroke", function(d) {
+            return isPathLink(d) ? "#ff8c00" : "#111";
+        })
+        .attr("stroke-width", function(d) {
+            return isPathLink(d) ? 6 : 2;
+        });
 
     group.selectAll(".branch-label")
         .data(root.links())
@@ -185,8 +199,12 @@ function drawTreeInGroup(data, group) {
         .attr("width", config.boxWidth)
         .attr("height", config.boxHeight)
         .attr("fill", getNodeColor)
-        .attr("stroke", "#111")
-        .attr("stroke-width", 2);
+        .attr("stroke", function(d) {
+            return exportedPathNodeIds.has(d.nodeId) ? "#ff8c00" : "#111";
+        })
+        .attr("stroke-width", function(d) {
+            return exportedPathNodeIds.has(d.nodeId) ? 6 : 2;
+        });
 
     nodes.each(function(d) {
         const lines = getNodeText(d.data);
@@ -207,6 +225,11 @@ function drawTreeInGroup(data, group) {
                 return line;
             });
     });
+}
+
+function isPathLink(link) {
+    return exportedPathNodeIds.has(link.source.nodeId) &&
+        exportedPathNodeIds.has(link.target.nodeId);
 }
 
 function getRootX(data) {
@@ -273,6 +296,11 @@ function getStyledSvgCopy() {
             stroke-width: 2;
         }
 
+        .path-link {
+            stroke: #ff8c00;
+            stroke-width: 6;
+        }
+
         .node-box {
             stroke: #111;
             stroke-width: 2;
@@ -280,6 +308,16 @@ function getStyledSvgCopy() {
 
         .selected-node .node-box {
             stroke: #ff8c00;
+            stroke-width: 9;
+        }
+
+        .path-node .node-box {
+            stroke: #ff8c00;
+            stroke-width: 6;
+        }
+
+        .selected-node.path-node .node-box {
+            stroke-width: 9;
         }
 
         .node-text {

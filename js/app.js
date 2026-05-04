@@ -24,11 +24,13 @@ function setupEvents() {
     maxDepthSelect.addEventListener("change", function(event) {
         maxVisibleDepth = event.target.value;
         resetNodeSelection();
+        clearPath();
         redrawCurrentView();
     });
 
     setupOptionInputs();
     setupOptionScopeInputs();
+    setupPathControls();
 }
 
 function handleD3CodeExport() {
@@ -52,12 +54,14 @@ function getCurrentVisualizationData() {
     if (currentView === VIEW_TYPE.TREE) {
         return {
             type: VIEW_TYPE.TREE,
-            data: currentTree
+            data: currentTree,
+            pathNodeIds: Array.from(pathNodeIds)
         };
     }
 
     return {
         type: VIEW_TYPE.FOREST,
-        data: currentForest
+        data: currentForest,
+        pathNodeIds: Array.from(pathNodeIds)
     };
 }

@@ -16,6 +16,8 @@ const exportD3CodeButton = d3.select("#export-d3-code-button");
 const jsonFileInput = document.getElementById("json-file-input");
 const fileStatus = document.getElementById("file-status");
 const maxDepthSelect = document.getElementById("max-depth-select");
+const pathModeCheckbox = document.getElementById("path-mode-checkbox");
+const clearPathButton = document.getElementById("clear-path-button");
 
 const optionScopeInputs = {
     tree: document.getElementById("scope-tree"),
@@ -59,6 +61,7 @@ const globalDisplayOptions = {
 };
 
 const nodeDisplayOptions = {};
+const pathNodeIds = new Set();
 const zoomLayer = svg.append("g");
 const zoomBehavior = d3.zoom()
     .scaleExtent([0.6, 3])
@@ -72,3 +75,4 @@ let currentForest = null;
 let currentTree = null;
 let optionScope = OPTION_SCOPE.TREE;
 let maxVisibleDepth = "all";
+let pathModeEnabled = false;

@@ -52,6 +52,8 @@ function readJsonFile(file, onSuccess) {
 }
 
 function renderJsonData(data) {
+    clearPath();
+
     if (isForestData(data)) {
         drawForest(data);
         return;
