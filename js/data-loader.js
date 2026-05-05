@@ -1,17 +1,3 @@
-function loadDefaultData() {
-    Promise.all([
-        d3.json("data/forest.json"),
-        d3.json("data/tree.json")
-    ]).then(function(files) {
-        currentForest = files[0];
-        currentTree = files[1];
-        drawForest(currentForest);
-    }).catch(function(error) {
-        console.error(error);
-        fileStatus.textContent = "Erreur chargement donnees";
-    });
-}
-
 function handleJsonFile(event) {
     const file = event.target.files[0];
 

@@ -134,7 +134,7 @@ Il fait :
 
 - l'initialisation du zoom;
 - la connexion des boutons aux fonctions;
-- le lancement du chargement des donnees par defaut.
+- l'affichage du message d'accueil avant le chargement d'un JSON.
 
 ### `js/data-loader.js`
 
@@ -142,7 +142,6 @@ Ce fichier gere les donnees JSON :
 
 - le chargement du fichier JSON choisi par l'utilisateur;
 - la detection automatique entre arbre simple et foret;
-- le chargement des fichiers par defaut;
 - la verification du format JSON.
 
 La detection se fait simplement :
@@ -265,11 +264,12 @@ chargement de fichiers JSON si on ouvre seulement le fichier HTML directement.
 ## Utilisation
 
 1. Ouvrir la page dans le navigateur.
-2. Cliquer sur `Charger JSON`.
-3. Choisir un fichier dans le dossier `data/`.
-4. Le programme affiche automatiquement un arbre ou une foret.
-5. Utiliser les cases pour choisir les informations visibles dans les noeuds.
-6. Utiliser `Exporter SVG`, `Exporter PNG` ou `Exporter code D3.js` si besoin.
+2. La page affiche le message `Chargez votre fichier JSON`.
+3. Cliquer sur `Charger JSON`.
+4. Choisir un fichier dans le dossier `data/`.
+5. Le programme affiche automatiquement un arbre ou une foret.
+6. Utiliser les cases pour choisir les informations visibles dans les noeuds.
+7. Utiliser `Exporter SVG`, `Exporter PNG` ou `Exporter code D3.js` si besoin.
 
 ## Personnalisation des noeuds
 

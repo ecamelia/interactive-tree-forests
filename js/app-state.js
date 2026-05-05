@@ -73,7 +73,7 @@ const zoomBehavior = d3.zoom()
     });
 
 let selectedNode = null;
-let currentView = VIEW_TYPE.FOREST;
+let currentView = null;
 let currentForest = null;
 let currentTree = null;
 let optionScope = OPTION_SCOPE.TREE;

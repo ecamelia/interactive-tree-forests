@@ -1,7 +1,35 @@
+function showEmptyState() {
+    clearTreeView();
+    resetZoom();
+    setEmptySvgStyle();
+
+    const width = getAvailableSvgWidth();
+    const height = 360;
+
+    svg
+        .attr("width", width)
+        .attr("height", height);
+
+    zoomLayer.append("text")
+        .attr("class", "empty-message")
+        .attr("x", width / 2)
+        .attr("y", height / 2 - 12)
+        .attr("text-anchor", "middle")
+        .text("Chargez votre fichier JSON");
+
+    zoomLayer.append("text")
+        .attr("class", "empty-submessage")
+        .attr("x", width / 2)
+        .attr("y", height / 2 + 24)
+        .attr("text-anchor", "middle")
+        .text("L'outil affichera automatiquement un arbre ou une foret.");
+}
+
 function drawForest(forest) {
     currentView = VIEW_TYPE.FOREST;
     currentForest = forest;
     resetZoom();
+    setActiveSvgStyle();
     clearTreeView();
 
     let currentX = 90;
@@ -50,6 +78,7 @@ function drawTree(tree) {
     currentView = VIEW_TYPE.TREE;
     currentTree = tree;
     resetZoom();
+    setActiveSvgStyle();
     clearTreeView();
 
     const visibleTreeRoot = getVisibleTreeRoot(tree);
@@ -80,7 +109,12 @@ function redrawCurrentView() {
         return;
     }
 
-    drawForest(currentForest);
+    if (currentView === VIEW_TYPE.FOREST) {
+        drawForest(currentForest);
+        return;
+    }
+
+    showEmptyState();
 }
 
 function resetZoom() {
@@ -91,6 +125,31 @@ function resizeSvg(width, height) {
     svg
         .attr("width", Math.max(1200, Math.ceil(width)))
         .attr("height", Math.max(700, Math.ceil(height)));
+}
+
+function getAvailableSvgWidth() {
+    const main = document.querySelector("main");
+
+    if (!main) {
+        return 1200;
+    }
+
+    const styles = window.getComputedStyle(main);
+    const paddingLeft = parseFloat(styles.paddingLeft) || 0;
+    const paddingRight = parseFloat(styles.paddingRight) || 0;
+    const availableWidth = main.clientWidth - paddingLeft - paddingRight;
+
+    return Math.max(700, availableWidth);
+}
+
+function setEmptySvgStyle() {
+    document.body.classList.add("empty-view");
+    svg.classed("empty-state", true);
+}
+
+function setActiveSvgStyle() {
+    document.body.classList.remove("empty-view");
+    svg.classed("empty-state", false);
 }
 
 function createAutoLayoutConfig(tree, baseConfig) {

@@ -5,7 +5,7 @@ function startApp() {
     setupEvents();
     updateOptionsPanel(globalDisplayOptions);
     updateOptionInputsState();
-    loadDefaultData();
+    showEmptyState();
 }
 
 function setupEvents() {

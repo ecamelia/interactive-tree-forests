@@ -21,6 +21,10 @@ main {
     padding: 24px;
 }
 
+body.empty-view main {
+    overflow-x: hidden;
+}
+
 .toolbar {
     display: flex;
     align-items: center;
@@ -79,6 +83,12 @@ svg {
     cursor: grab;
 }
 
+svg.empty-state {
+    background: transparent;
+    border: 0;
+    cursor: default;
+}
+
 .link {
     stroke: #111;
     stroke-width: 2;
@@ -130,6 +140,17 @@ svg {
 .tree-title {
     font-size: 18px;
     font-weight: bold;
+}
+
+.empty-message {
+    fill: #222;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.empty-submessage {
+    fill: #666;
+    font-size: 17px;
 }
 
 #tooltip {
