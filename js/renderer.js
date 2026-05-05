@@ -11,7 +11,7 @@ function drawForest(forest) {
         const treeId = tree.id || index + 1;
         const treeRoot = tree.root || tree;
         const visibleTreeRoot = getVisibleTreeRoot(treeRoot);
-        const treeConfig = createAutoLayoutConfig(visibleTreeRoot, overviewConfig);
+        const treeConfig = createAutoLayoutConfig(visibleTreeRoot, getBaseTreeConfig(overviewConfig));
         const treeGroup = createForestTreeGroup(visibleTreeRoot, treeId, currentX, treeConfig);
         const drawingGroup = treeGroup
             .append("g")
@@ -53,7 +53,7 @@ function drawTree(tree) {
     clearTreeView();
 
     const visibleTreeRoot = getVisibleTreeRoot(tree);
-    const treeConfig = createAutoLayoutConfig(visibleTreeRoot, detailConfig);
+    const treeConfig = createAutoLayoutConfig(visibleTreeRoot, getBaseTreeConfig(detailConfig));
     const group = zoomLayer
         .append("g")
         .attr("transform", "translate(" + treeConfig.translateX + ", " + treeConfig.translateY + ")");
@@ -96,14 +96,34 @@ function resizeSvg(width, height) {
 function createAutoLayoutConfig(tree, baseConfig) {
     const leafCount = countLeaves(tree);
     const depth = getTreeDepth(tree);
-    const horizontalGap = baseConfig.boxWidth + 130;
-    const verticalGap = baseConfig.boxHeight + 95;
+    const horizontalGap = baseConfig.boxWidth + (isOverviewMode() ? 90 : 130);
+    const verticalGap = baseConfig.boxHeight + (isOverviewMode() ? 80 : 95);
 
     return {
         ...baseConfig,
         layoutWidth: Math.max(baseConfig.layoutWidth, Math.max(1, leafCount - 1) * horizontalGap),
         layoutHeight: Math.max(baseConfig.layoutHeight, Math.max(1, depth - 1) * verticalGap)
     };
+}
+
+function getBaseTreeConfig(baseConfig) {
+    if (!isOverviewMode()) {
+        return baseConfig;
+    }
+
+    return {
+        ...baseConfig,
+        nodeShape: "circle",
+        nodeRadius: 13,
+        boxWidth: 26,
+        boxHeight: 26,
+        textStartY: 0,
+        textStep: 0
+    };
+}
+
+function isOverviewMode() {
+    return displayMode === "overview";
 }
 
 function getVisibleTreeRoot(tree) {

@@ -159,6 +159,7 @@ Ce fichier gere l'affichage principal :
 - le zoom et le deplacement dans le SVG;
 - l'ajustement automatique de l'espace pour les arbres plus grands;
 - le choix du nombre de niveaux affiches.
+- le mode d'affichage detaille ou general.
 
 ### `js/interactions.js`
 
@@ -292,6 +293,11 @@ Pour les grands arbres, le menu `niveaux` permet d'afficher seulement les
 premiers niveaux de l'arbre. Par exemple, choisir `3` affiche la racine et les
 deux niveaux suivants. L'option `tous` affiche l'arbre entier.
 
+Le menu `mode` permet de changer le style d'affichage :
+
+- `detaillé` : noeuds rectangulaires avec les informations dans chaque noeud;
+- `general` : noeuds ronds, sans texte, pour voir plus facilement la structure.
+
 Le mode `chemin` permet de cliquer sur plusieurs noeuds pour les colorer. Si
 deux noeuds selectionnes sont relies directement, le lien entre eux est colore
 aussi. Le bouton `Effacer chemin` remet le chemin a zero.
@@ -360,6 +366,7 @@ simple.
 - Creation d'un chemin colore en selectionnant plusieurs noeuds.
 - Ajustement automatique de l'espacement selon la taille de l'arbre.
 - Affichage limite aux premiers niveaux pour les grands arbres.
+- Mode d'affichage general avec des noeuds ronds.
 - Export SVG.
 - Export PNG.
 - Export du code D3.js de la visualisation courante.

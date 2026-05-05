@@ -22,26 +22,28 @@ function drawDecisionTree(data, group, config, options = {}) {
             return options.isPathLink ? options.isPathLink(d) : false;
         })
         .attr("x1", function(d) { return d.source.x; })
-        .attr("y1", function(d) { return d.source.y + config.boxHeight / 2; })
+        .attr("y1", function(d) { return d.source.y + getNodeVerticalOffset(config); })
         .attr("x2", function(d) { return d.target.x; })
-        .attr("y2", function(d) { return d.target.y - config.boxHeight / 2; });
+        .attr("y2", function(d) { return d.target.y - getNodeVerticalOffset(config); });
 
-    group.selectAll(".branch-label")
-        .data(root.links())
-        .enter()
-        .append("text")
-        .attr("class", "branch-label")
-        .attr("x", function(d) {
-            const middle = (d.source.x + d.target.x) / 2;
-            const offset = d.source.children[0] === d.target ? -22 : 22;
+    if (!isCircleMode(config)) {
+        group.selectAll(".branch-label")
+            .data(root.links())
+            .enter()
+            .append("text")
+            .attr("class", "branch-label")
+            .attr("x", function(d) {
+                const middle = (d.source.x + d.target.x) / 2;
+                const offset = d.source.children[0] === d.target ? -22 : 22;
 
-            return middle + offset;
-        })
-        .attr("y", function(d) { return (d.source.y + d.target.y) / 2 - 18; })
-        .attr("text-anchor", "middle")
-        .text(function(d) {
-            return d.source.children[0] === d.target ? "True" : "False";
-        });
+                return middle + offset;
+            })
+            .attr("y", function(d) { return (d.source.y + d.target.y) / 2 - 18; })
+            .attr("text-anchor", "middle")
+            .text(function(d) {
+                return d.source.children[0] === d.target ? "True" : "False";
+            });
+    }
 
     const nodes = group.selectAll(".node")
         .data(root.descendants())
@@ -58,13 +60,20 @@ function drawDecisionTree(data, group, config, options = {}) {
             return "translate(" + d.x + "," + d.y + ")";
         });
 
-    nodes.append("rect")
-        .attr("class", "node-box")
-        .attr("fill", getNodeColor)
-        .attr("x", -config.boxWidth / 2)
-        .attr("y", -config.boxHeight / 2)
-        .attr("width", config.boxWidth)
-        .attr("height", config.boxHeight);
+    if (isCircleMode(config)) {
+        nodes.append("circle")
+            .attr("class", "node-circle")
+            .attr("fill", getNodeColor)
+            .attr("r", config.nodeRadius);
+    } else {
+        nodes.append("rect")
+            .attr("class", "node-box")
+            .attr("fill", getNodeColor)
+            .attr("x", -config.boxWidth / 2)
+            .attr("y", -config.boxHeight / 2)
+            .attr("width", config.boxWidth)
+            .attr("height", config.boxHeight);
+    }
 
     if (options.onNodeMouseOver) {
         nodes
@@ -88,28 +97,42 @@ function drawDecisionTree(data, group, config, options = {}) {
         });
     }
 
-    nodes.each(function(d) {
-        const displayOptions = options.getNodeDisplayOptions
-            ? options.getNodeDisplayOptions(d)
-            : getDefaultNodeDisplayOptions(d.data);
+    if (!isCircleMode(config)) {
+        nodes.each(function(d) {
+            const displayOptions = options.getNodeDisplayOptions
+                ? options.getNodeDisplayOptions(d)
+                : getDefaultNodeDisplayOptions(d.data);
 
-        const lines = getNodeText(d.data, displayOptions);
+            const lines = getNodeText(d.data, displayOptions);
 
-        d3.select(this)
-            .selectAll(".node-text")
-            .data(lines)
-            .enter()
-            .append("text")
-            .attr("class", "node-text")
-            .attr("x", 0)
-            .attr("y", function(_, index) {
-                return config.textStartY + index * config.textStep;
-            })
-            .attr("text-anchor", "middle")
-            .text(function(line) {
-                return line;
-            });
-    });
+            d3.select(this)
+                .selectAll(".node-text")
+                .data(lines)
+                .enter()
+                .append("text")
+                .attr("class", "node-text")
+                .attr("x", 0)
+                .attr("y", function(_, index) {
+                    return config.textStartY + index * config.textStep;
+                })
+                .attr("text-anchor", "middle")
+                .text(function(line) {
+                    return line;
+                });
+        });
+    }
+}
+
+function isCircleMode(config) {
+    return config.nodeShape === "circle";
+}
+
+function getNodeVerticalOffset(config) {
+    if (isCircleMode(config)) {
+        return config.nodeRadius;
+    }
+
+    return config.boxHeight / 2;
 }
 
 function getRootX(data, config) {

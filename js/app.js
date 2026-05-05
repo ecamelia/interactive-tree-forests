@@ -28,6 +28,12 @@ function setupEvents() {
         redrawCurrentView();
     });
 
+    displayModeSelect.addEventListener("change", function(event) {
+        displayMode = event.target.value;
+        resetNodeSelection();
+        redrawCurrentView();
+    });
+
     setupOptionInputs();
     setupOptionScopeInputs();
     setupPathControls();

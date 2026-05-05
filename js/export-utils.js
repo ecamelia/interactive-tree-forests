@@ -301,22 +301,26 @@ function getStyledSvgCopy() {
             stroke-width: 6;
         }
 
-        .node-box {
+        .node-box,
+        .node-circle {
             stroke: #111;
             stroke-width: 2;
         }
 
-        .selected-node .node-box {
+        .selected-node .node-box,
+        .selected-node .node-circle {
             stroke: #ff8c00;
             stroke-width: 9;
         }
 
-        .path-node .node-box {
+        .path-node .node-box,
+        .path-node .node-circle {
             stroke: #ff8c00;
             stroke-width: 6;
         }
 
-        .selected-node.path-node .node-box {
+        .selected-node.path-node .node-box,
+        .selected-node.path-node .node-circle {
             stroke-width: 9;
         }
 

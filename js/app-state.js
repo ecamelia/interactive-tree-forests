@@ -16,6 +16,7 @@ const exportD3CodeButton = d3.select("#export-d3-code-button");
 const jsonFileInput = document.getElementById("json-file-input");
 const fileStatus = document.getElementById("file-status");
 const maxDepthSelect = document.getElementById("max-depth-select");
+const displayModeSelect = document.getElementById("display-mode-select");
 const pathModeCheckbox = document.getElementById("path-mode-checkbox");
 const clearPathButton = document.getElementById("clear-path-button");
 
@@ -33,6 +34,7 @@ const optionInputs = {
 };
 
 const detailConfig = {
+    nodeShape: "box",
     boxWidth: 190,
     boxHeight: 100,
     layoutWidth: 700,
@@ -44,6 +46,7 @@ const detailConfig = {
 };
 
 const overviewConfig = {
+    nodeShape: "box",
     boxWidth: 190,
     boxHeight: 100,
     layoutWidth: 780,
@@ -75,4 +78,5 @@ let currentForest = null;
 let currentTree = null;
 let optionScope = OPTION_SCOPE.TREE;
 let maxVisibleDepth = "all";
+let displayMode = "detail";
 let pathModeEnabled = false;
