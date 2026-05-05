@@ -69,6 +69,7 @@ function downloadUrl(url, filename) {
 function buildD3CodeExport(visualization) {
     const dataString = JSON.stringify(visualization.data, null, 4);
     const pathString = JSON.stringify(visualization.pathNodeIds || [], null, 4);
+    const nodeStyleString = JSON.stringify(visualization.nodeStyleOptions || {}, null, 4);
     const isForest = visualization.type === "forest";
     const exportedForestTreeLimit = visualization.forestTreeLimit || 3;
 
@@ -80,6 +81,7 @@ function buildD3CodeExport(visualization) {
 
 const exportedData = ${dataString};
 const exportedPathNodeIds = new Set(${pathString});
+const exportedNodeStyleOptions = ${nodeStyleString};
 const exportedForestTreeLimit = ${exportedForestTreeLimit};
 
 const svg = d3.select("#tree-view");
@@ -185,7 +187,8 @@ function drawTreeInGroup(data, group, idPrefix) {
 
     root.descendants().forEach(function(d, index) {
         d.nodeId = idPrefix + "-node-" + index;
-        d.boxSize = getNodeBoxSize(d.data, localConfig);
+        d.nodeStyle = getNodeStyle(d);
+        d.boxSize = getNodeBoxSize(d.data, localConfig, d.nodeStyle);
     });
 
     group.selectAll(".link")
@@ -236,7 +239,7 @@ function drawTreeInGroup(data, group, idPrefix) {
         .attr("y", function(d) { return -d.boxSize.height / 2; })
         .attr("width", function(d) { return d.boxSize.width; })
         .attr("height", function(d) { return d.boxSize.height; })
-        .attr("fill", getNodeColor)
+        .attr("fill", function(d) { return d.nodeStyle.fill; })
         .attr("stroke", function(d) {
             return exportedPathNodeIds.has(d.nodeId) ? "#ff8c00" : "#111";
         })
@@ -246,6 +249,8 @@ function drawTreeInGroup(data, group, idPrefix) {
 
     nodes.each(function(d) {
         const lines = getNodeText(d.data);
+        const textStep = getNodeTextStep(localConfig, d.nodeStyle);
+        const textStartY = getNodeTextStartY(lines, textStep);
 
         d3.select(this)
             .selectAll("text.node-text")
@@ -255,10 +260,11 @@ function drawTreeInGroup(data, group, idPrefix) {
             .attr("class", "node-text")
             .attr("x", 0)
             .attr("y", function(_, index) {
-                return localConfig.textStartY + index * localConfig.textStep;
+                return textStartY + index * textStep;
             })
             .attr("text-anchor", "middle")
-            .attr("font-size", 16)
+            .attr("fill", d.nodeStyle.textColor)
+            .attr("font-size", d.nodeStyle.fontSize)
             .text(function(line) {
                 return line;
             });
@@ -294,25 +300,55 @@ function createAutoLayoutConfig(tree) {
     };
 }
 
-function getNodeBoxSize(node, localConfig) {
+function getNodeBoxSize(node, localConfig, style) {
     const lines = getNodeText(node);
     const longestLine = lines.reduce(function(longest, line) {
         return Math.max(longest, line.length);
     }, 0);
-    const width = Math.min(
+    const autoWidth = Math.min(
         localConfig.maxBoxWidth,
-        Math.max(localConfig.boxWidth, Math.ceil(longestLine * 7.4 + 34))
+        Math.max(localConfig.boxWidth, Math.ceil(longestLine * style.fontSize * 0.47 + 34))
     );
-    const height = Math.max(localConfig.boxHeight, lines.length * localConfig.textStep + 34);
+    const autoHeight = Math.max(localConfig.boxHeight, lines.length * getNodeTextStep(localConfig, style) + 34);
+    const width = style.width || autoWidth;
+    const height = style.height || autoHeight;
 
     return { width: width, height: height };
+}
+
+function getNodeStyle(d) {
+    if (exportedNodeStyleOptions[d.nodeId]) {
+        return exportedNodeStyleOptions[d.nodeId];
+    }
+
+    return {
+        fill: getNodeColor(d),
+        textColor: "#111111",
+        fontSize: 16,
+        width: config.boxWidth,
+        height: config.boxHeight
+    };
+}
+
+function getNodeTextStep(localConfig, style) {
+    return Math.max(localConfig.textStep, style.fontSize + 6);
+}
+
+function getNodeTextStartY(lines, textStep) {
+    return -((lines.length - 1) * textStep) / 2 + 5;
 }
 
 function getMaxNodeBoxWidth(tree) {
     let maxWidth = config.boxWidth;
 
     visitTreeNodes(tree, function(node) {
-        maxWidth = Math.max(maxWidth, getNodeBoxSize(node, config).width);
+        maxWidth = Math.max(maxWidth, getNodeBoxSize(node, config, {
+            fill: "white",
+            textColor: "#111111",
+            fontSize: 16,
+            width: config.boxWidth,
+            height: config.boxHeight
+        }).width);
     });
 
     return maxWidth;
@@ -371,7 +407,7 @@ function getNodeText(node) {
 
     lines.push("gini = " + node.gini);
     lines.push("samples = " + node.samples);
-    lines.push("value = " + formatValue(node.value));
+    lines.push("value = " + formatNodeValue(node.value));
 
     if (node.type === "leaf") {
         lines.push("classe " + node.class);
@@ -382,6 +418,14 @@ function getNodeText(node) {
 
 function formatValue(value) {
     return "[" + value.join(", ") + "]";
+}
+
+function formatNodeValue(value) {
+    if (!Array.isArray(value) || value.length <= 5) {
+        return formatValue(value);
+    }
+
+    return "[" + value.slice(0, 3).join(", ") + ", ..., " + value[value.length - 1] + "]";
 }
 `;
 }

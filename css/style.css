@@ -43,9 +43,45 @@ body.empty-view main {
     border: 1px solid #ddd;
 }
 
-#node-options-panel h2 {
+#node-style-panel,
+#node-details-panel,
+#observation-panel {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    padding: 12px;
+    background: white;
+    border: 1px solid #ddd;
+}
+
+#node-options-panel h2,
+#node-style-panel h2,
+#node-details-panel h2,
+#observation-panel h2 {
     margin: 0;
     font-size: 18px;
+}
+
+#node-style-panel.is-disabled,
+#node-details-panel.is-disabled,
+#observation-panel.is-disabled {
+    opacity: 0.55;
+}
+
+#node-details-content,
+#observation-result {
+    margin: 0;
+    color: #444;
+    font-size: 15px;
+}
+
+#observation-inputs {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
 label {
@@ -54,7 +90,9 @@ label {
 
 button,
 .file-button,
+input[type="color"],
 input[type="number"],
+input[type="text"],
 select {
     min-width: 130px;
     padding: 8px 10px;
@@ -74,12 +112,28 @@ input[type="number"] {
     width: 70px;
 }
 
+input[type="text"] {
+    min-width: 130px;
+}
+
+input[type="color"] {
+    min-width: 52px;
+    width: 52px;
+    height: 38px;
+    padding: 3px;
+}
+
 #json-file-input {
     display: none;
 }
 
 #file-status {
     color: #444;
+    font-size: 15px;
+}
+
+#forest-total-status {
+    color: #555;
     font-size: 15px;
 }
 

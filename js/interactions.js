@@ -8,7 +8,8 @@ function getTreeInteractions() {
         getNodeDisplayOptions: getNodeDisplayOptions,
         isNodeSelected: isNodeSelected,
         isPathNode: isPathNode,
-        isPathLink: isPathLink
+        isPathLink: isPathLink,
+        getNodeStyleOptions: getNodeStyleOptions
     };
 }
 
@@ -66,10 +67,14 @@ function selectNodeForOptions(event, d) {
         updateOptionsPanel(nodeDisplayOptions[d.nodeId]);
     }
 
+    syncNodeStylePanelWithSelection();
+    syncNodeDetailsPanelWithSelection();
+
     if (pathModeEnabled) {
         togglePathNode(d);
-        redrawCurrentView();
     }
+
+    redrawCurrentView();
 }
 
 function isNodeSelected(d) {
@@ -86,4 +91,44 @@ function resetNodeSelection() {
 
     updateOptionsPanel(globalDisplayOptions);
     updateOptionInputsState();
+    syncNodeStylePanelWithSelection();
+    syncNodeDetailsPanelWithSelection();
+}
+
+// Les personnalisations de style sont liees au fichier JSON courant.
+function clearNodeStyleOptions() {
+    Object.keys(nodeStyleOptions).forEach(function(nodeId) {
+        delete nodeStyleOptions[nodeId];
+    });
+
+    syncNodeStylePanelWithSelection();
+}
+
+function syncNodeDetailsPanelWithSelection() {
+    if (!selectedNode) {
+        nodeDetailsPanel.classList.add("is-disabled");
+        nodeDetailsContent.textContent = "Aucun noeud sélectionné.";
+        return;
+    }
+
+    nodeDetailsPanel.classList.remove("is-disabled");
+    nodeDetailsContent.textContent = getReadableNodeDetails(selectedNode.data);
+}
+
+function getReadableNodeDetails(node) {
+    const parts = [];
+
+    if (node.type === "leaf") {
+        parts.push("Feuille");
+        parts.push("classe " + node.class);
+    } else {
+        parts.push("Noeud de décision");
+        parts.push(node.feature + " <= " + node.threshold);
+    }
+
+    parts.push("gini = " + node.gini);
+    parts.push("samples = " + node.samples);
+    parts.push("value = " + formatValue(node.value));
+
+    return parts.join(" | ");
 }

@@ -7,6 +7,8 @@ function startApp() {
     setupEvents();
     updateOptionsPanel(globalDisplayOptions);
     updateOptionInputsState();
+    updateNodeStyleInputsState();
+    syncNodeDetailsPanelWithSelection();
     showEmptyState();
 }
 
@@ -36,6 +38,7 @@ function setupEvents() {
         // Le mode general/detaille change la forme des noeuds.
         displayMode = event.target.value;
         resetNodeSelection();
+        updateNodeStyleInputsState();
         redrawCurrentView();
     });
 
@@ -45,12 +48,28 @@ function setupEvents() {
         event.target.value = forestTreeLimit;
         resetNodeSelection();
         clearPath();
+        updateForestTotalStatus();
         redrawCurrentView();
     });
 
     setupOptionInputs();
     setupOptionScopeInputs();
+    setupNodeStyleControls();
     setupPathControls();
+    setupObservationControls();
+}
+
+// Indique combien d'arbres sont visibles par rapport au total de la foret.
+function updateForestTotalStatus() {
+    if (!currentForest || currentView !== VIEW_TYPE.FOREST) {
+        forestTotalStatus.textContent = "Aucune foret chargee";
+        return;
+    }
+
+    const totalTrees = currentForest.trees.length;
+    const visibleTrees = Math.min(forestTreeLimit, totalTrees);
+
+    forestTotalStatus.textContent = visibleTrees + " / " + totalTrees + " arbres affiches";
 }
 
 // Exporte le code D3 correspondant a ce qui est affiche.
@@ -77,7 +96,8 @@ function getCurrentVisualizationData() {
         return {
             type: VIEW_TYPE.TREE,
             data: currentTree,
-            pathNodeIds: Array.from(pathNodeIds)
+            pathNodeIds: Array.from(pathNodeIds),
+            nodeStyleOptions: nodeStyleOptions
         };
     }
 
@@ -85,6 +105,7 @@ function getCurrentVisualizationData() {
         type: VIEW_TYPE.FOREST,
         data: currentForest,
         pathNodeIds: Array.from(pathNodeIds),
-        forestTreeLimit: forestTreeLimit
+        forestTreeLimit: forestTreeLimit,
+        nodeStyleOptions: nodeStyleOptions
     };
 }

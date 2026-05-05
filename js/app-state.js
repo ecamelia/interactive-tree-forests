@@ -22,8 +22,23 @@ const fileStatus = document.getElementById("file-status");
 const maxDepthSelect = document.getElementById("max-depth-select");
 const displayModeSelect = document.getElementById("display-mode-select");
 const forestTreeLimitInput = document.getElementById("forest-tree-limit-input");
+const forestTotalStatus = document.getElementById("forest-total-status");
 const pathModeCheckbox = document.getElementById("path-mode-checkbox");
 const clearPathButton = document.getElementById("clear-path-button");
+const nodeStylePanel = document.getElementById("node-style-panel");
+const nodeStyleFillInput = document.getElementById("node-style-fill");
+const nodeStyleTextInput = document.getElementById("node-style-text");
+const nodeStyleFontSizeInput = document.getElementById("node-style-font-size");
+const nodeStyleWidthInput = document.getElementById("node-style-width");
+const nodeStyleHeightInput = document.getElementById("node-style-height");
+const resetNodeStyleButton = document.getElementById("reset-node-style-button");
+const nodeDetailsPanel = document.getElementById("node-details-panel");
+const nodeDetailsContent = document.getElementById("node-details-content");
+const observationPanel = document.getElementById("observation-panel");
+const observationInputs = document.getElementById("observation-inputs");
+const runObservationButton = document.getElementById("run-observation-button");
+const clearObservationButton = document.getElementById("clear-observation-button");
+const observationResult = document.getElementById("observation-result");
 
 // Choix du niveau d'application des options d'affichage.
 const optionScopeInputs = {
@@ -78,6 +93,7 @@ const globalDisplayOptions = {
 
 // Personnalisations propres a certains noeuds.
 const nodeDisplayOptions = {};
+const nodeStyleOptions = {};
 
 // Noeuds actuellement marques comme faisant partie du chemin.
 const pathNodeIds = new Set();

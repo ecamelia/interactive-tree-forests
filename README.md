@@ -20,6 +20,8 @@ but est de construire progressivement un outil reutilisable qui pourra :
 - afficher automatiquement le bon type de visualisation selon le fichier JSON;
 - limiter le nombre d'arbres visibles dans une foret;
 - personnaliser les informations visibles dans les noeuds;
+- afficher les details d'un noeud selectionne;
+- tester une observation et colorer automatiquement le chemin suivi;
 - exporter la visualisation en SVG ou en PNG;
 - exporter un fichier JavaScript contenant le code D3.js de la visualisation.
 
@@ -41,6 +43,7 @@ visualisation-arbres/
 │   ├── app.js
 │   ├── data-loader.js
 │   ├── display-options.js
+│   ├── decision-explainer.js
 │   ├── interactions.js
 │   ├── path-tools.js
 │   ├── renderer.js
@@ -191,6 +194,15 @@ Ce fichier gere les cases du panneau d'affichage :
 
 - les options d'affichage pour tout l'arbre;
 - les options d'affichage pour un seul noeud selectionne.
+
+### `js/decision-explainer.js`
+
+Ce fichier gere l'explication d'une prediction :
+
+- creation automatique des champs correspondant aux features de l'arbre;
+- lecture d'une observation saisie par l'utilisateur;
+- coloration du chemin suivi par cette observation;
+- resume des votes quand une foret est affichee.
 
 ### `js/export-utils.js`
 

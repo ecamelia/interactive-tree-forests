@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>Visualisation d'arbres</title>
-    <link rel="stylesheet" href="css/style.css?v=19">
+    <link rel="stylesheet" href="css/style.css?v=26">
 </head>
 <body>
     <header>
@@ -76,12 +76,57 @@
                 arbres foret
                 <input type="number" id="forest-tree-limit-input" min="1" value="3">
             </label>
+            <span id="forest-total-status">Aucune foret chargee</span>
 
             <label>
                 <input type="checkbox" id="path-mode-checkbox">
                 mode chemin
             </label>
             <button id="clear-path-button">Effacer chemin</button>
+        </section>
+
+        <section id="node-style-panel">
+            <h2>Style du noeud sélectionné</h2>
+
+            <label>
+                fond
+                <input type="color" id="node-style-fill" value="#ffffff">
+            </label>
+
+            <label>
+                texte
+                <input type="color" id="node-style-text" value="#111111">
+            </label>
+
+            <label>
+                taille texte
+                <input type="number" id="node-style-font-size" min="10" max="28" value="16">
+            </label>
+
+            <label>
+                largeur
+                <input type="number" id="node-style-width" min="60" max="500" value="190">
+            </label>
+
+            <label>
+                hauteur
+                <input type="number" id="node-style-height" min="40" max="260" value="100">
+            </label>
+
+            <button id="reset-node-style-button">Réinitialiser</button>
+        </section>
+
+        <section id="node-details-panel">
+            <h2>Détails du noeud sélectionné</h2>
+            <p id="node-details-content">Aucun noeud sélectionné.</p>
+        </section>
+
+        <section id="observation-panel">
+            <h2>Tester une observation</h2>
+            <div id="observation-inputs"></div>
+            <button id="run-observation-button">Colorer le chemin</button>
+            <button id="clear-observation-button">Effacer</button>
+            <span id="observation-result">Chargez un arbre ou une foret.</span>
         </section>
 
         <section id="empty-state">
@@ -94,14 +139,15 @@
     </main>
 
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="js/tree-viz.js?v=19"></script>
-    <script src="js/export-utils.js?v=19"></script>
-    <script src="js/app-state.js?v=19"></script>
-    <script src="js/renderer.js?v=19"></script>
-    <script src="js/path-tools.js?v=19"></script>
-    <script src="js/interactions.js?v=19"></script>
-    <script src="js/display-options.js?v=19"></script>
-    <script src="js/data-loader.js?v=19"></script>
-    <script src="js/app.js?v=19"></script>
+    <script src="js/tree-viz.js?v=26"></script>
+    <script src="js/export-utils.js?v=26"></script>
+    <script src="js/app-state.js?v=26"></script>
+    <script src="js/renderer.js?v=26"></script>
+    <script src="js/path-tools.js?v=26"></script>
+    <script src="js/interactions.js?v=26"></script>
+    <script src="js/display-options.js?v=26"></script>
+    <script src="js/decision-explainer.js?v=26"></script>
+    <script src="js/data-loader.js?v=26"></script>
+    <script src="js/app.js?v=26"></script>
 </body>
 </html>

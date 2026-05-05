@@ -1,7 +1,12 @@
 // Message affiche avant qu'un fichier JSON soit charge.
 function showEmptyState() {
+    currentView = null;
+    currentForest = null;
+    currentTree = null;
     clearTreeView();
     resetZoom();
+    updateForestTotalStatus();
+    updateObservationPanel();
     setEmptySvgStyle();
 }
 
@@ -9,6 +14,7 @@ function showEmptyState() {
 function drawForest(forest) {
     currentView = VIEW_TYPE.FOREST;
     currentForest = forest;
+    updateForestTotalStatus();
     resetZoom();
     setActiveSvgStyle();
     clearTreeView();
@@ -92,6 +98,7 @@ function drawHiddenTreesPlaceholder(xPosition, hiddenTreeCount) {
 function drawTree(tree) {
     currentView = VIEW_TYPE.TREE;
     currentTree = tree;
+    updateForestTotalStatus();
     resetZoom();
     setActiveSvgStyle();
     clearTreeView();

@@ -9,6 +9,7 @@ function handleJsonFile(event) {
     readJsonFile(file, function(data) {
         try {
             resetNodeSelection();
+            clearNodeStyleOptions();
             renderJsonData(data);
             fileStatus.textContent = "Fichier charge : " + file.name;
         } catch (error) {
@@ -45,11 +46,13 @@ function renderJsonData(data) {
 
     if (isForestData(data)) {
         drawForest(data);
+        updateObservationPanel();
         return;
     }
 
     if (isTreeData(data)) {
         drawTree(getTreeRoot(data));
+        updateObservationPanel();
         return;
     }
 

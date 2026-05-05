@@ -79,7 +79,9 @@ function drawDecisionTree(data, group, config, options = {}) {
     } else {
         nodes.append("rect")
             .attr("class", "node-box")
-            .attr("fill", getNodeColor)
+            .attr("fill", function(d) {
+                return getNodeStyleForHierarchyNode(d, options).fill;
+            })
             .attr("x", function(d) { return -d.boxSize.width / 2; })
             .attr("y", function(d) { return -d.boxSize.height / 2; })
             .attr("width", function(d) { return d.boxSize.width; })
@@ -101,7 +103,7 @@ function drawDecisionTree(data, group, config, options = {}) {
     }
 
     if (options.onNodeClick){
-        nodes.on("pointerdown", function(event, d) {
+        nodes.on("click", function(event, d) {
             event.stopPropagation();
             event.preventDefault();
 
@@ -113,6 +115,9 @@ function drawDecisionTree(data, group, config, options = {}) {
         // Mode detail : texte affiche dans chaque rectangle.
         nodes.each(function(d) {
             const lines = getNodeTextForHierarchyNode(d, options);
+            const style = getNodeStyleForHierarchyNode(d, options);
+            const textStep = getNodeTextStep(config, style);
+            const textStartY = getNodeTextStartY(lines, textStep);
 
             d3.select(this)
                 .selectAll(".node-text")
@@ -122,9 +127,11 @@ function drawDecisionTree(data, group, config, options = {}) {
                 .attr("class", "node-text")
                 .attr("x", 0)
                 .attr("y", function(_, index) {
-                    return config.textStartY + index * config.textStep;
+                    return textStartY + index * textStep;
                 })
                 .attr("text-anchor", "middle")
+                .attr("fill", style.textColor)
+                .attr("font-size", style.fontSize)
                 .text(function(line) {
                     return line;
                 });
@@ -188,8 +195,11 @@ function getNodeBoxSize(d, config, options = {}) {
     }
 
     const lines = getNodeTextForHierarchyNode(d, options);
-    const width = estimateNodeTextWidth(lines, config);
-    const height = estimateNodeTextHeight(lines, config);
+    const style = getNodeStyleForHierarchyNode(d, options);
+    const autoWidth = estimateNodeTextWidth(lines, config, style);
+    const autoHeight = estimateNodeTextHeight(lines, config, style);
+    const width = style.width || autoWidth;
+    const height = style.height || autoHeight;
 
     return {
         width: width,
@@ -205,11 +215,23 @@ function getNodeTextForHierarchyNode(d, options = {}) {
     return getNodeText(d.data, displayOptions);
 }
 
-function estimateNodeTextWidth(lines, config) {
+function getNodeStyleForHierarchyNode(d, options = {}) {
+    if (options.getNodeStyleOptions) {
+        return options.getNodeStyleOptions(d);
+    }
+
+    return {
+        fill: getNodeColor(d),
+        textColor: "#111111",
+        fontSize: 16
+    };
+}
+
+function estimateNodeTextWidth(lines, config, style = { fontSize: 16 }) {
     const longestLine = lines.reduce(function(longest, line) {
         return Math.max(longest, line.length);
     }, 0);
-    const estimatedWidth = longestLine * 7.4 + 34;
+    const estimatedWidth = longestLine * style.fontSize * 0.47 + 34;
 
     return Math.min(
         config.maxBoxWidth || 430,
@@ -217,11 +239,19 @@ function estimateNodeTextWidth(lines, config) {
     );
 }
 
-function estimateNodeTextHeight(lines, config) {
+function estimateNodeTextHeight(lines, config, style = { fontSize: 16 }) {
     const verticalPadding = 34;
-    const estimatedHeight = lines.length * config.textStep + verticalPadding;
+    const estimatedHeight = lines.length * getNodeTextStep(config, style) + verticalPadding;
 
     return Math.max(config.boxHeight, estimatedHeight);
+}
+
+function getNodeTextStep(config, style) {
+    return Math.max(config.textStep, style.fontSize + 6);
+}
+
+function getNodeTextStartY(lines, textStep) {
+    return -((lines.length - 1) * textStep) / 2 + 5;
 }
 
 // Largeur maximale utile pour calculer l'espacement horizontal de l'arbre.
@@ -235,7 +265,8 @@ function getMaxVisibleNodeBoxWidth(tree, config, options = {}) {
     visitTreeNodes(tree, function(node) {
         const fakeHierarchyNode = { data: node };
         const lines = getNodeTextForHierarchyNode(fakeHierarchyNode, options);
-        maxWidth = Math.max(maxWidth, estimateNodeTextWidth(lines, config));
+        const style = getNodeStyleForHierarchyNode(fakeHierarchyNode, options);
+        maxWidth = Math.max(maxWidth, style.width || estimateNodeTextWidth(lines, config, style));
     });
 
     return maxWidth;
@@ -281,7 +312,7 @@ function getNodeText(node, displayOptions) {
     }
 
     if (displayOptions.value) {
-        lines.push("value = " + formatValue(node.value));
+        lines.push("value = " + formatNodeValue(node.value));
     }
 
     if (displayOptions.class && node.type === "leaf") {
@@ -293,4 +324,13 @@ function getNodeText(node, displayOptions) {
 
 function formatValue(value) {
     return "[" + value.join(", ") + "]";
+}
+
+// Affichage compact utile pour les datasets multi-classes comme digits.
+function formatNodeValue(value) {
+    if (!Array.isArray(value) || value.length <= 5) {
+        return formatValue(value);
+    }
+
+    return "[" + value.slice(0, 3).join(", ") + ", ..., " + value[value.length - 1] + "]";
 }

@@ -1,0 +1,184 @@
+// Outils d'explication : tester une observation et colorer le chemin suivi.
+function setupObservationControls() {
+    runObservationButton.addEventListener("click", runObservationExplanation);
+
+    clearObservationButton.addEventListener("click", function() {
+        clearPath();
+        observationResult.textContent = "Chemin effacé.";
+        redrawCurrentView();
+    });
+}
+
+function updateObservationPanel() {
+    const root = getCurrentRootForFeatures();
+
+    observationInputs.innerHTML = "";
+
+    if (!root) {
+        observationPanel.classList.add("is-disabled");
+        observationResult.textContent = "Chargez un arbre ou une foret.";
+        return;
+    }
+
+    observationPanel.classList.remove("is-disabled");
+    createObservationInputs(getFeatureNames(root));
+}
+
+function createObservationInputs(featureNames) {
+    featureNames.forEach(function(featureName) {
+        const label = document.createElement("label");
+        label.textContent = featureName + " ";
+
+        const input = document.createElement("input");
+        input.type = "number";
+        input.step = "0.001";
+        input.dataset.feature = featureName;
+
+        label.appendChild(input);
+        observationInputs.appendChild(label);
+    });
+
+    observationResult.textContent = featureNames.length
+        ? "Entrez une observation pour colorer son chemin."
+        : "Aucune feature trouvée dans cet arbre.";
+}
+
+function runObservationExplanation() {
+    const observation = readObservationValues();
+
+    if (!Object.keys(observation).length) {
+        alert("Entre au moins une valeur pour tester une observation.");
+        return;
+    }
+
+    if (!hasAllObservationValues(observation)) {
+        alert("Remplis toutes les valeurs de l'observation.");
+        return;
+    }
+
+    clearPath();
+
+    if (currentView === VIEW_TYPE.TREE) {
+        explainTreeObservation(currentTree, observation, "single");
+        redrawCurrentView();
+        return;
+    }
+
+    if (currentView === VIEW_TYPE.FOREST) {
+        explainForestObservation(observation);
+        redrawCurrentView();
+    }
+}
+
+function explainTreeObservation(tree, observation, idPrefix) {
+    const prediction = addDecisionPath(tree.root || tree, observation, idPrefix);
+    observationResult.textContent = "Classe prédite : " + prediction;
+}
+
+function explainForestObservation(observation) {
+    const votes = {};
+    const visibleTrees = currentForest.trees.slice(0, forestTreeLimit);
+
+    currentForest.trees.forEach(function(tree, index) {
+        const treeId = tree.id || index + 1;
+        const idPrefix = index < visibleTrees.length ? "forest-" + treeId : null;
+        const prediction = addDecisionPath(tree.root || tree, observation, idPrefix);
+
+        votes[prediction] = (votes[prediction] || 0) + 1;
+    });
+
+    observationResult.textContent = "Votes foret : " + formatVotes(votes);
+}
+
+function addDecisionPath(tree, observation, idPrefix) {
+    let currentNode = tree;
+    let prediction = currentNode.class;
+    const nodeIds = idPrefix ? createNodeIdMap(tree, idPrefix) : null;
+
+    while (currentNode) {
+        if (nodeIds) {
+            pathNodeIds.add(nodeIds.get(currentNode));
+        }
+
+        if (currentNode.type === "leaf") {
+            prediction = currentNode.class;
+            break;
+        }
+
+        const featureValue = observation[currentNode.feature];
+        const goLeft = featureValue <= currentNode.threshold;
+
+        currentNode = goLeft ? currentNode.left : currentNode.right;
+    }
+
+    return prediction;
+}
+
+function createNodeIdMap(tree, idPrefix) {
+    const root = d3.hierarchy(tree, function(d) {
+        return [d.left, d.right].filter(Boolean);
+    });
+    const nodeIds = new Map();
+
+    root.descendants().forEach(function(d, index) {
+        nodeIds.set(d.data, idPrefix + "-node-" + index);
+    });
+
+    return nodeIds;
+}
+
+function hasAllObservationValues(observation) {
+    const inputs = Array.from(observationInputs.querySelectorAll("input"));
+
+    return inputs.every(function(input) {
+        return observation[input.dataset.feature] !== undefined;
+    });
+}
+
+function readObservationValues() {
+    const values = {};
+
+    observationInputs.querySelectorAll("input").forEach(function(input) {
+        if (input.value === "") {
+            return;
+        }
+
+        values[input.dataset.feature] = Number(input.value);
+    });
+
+    return values;
+}
+
+function getCurrentRootForFeatures() {
+    if (currentView === VIEW_TYPE.TREE && currentTree) {
+        return currentTree.root || currentTree;
+    }
+
+    if (currentView === VIEW_TYPE.FOREST && currentForest && currentForest.trees.length) {
+        const firstTree = currentForest.trees[0];
+        return firstTree.root || firstTree;
+    }
+
+    return null;
+}
+
+function getFeatureNames(root) {
+    const features = new Set();
+
+    visitTreeNodes(root, function(node) {
+        if (node.type !== "leaf" && node.feature) {
+            features.add(node.feature);
+        }
+    });
+
+    return Array.from(features);
+}
+
+function formatVotes(votes) {
+    return Object.keys(votes)
+        .sort()
+        .map(function(className) {
+            return "classe " + className + " = " + votes[className];
+        })
+        .join(", ");
+}
