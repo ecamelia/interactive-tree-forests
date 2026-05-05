@@ -1,0 +1,1106 @@
+{
+  "dataset": "digits",
+  "classes": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "root": {
+    "type": "node",
+    "feature": "pixel_4_4",
+    "threshold": 0.5,
+    "gini": 0.9,
+    "samples": 1797,
+    "value": [
+      178,
+      182,
+      177,
+      183,
+      181,
+      182,
+      181,
+      179,
+      174,
+      180
+    ],
+    "left": {
+      "type": "node",
+      "feature": "pixel_3_4",
+      "threshold": 2.5,
+      "gini": 0.547,
+      "samples": 275,
+      "value": [
+        174,
+        0,
+        4,
+        1,
+        6,
+        25,
+        5,
+        0,
+        3,
+        57
+      ],
+      "left": {
+        "type": "node",
+        "feature": "pixel_2_5",
+        "threshold": 0.5,
+        "gini": 0.17,
+        "samples": 188,
+        "value": [
+          171,
+          0,
+          2,
+          0,
+          6,
+          6,
+          3,
+          0,
+          0,
+          0
+        ],
+        "left": {
+          "type": "node",
+          "feature": "pixel_0_6",
+          "threshold": 1.0,
+          "gini": 0.719,
+          "samples": 16,
+          "value": [
+            1,
+            0,
+            1,
+            0,
+            5,
+            6,
+            3,
+            0,
+            0,
+            0
+          ],
+          "left": {
+            "type": "node",
+            "feature": "pixel_3_5",
+            "threshold": 1.0,
+            "gini": 0.64,
+            "samples": 10,
+            "value": [
+              1,
+              0,
+              1,
+              0,
+              5,
+              0,
+              3,
+              0,
+              0,
+              0
+            ],
+            "left": {
+              "type": "leaf",
+              "gini": 0.56,
+              "samples": 5,
+              "value": [
+                1,
+                0,
+                1,
+                0,
+                0,
+                0,
+                3,
+                0,
+                0,
+                0
+              ],
+              "class": 6
+            },
+            "right": {
+              "type": "leaf",
+              "gini": 0.0,
+              "samples": 5,
+              "value": [
+                0,
+                0,
+                0,
+                0,
+                5,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "class": 4
+            }
+          },
+          "right": {
+            "type": "leaf",
+            "gini": 0.0,
+            "samples": 6,
+            "value": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              6,
+              0,
+              0,
+              0,
+              0
+            ],
+            "class": 5
+          }
+        },
+        "right": {
+          "type": "node",
+          "feature": "pixel_5_4",
+          "threshold": 12.5,
+          "gini": 0.023,
+          "samples": 172,
+          "value": [
+            170,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "left": {
+            "type": "node",
+            "feature": "pixel_7_6",
+            "threshold": 7.5,
+            "gini": 0.012,
+            "samples": 171,
+            "value": [
+              170,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "left": {
+              "type": "leaf",
+              "gini": 0.0,
+              "samples": 170,
+              "value": [
+                170,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "class": 0
+            },
+            "right": {
+              "type": "leaf",
+              "gini": 0.0,
+              "samples": 1,
+              "value": [
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "class": 2
+            }
+          },
+          "right": {
+            "type": "leaf",
+            "gini": 0.0,
+            "samples": 1,
+            "value": [
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "class": 4
+          }
+        }
+      },
+      "right": {
+        "type": "node",
+        "feature": "pixel_2_5",
+        "threshold": 6.5,
+        "gini": 0.519,
+        "samples": 87,
+        "value": [
+          3,
+          0,
+          2,
+          1,
+          0,
+          19,
+          2,
+          0,
+          3,
+          57
+        ],
+        "left": {
+          "type": "node",
+          "feature": "pixel_6_3",
+          "threshold": 9.5,
+          "gini": 0.384,
+          "samples": 22,
+          "value": [
+            0,
+            0,
+            2,
+            0,
+            0,
+            17,
+            2,
+            0,
+            0,
+            1
+          ],
+          "left": {
+            "type": "node",
+            "feature": "pixel_3_2",
+            "threshold": 5.0,
+            "gini": 0.105,
+            "samples": 18,
+            "value": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              17,
+              0,
+              0,
+              0,
+              1
+            ],
+            "left": {
+              "type": "leaf",
+              "gini": 0.0,
+              "samples": 1,
+              "value": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                1
+              ],
+              "class": 9
+            },
+            "right": {
+              "type": "leaf",
+              "gini": 0.0,
+              "samples": 17,
+              "value": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                17,
+                0,
+                0,
+                0,
+                0
+              ],
+              "class": 5
+            }
+          },
+          "right": {
+            "type": "node",
+            "feature": "pixel_3_4",
+            "threshold": 9.5,
+            "gini": 0.5,
+            "samples": 4,
+            "value": [
+              0,
+              0,
+              2,
+              0,
+              0,
+              0,
+              2,
+              0,
+              0,
+              0
+            ],
+            "left": {
+              "type": "leaf",
+              "gini": 0.0,
+              "samples": 2,
+              "value": [
+                0,
+                0,
+                2,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "class": 2
+            },
+            "right": {
+              "type": "leaf",
+              "gini": 0.0,
+              "samples": 2,
+              "value": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                2,
+                0,
+                0,
+                0
+              ],
+              "class": 6
+            }
+          }
+        },
+        "right": {
+          "type": "node",
+          "feature": "pixel_4_2",
+          "threshold": 7.5,
+          "gini": 0.252,
+          "samples": 65,
+          "value": [
+            3,
+            0,
+            0,
+            1,
+            0,
+            2,
+            0,
+            0,
+            3,
+            56
+          ],
+          "left": {
+            "type": "node",
+            "feature": "pixel_2_2",
+            "threshold": 2.0,
+            "gini": 0.034,
+            "samples": 57,
+            "value": [
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+              56
+            ],
+            "left": {
+              "type": "leaf",
+              "gini": 0.0,
+              "samples": 1,
+              "value": [
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "class": 3
+            },
+            "right": {
+              "type": "leaf",
+              "gini": 0.0,
+              "samples": 56,
+              "value": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                56
+              ],
+              "class": 9
+            }
+          },
+          "right": {
+            "type": "node",
+            "feature": "pixel_7_2",
+            "threshold": 4.0,
+            "gini": 0.656,
+            "samples": 8,
+            "value": [
+              3,
+              0,
+              0,
+              0,
+              0,
+              2,
+              0,
+              0,
+              3,
+              0
+            ],
+            "left": {
+              "type": "leaf",
+              "gini": 0.0,
+              "samples": 3,
+              "value": [
+                3,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "class": 0
+            },
+            "right": {
+              "type": "leaf",
+              "gini": 0.48,
+              "samples": 5,
+              "value": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                2,
+                0,
+                0,
+                3,
+                0
+              ],
+              "class": 8
+            }
+          }
+        }
+      }
+    },
+    "right": {
+      "type": "node",
+      "feature": "pixel_2_5",
+      "threshold": 0.5,
+      "gini": 0.888,
+      "samples": 1522,
+      "value": [
+        4,
+        182,
+        173,
+        182,
+        175,
+        157,
+        176,
+        179,
+        171,
+        123
+      ],
+      "left": {
+        "type": "node",
+        "feature": "pixel_5_2",
+        "threshold": 8.5,
+        "gini": 0.74,
+        "samples": 464,
+        "value": [
+          0,
+          43,
+          46,
+          15,
+          33,
+          145,
+          172,
+          6,
+          3,
+          1
+        ],
+        "left": {
+          "type": "node",
+          "feature": "pixel_0_5",
+          "threshold": 1.5,
+          "gini": 0.621,
+          "samples": 246,
+          "value": [
+            0,
+            35,
+            35,
+            15,
+            7,
+            142,
+            3,
+            5,
+            3,
+            1
+          ],
+          "left": {
+            "type": "node",
+            "feature": "pixel_2_3",
+            "threshold": 13.5,
+            "gini": 0.735,
+            "samples": 101,
+            "value": [
+              0,
+              35,
+              35,
+              14,
+              5,
+              2,
+              3,
+              4,
+              2,
+              1
+            ],
+            "left": {
+              "type": "leaf",
+              "gini": 0.651,
+              "samples": 61,
+              "value": [
+                0,
+                3,
+                33,
+                13,
+                2,
+                2,
+                1,
+                4,
+                2,
+                1
+              ],
+              "class": 2
+            },
+            "right": {
+              "type": "leaf",
+              "gini": 0.349,
+              "samples": 40,
+              "value": [
+                0,
+                32,
+                2,
+                1,
+                3,
+                0,
+                2,
+                0,
+                0,
+                0
+              ],
+              "class": 1
+            }
+          },
+          "right": {
+            "type": "node",
+            "feature": "pixel_2_2",
+            "threshold": 4.5,
+            "gini": 0.067,
+            "samples": 145,
+            "value": [
+              0,
+              0,
+              0,
+              1,
+              2,
+              140,
+              0,
+              1,
+              1,
+              0
+            ],
+            "left": {
+              "type": "leaf",
+              "gini": 0.667,
+              "samples": 3,
+              "value": [
+                0,
+                0,
+                0,
+                1,
+                1,
+                0,
+                0,
+                1,
+                0,
+                0
+              ],
+              "class": 3
+            },
+            "right": {
+              "type": "leaf",
+              "gini": 0.028,
+              "samples": 142,
+              "value": [
+                0,
+                0,
+                0,
+                0,
+                1,
+                140,
+                0,
+                0,
+                1,
+                0
+              ],
+              "class": 5
+            }
+          }
+        },
+        "right": {
+          "type": "node",
+          "feature": "pixel_6_6",
+          "threshold": 1.5,
+          "gini": 0.381,
+          "samples": 218,
+          "value": [
+            0,
+            8,
+            11,
+            0,
+            26,
+            3,
+            169,
+            1,
+            0,
+            0
+          ],
+          "left": {
+            "type": "node",
+            "feature": "pixel_1_2",
+            "threshold": 5.5,
+            "gini": 0.636,
+            "samples": 47,
+            "value": [
+              0,
+              8,
+              2,
+              0,
+              26,
+              3,
+              7,
+              1,
+              0,
+              0
+            ],
+            "left": {
+              "type": "leaf",
+              "gini": 0.145,
+              "samples": 26,
+              "value": [
+                0,
+                1,
+                0,
+                0,
+                24,
+                0,
+                1,
+                0,
+                0,
+                0
+              ],
+              "class": 4
+            },
+            "right": {
+              "type": "leaf",
+              "gini": 0.766,
+              "samples": 21,
+              "value": [
+                0,
+                7,
+                2,
+                0,
+                2,
+                3,
+                6,
+                1,
+                0,
+                0
+              ],
+              "class": 1
+            }
+          },
+          "right": {
+            "type": "node",
+            "feature": "pixel_0_2",
+            "threshold": 10.0,
+            "gini": 0.1,
+            "samples": 171,
+            "value": [
+              0,
+              0,
+              9,
+              0,
+              0,
+              0,
+              162,
+              0,
+              0,
+              0
+            ],
+            "left": {
+              "type": "leaf",
+              "gini": 0.0,
+              "samples": 162,
+              "value": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                162,
+                0,
+                0,
+                0
+              ],
+              "class": 6
+            },
+            "right": {
+              "type": "leaf",
+              "gini": 0.0,
+              "samples": 9,
+              "value": [
+                0,
+                0,
+                9,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "class": 2
+            }
+          }
+        }
+      },
+      "right": {
+        "type": "node",
+        "feature": "pixel_7_4",
+        "threshold": 7.5,
+        "gini": 0.86,
+        "samples": 1058,
+        "value": [
+          4,
+          139,
+          127,
+          167,
+          142,
+          12,
+          4,
+          173,
+          168,
+          122
+        ],
+        "left": {
+          "type": "node",
+          "feature": "pixel_0_5",
+          "threshold": 0.5,
+          "gini": 0.552,
+          "samples": 247,
+          "value": [
+            0,
+            11,
+            6,
+            10,
+            28,
+            4,
+            0,
+            161,
+            11,
+            16
+          ],
+          "left": {
+            "type": "node",
+            "feature": "pixel_1_4",
+            "threshold": 7.5,
+            "gini": 0.627,
+            "samples": 45,
+            "value": [
+              0,
+              2,
+              5,
+              0,
+              26,
+              2,
+              0,
+              6,
+              3,
+              1
+            ],
+            "left": {
+              "type": "leaf",
+              "gini": 0.0,
+              "samples": 26,
+              "value": [
+                0,
+                0,
+                0,
+                0,
+                26,
+                0,
+                0,
+                0,
+                0,
+                0
+              ],
+              "class": 4
+            },
+            "right": {
+              "type": "leaf",
+              "gini": 0.781,
+              "samples": 19,
+              "value": [
+                0,
+                2,
+                5,
+                0,
+                0,
+                2,
+                0,
+                6,
+                3,
+                1
+              ],
+              "class": 7
+            }
+          },
+          "right": {
+            "type": "node",
+            "feature": "pixel_6_5",
+            "threshold": 3.5,
+            "gini": 0.399,
+            "samples": 202,
+            "value": [
+              0,
+              9,
+              1,
+              10,
+              2,
+              2,
+              0,
+              155,
+              8,
+              15
+            ],
+            "left": {
+              "type": "leaf",
+              "gini": 0.269,
+              "samples": 182,
+              "value": [
+                0,
+                3,
+                0,
+                4,
+                2,
+                1,
+                0,
+                155,
+                6,
+                11
+              ],
+              "class": 7
+            },
+            "right": {
+              "type": "leaf",
+              "gini": 0.765,
+              "samples": 20,
+              "value": [
+                0,
+                6,
+                1,
+                6,
+                0,
+                1,
+                0,
+                0,
+                2,
+                4
+              ],
+              "class": 1
+            }
+          }
+        },
+        "right": {
+          "type": "node",
+          "feature": "pixel_4_1",
+          "threshold": 3.5,
+          "gini": 0.841,
+          "samples": 811,
+          "value": [
+            4,
+            128,
+            121,
+            157,
+            114,
+            8,
+            4,
+            12,
+            157,
+            106
+          ],
+          "left": {
+            "type": "node",
+            "feature": "pixel_5_3",
+            "threshold": 1.5,
+            "gini": 0.808,
+            "samples": 666,
+            "value": [
+              2,
+              107,
+              120,
+              156,
+              4,
+              7,
+              1,
+              10,
+              154,
+              105
+            ],
+            "left": {
+              "type": "leaf",
+              "gini": 0.636,
+              "samples": 281,
+              "value": [
+                0,
+                19,
+                6,
+                138,
+                0,
+                7,
+                0,
+                0,
+                16,
+                95
+              ],
+              "class": 3
+            },
+            "right": {
+              "type": "leaf",
+              "gini": 0.728,
+              "samples": 385,
+              "value": [
+                2,
+                88,
+                114,
+                18,
+                4,
+                0,
+                1,
+                10,
+                138,
+                10
+              ],
+              "class": 8
+            }
+          },
+          "right": {
+            "type": "node",
+            "feature": "pixel_1_5",
+            "threshold": 9.5,
+            "gini": 0.402,
+            "samples": 145,
+            "value": [
+              2,
+              21,
+              1,
+              1,
+              110,
+              1,
+              3,
+              2,
+              3,
+              1
+            ],
+            "left": {
+              "type": "leaf",
+              "gini": 0.088,
+              "samples": 110,
+              "value": [
+                0,
+                3,
+                0,
+                0,
+                105,
+                0,
+                1,
+                0,
+                0,
+                1
+              ],
+              "class": 4
+            },
+            "right": {
+              "type": "leaf",
+              "gini": 0.696,
+              "samples": 35,
+              "value": [
+                2,
+                18,
+                1,
+                1,
+                5,
+                1,
+                2,
+                2,
+                3,
+                0
+              ],
+              "class": 1
+            }
+          }
+        }
+      }
+    }
+  }
+}

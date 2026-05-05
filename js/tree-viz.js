@@ -16,6 +16,10 @@ function drawDecisionTree(data, group, config, options = {}) {
         d.treeKey = treeKey;
     });
 
+    root.descendants().forEach(function(d) {
+        d.boxSize = getNodeBoxSize(d, config, options);
+    });
+
     // Liens parent-enfant.
     group.selectAll(".link")
         .data(root.links())
@@ -26,9 +30,9 @@ function drawDecisionTree(data, group, config, options = {}) {
             return options.isPathLink ? options.isPathLink(d) : false;
         })
         .attr("x1", function(d) { return d.source.x; })
-        .attr("y1", function(d) { return d.source.y + getNodeVerticalOffset(config); })
+        .attr("y1", function(d) { return d.source.y + getNodeVerticalOffset(d.source, config); })
         .attr("x2", function(d) { return d.target.x; })
-        .attr("y2", function(d) { return d.target.y - getNodeVerticalOffset(config); });
+        .attr("y2", function(d) { return d.target.y - getNodeVerticalOffset(d.target, config); });
 
     if (!isCircleMode(config)) {
         // Les labels True/False sont gardes uniquement en mode detail.
@@ -76,10 +80,10 @@ function drawDecisionTree(data, group, config, options = {}) {
         nodes.append("rect")
             .attr("class", "node-box")
             .attr("fill", getNodeColor)
-            .attr("x", -config.boxWidth / 2)
-            .attr("y", -config.boxHeight / 2)
-            .attr("width", config.boxWidth)
-            .attr("height", config.boxHeight);
+            .attr("x", function(d) { return -d.boxSize.width / 2; })
+            .attr("y", function(d) { return -d.boxSize.height / 2; })
+            .attr("width", function(d) { return d.boxSize.width; })
+            .attr("height", function(d) { return d.boxSize.height; });
     }
 
     if (options.onNodeMouseOver) {
@@ -108,11 +112,7 @@ function drawDecisionTree(data, group, config, options = {}) {
     if (!isCircleMode(config)) {
         // Mode detail : texte affiche dans chaque rectangle.
         nodes.each(function(d) {
-            const displayOptions = options.getNodeDisplayOptions
-                ? options.getNodeDisplayOptions(d)
-                : getDefaultNodeDisplayOptions(d.data);
-
-            const lines = getNodeText(d.data, displayOptions);
+            const lines = getNodeTextForHierarchyNode(d, options);
 
             d3.select(this)
                 .selectAll(".node-text")
@@ -137,12 +137,12 @@ function isCircleMode(config) {
 }
 
 // Permet aux lignes d'arriver au bord du noeud, pas au centre.
-function getNodeVerticalOffset(config) {
+function getNodeVerticalOffset(d, config) {
     if (isCircleMode(config)) {
         return config.nodeRadius;
     }
 
-    return config.boxHeight / 2;
+    return d.boxSize.height / 2;
 }
 
 // Calcule la position horizontale de la racine pour centrer le titre.
@@ -176,6 +176,81 @@ function getNodeColor(d) {
     }
 
     return "white";
+}
+
+// Dimensionne un rectangle selon le texte reel du noeud.
+function getNodeBoxSize(d, config, options = {}) {
+    if (isCircleMode(config)) {
+        return {
+            width: config.boxWidth,
+            height: config.boxHeight
+        };
+    }
+
+    const lines = getNodeTextForHierarchyNode(d, options);
+    const width = estimateNodeTextWidth(lines, config);
+    const height = estimateNodeTextHeight(lines, config);
+
+    return {
+        width: width,
+        height: height
+    };
+}
+
+function getNodeTextForHierarchyNode(d, options = {}) {
+    const displayOptions = options.getNodeDisplayOptions
+        ? options.getNodeDisplayOptions(d)
+        : getDefaultNodeDisplayOptions(d.data);
+
+    return getNodeText(d.data, displayOptions);
+}
+
+function estimateNodeTextWidth(lines, config) {
+    const longestLine = lines.reduce(function(longest, line) {
+        return Math.max(longest, line.length);
+    }, 0);
+    const estimatedWidth = longestLine * 7.4 + 34;
+
+    return Math.min(
+        config.maxBoxWidth || 430,
+        Math.max(config.boxWidth, Math.ceil(estimatedWidth))
+    );
+}
+
+function estimateNodeTextHeight(lines, config) {
+    const verticalPadding = 34;
+    const estimatedHeight = lines.length * config.textStep + verticalPadding;
+
+    return Math.max(config.boxHeight, estimatedHeight);
+}
+
+// Largeur maximale utile pour calculer l'espacement horizontal de l'arbre.
+function getMaxVisibleNodeBoxWidth(tree, config, options = {}) {
+    if (isCircleMode(config)) {
+        return config.boxWidth;
+    }
+
+    let maxWidth = config.boxWidth;
+
+    visitTreeNodes(tree, function(node) {
+        const fakeHierarchyNode = { data: node };
+        const lines = getNodeTextForHierarchyNode(fakeHierarchyNode, options);
+        maxWidth = Math.max(maxWidth, estimateNodeTextWidth(lines, config));
+    });
+
+    return maxWidth;
+}
+
+function visitTreeNodes(node, callback) {
+    callback(node);
+
+    if (node.left) {
+        visitTreeNodes(node.left, callback);
+    }
+
+    if (node.right) {
+        visitTreeNodes(node.right, callback);
+    }
 }
 
 // Affichage par defaut quand aucun choix utilisateur n'est donne.

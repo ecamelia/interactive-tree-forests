@@ -18,6 +18,7 @@ but est de construire progressivement un outil reutilisable qui pourra :
 - lire un arbre de decision exporte depuis `scikit-learn`;
 - lire une foret contenant plusieurs arbres;
 - afficher automatiquement le bon type de visualisation selon le fichier JSON;
+- limiter le nombre d'arbres visibles dans une foret;
 - personnaliser les informations visibles dans les noeuds;
 - exporter la visualisation en SVG ou en PNG;
 - exporter un fichier JavaScript contenant le code D3.js de la visualisation.
@@ -53,10 +54,17 @@ visualisation-arbres/
 │   ├── leaf-only.json
 │   ├── forest.json
 │   ├── forest-small.json
-│   └── forest-medium.json
+│   ├── forest-medium.json
+│   ├── iris_tree.json
+│   ├── iris_forest.json
+│   ├── digits_tree.json
+│   └── digits_forest.json
 └── python/
+    ├── sklearn_export_utils.py
     ├── export_tree.py
-    └── export_forest.py
+    ├── export_forest.py
+    ├── export_iris.py
+    └── export_digits.py
 ```
 
 ## Role des fichiers
@@ -159,6 +167,7 @@ Ce fichier gere l'affichage principal :
 - l'ajustement automatique de l'espace pour les arbres plus grands;
 - le choix du nombre de niveaux affiches.
 - le mode d'affichage detaille ou general.
+- le remplacement des arbres caches d'une foret par un bloc `...`.
 
 ### `js/interactions.js`
 
@@ -213,12 +222,16 @@ Arbres simples :
 - `tree-medium.json` : arbre un peu plus complet;
 - `tree-big.json` : arbre plus grand avec plusieurs niveaux;
 - `leaf-only.json` : cas special avec seulement une feuille.
+- `iris_tree.json` : arbre entraine sur le dataset Iris;
+- `digits_tree.json` : arbre entraine sur le dataset Digits.
 
 Forets :
 
 - `forest.json` : foret de base;
 - `forest-small.json` : petite foret;
 - `forest-medium.json` : foret avec plusieurs arbres.
+- `iris_forest.json` : foret entrainee sur Iris;
+- `digits_forest.json` : foret entrainee sur Digits.
 
 Ces fichiers servent surtout a verifier que le bouton `Charger JSON` fonctionne
 bien avec plusieurs formes de donnees.
@@ -243,6 +256,29 @@ Ce script fait la meme chose, mais avec un `RandomForestClassifier`.
 
 Une foret contient plusieurs arbres. Le script exporte donc une liste `trees`,
 ou chaque element contient la racine d'un arbre.
+
+### `python/export_iris.py` et `python/export_digits.py`
+
+Ces scripts generent des fichiers JSON a partir de datasets fournis par
+`scikit-learn`.
+
+Ils creent chacun :
+
+- un arbre de decision;
+- une foret d'arbres.
+
+Les fichiers generes sont places dans `data/` et peuvent etre charges avec le
+bouton `Charger JSON`.
+
+Commandes possibles :
+
+```bash
+/opt/anaconda3/bin/python python/export_iris.py
+/opt/anaconda3/bin/python python/export_digits.py
+```
+
+Le fichier `python/sklearn_export_utils.py` contient les fonctions communes pour
+transformer un arbre sklearn en JSON.
 
 ## Lancer le projet
 

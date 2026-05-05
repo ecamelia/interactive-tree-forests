@@ -39,6 +39,15 @@ function setupEvents() {
         redrawCurrentView();
     });
 
+    forestTreeLimitInput.addEventListener("change", function(event) {
+        // Certains arbres de la foret peuvent etre masques par un bloc "...".
+        forestTreeLimit = Math.max(1, Number(event.target.value) || 1);
+        event.target.value = forestTreeLimit;
+        resetNodeSelection();
+        clearPath();
+        redrawCurrentView();
+    });
+
     setupOptionInputs();
     setupOptionScopeInputs();
     setupPathControls();
@@ -75,6 +84,7 @@ function getCurrentVisualizationData() {
     return {
         type: VIEW_TYPE.FOREST,
         data: currentForest,
-        pathNodeIds: Array.from(pathNodeIds)
+        pathNodeIds: Array.from(pathNodeIds),
+        forestTreeLimit: forestTreeLimit
     };
 }

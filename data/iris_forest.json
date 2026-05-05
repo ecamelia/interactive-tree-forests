@@ -1,0 +1,845 @@
+{
+  "model_type": "random_forest",
+  "dataset": "iris",
+  "classes": [
+    0,
+    1,
+    2
+  ],
+  "trees": [
+    {
+      "id": 1,
+      "weight": 1,
+      "root": {
+        "type": "node",
+        "feature": "petal width",
+        "threshold": 0.75,
+        "gini": 0.661,
+        "samples": 94,
+        "value": [
+          29,
+          28,
+          37
+        ],
+        "left": {
+          "type": "leaf",
+          "gini": 0.0,
+          "samples": 31,
+          "value": [
+            31,
+            0,
+            0
+          ],
+          "class": 0
+        },
+        "right": {
+          "type": "node",
+          "feature": "petal length",
+          "threshold": 4.85,
+          "gini": 0.489,
+          "samples": 63,
+          "value": [
+            0,
+            27,
+            36
+          ],
+          "left": {
+            "type": "node",
+            "feature": "petal width",
+            "threshold": 1.65,
+            "gini": 0.122,
+            "samples": 32,
+            "value": [
+              0,
+              30,
+              2
+            ],
+            "left": {
+              "type": "leaf",
+              "gini": 0.0,
+              "samples": 29,
+              "value": [
+                0,
+                29,
+                0
+              ],
+              "class": 1
+            },
+            "right": {
+              "type": "node",
+              "feature": "sepal width",
+              "threshold": 3.0,
+              "gini": 0.375,
+              "samples": 3,
+              "value": [
+                0,
+                1,
+                2
+              ],
+              "left": {
+                "type": "leaf",
+                "gini": 0.0,
+                "samples": 2,
+                "value": [
+                  0,
+                  0,
+                  2
+                ],
+                "class": 2
+              },
+              "right": {
+                "type": "leaf",
+                "gini": 0.0,
+                "samples": 1,
+                "value": [
+                  0,
+                  1,
+                  0
+                ],
+                "class": 1
+              }
+            }
+          },
+          "right": {
+            "type": "node",
+            "feature": "sepal length",
+            "threshold": 6.6,
+            "gini": 0.034,
+            "samples": 31,
+            "value": [
+              0,
+              1,
+              30
+            ],
+            "left": {
+              "type": "leaf",
+              "gini": 0.0,
+              "samples": 15,
+              "value": [
+                0,
+                0,
+                15
+              ],
+              "class": 2
+            },
+            "right": {
+              "type": "node",
+              "feature": "petal length",
+              "threshold": 5.2,
+              "gini": 0.064,
+              "samples": 16,
+              "value": [
+                0,
+                1,
+                15
+              ],
+              "left": {
+                "type": "leaf",
+                "gini": 0.0,
+                "samples": 1,
+                "value": [
+                  0,
+                  1,
+                  0
+                ],
+                "class": 1
+              },
+              "right": {
+                "type": "leaf",
+                "gini": 0.0,
+                "samples": 15,
+                "value": [
+                  0,
+                  0,
+                  15
+                ],
+                "class": 2
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 2,
+      "weight": 1,
+      "root": {
+        "type": "node",
+        "feature": "petal width",
+        "threshold": 0.8,
+        "gini": 0.657,
+        "samples": 100,
+        "value": [
+          31,
+          41,
+          28
+        ],
+        "left": {
+          "type": "leaf",
+          "gini": 0.0,
+          "samples": 33,
+          "value": [
+            33,
+            0,
+            0
+          ],
+          "class": 0
+        },
+        "right": {
+          "type": "node",
+          "feature": "petal width",
+          "threshold": 1.75,
+          "gini": 0.482,
+          "samples": 67,
+          "value": [
+            0,
+            40,
+            27
+          ],
+          "left": {
+            "type": "node",
+            "feature": "petal length",
+            "threshold": 4.95,
+            "gini": 0.14,
+            "samples": 39,
+            "value": [
+              0,
+              36,
+              3
+            ],
+            "left": {
+              "type": "leaf",
+              "gini": 0.0,
+              "samples": 35,
+              "value": [
+                0,
+                35,
+                0
+              ],
+              "class": 1
+            },
+            "right": {
+              "type": "node",
+              "feature": "petal length",
+              "threshold": 5.45,
+              "gini": 0.469,
+              "samples": 4,
+              "value": [
+                0,
+                2,
+                2
+              ],
+              "left": {
+                "type": "leaf",
+                "gini": 0.48,
+                "samples": 3,
+                "value": [
+                  0,
+                  2,
+                  1
+                ],
+                "class": 1
+              },
+              "right": {
+                "type": "leaf",
+                "gini": 0.0,
+                "samples": 1,
+                "value": [
+                  0,
+                  0,
+                  1
+                ],
+                "class": 2
+              }
+            }
+          },
+          "right": {
+            "type": "node",
+            "feature": "petal width",
+            "threshold": 1.9,
+            "gini": 0.051,
+            "samples": 28,
+            "value": [
+              0,
+              1,
+              27
+            ],
+            "left": {
+              "type": "node",
+              "feature": "petal length",
+              "threshold": 4.85,
+              "gini": 0.142,
+              "samples": 8,
+              "value": [
+                0,
+                1,
+                7
+              ],
+              "left": {
+                "type": "leaf",
+                "gini": 0.444,
+                "samples": 2,
+                "value": [
+                  0,
+                  1,
+                  1
+                ],
+                "class": 1
+              },
+              "right": {
+                "type": "leaf",
+                "gini": 0.0,
+                "samples": 6,
+                "value": [
+                  0,
+                  0,
+                  6
+                ],
+                "class": 2
+              }
+            },
+            "right": {
+              "type": "leaf",
+              "gini": 0.0,
+              "samples": 20,
+              "value": [
+                0,
+                0,
+                20
+              ],
+              "class": 2
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 3,
+      "weight": 1,
+      "root": {
+        "type": "node",
+        "feature": "sepal length",
+        "threshold": 5.55,
+        "gini": 0.666,
+        "samples": 98,
+        "value": [
+          33,
+          30,
+          35
+        ],
+        "left": {
+          "type": "node",
+          "feature": "petal width",
+          "threshold": 0.8,
+          "gini": 0.338,
+          "samples": 40,
+          "value": [
+            32,
+            8,
+            1
+          ],
+          "left": {
+            "type": "leaf",
+            "gini": 0.0,
+            "samples": 29,
+            "value": [
+              29,
+              0,
+              0
+            ],
+            "class": 0
+          },
+          "right": {
+            "type": "node",
+            "feature": "petal width",
+            "threshold": 1.6,
+            "gini": 0.142,
+            "samples": 11,
+            "value": [
+              0,
+              10,
+              1
+            ],
+            "left": {
+              "type": "leaf",
+              "gini": 0.0,
+              "samples": 10,
+              "value": [
+                0,
+                10,
+                0
+              ],
+              "class": 1
+            },
+            "right": {
+              "type": "leaf",
+              "gini": 0.0,
+              "samples": 1,
+              "value": [
+                0,
+                0,
+                1
+              ],
+              "class": 2
+            }
+          }
+        },
+        "right": {
+          "type": "node",
+          "feature": "petal width",
+          "threshold": 1.55,
+          "gini": 0.501,
+          "samples": 58,
+          "value": [
+            1,
+            22,
+            34
+          ],
+          "left": {
+            "type": "node",
+            "feature": "petal width",
+            "threshold": 0.75,
+            "gini": 0.16,
+            "samples": 24,
+            "value": [
+              1,
+              22,
+              1
+            ],
+            "left": {
+              "type": "leaf",
+              "gini": 0.0,
+              "samples": 2,
+              "value": [
+                2,
+                0,
+                0
+              ],
+              "class": 0
+            },
+            "right": {
+              "type": "node",
+              "feature": "petal length",
+              "threshold": 5.0,
+              "gini": 0.059,
+              "samples": 22,
+              "value": [
+                0,
+                21,
+                1
+              ],
+              "left": {
+                "type": "leaf",
+                "gini": 0.0,
+                "samples": 21,
+                "value": [
+                  0,
+                  21,
+                  0
+                ],
+                "class": 1
+              },
+              "right": {
+                "type": "leaf",
+                "gini": 0.0,
+                "samples": 1,
+                "value": [
+                  0,
+                  0,
+                  1
+                ],
+                "class": 2
+              }
+            }
+          },
+          "right": {
+            "type": "node",
+            "feature": "petal length",
+            "threshold": 4.65,
+            "gini": 0.073,
+            "samples": 34,
+            "value": [
+              0,
+              1,
+              33
+            ],
+            "left": {
+              "type": "leaf",
+              "gini": 0.0,
+              "samples": 1,
+              "value": [
+                0,
+                1,
+                0
+              ],
+              "class": 1
+            },
+            "right": {
+              "type": "node",
+              "feature": "petal width",
+              "threshold": 1.7,
+              "gini": 0.038,
+              "samples": 33,
+              "value": [
+                0,
+                1,
+                32
+              ],
+              "left": {
+                "type": "leaf",
+                "gini": 0.375,
+                "samples": 2,
+                "value": [
+                  0,
+                  0,
+                  2
+                ],
+                "class": 2
+              },
+              "right": {
+                "type": "leaf",
+                "gini": 0.0,
+                "samples": 31,
+                "value": [
+                  0,
+                  0,
+                  31
+                ],
+                "class": 2
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 4,
+      "weight": 1,
+      "root": {
+        "type": "node",
+        "feature": "sepal length",
+        "threshold": 5.45,
+        "gini": 0.661,
+        "samples": 96,
+        "value": [
+          28,
+          38,
+          30
+        ],
+        "left": {
+          "type": "node",
+          "feature": "sepal width",
+          "threshold": 2.8,
+          "gini": 0.351,
+          "samples": 34,
+          "value": [
+            27,
+            5,
+            2
+          ],
+          "left": {
+            "type": "node",
+            "feature": "sepal width",
+            "threshold": 2.45,
+            "gini": 0.397,
+            "samples": 5,
+            "value": [
+              0,
+              4,
+              1
+            ],
+            "left": {
+              "type": "leaf",
+              "gini": 0.0,
+              "samples": 2,
+              "value": [
+                0,
+                2,
+                0
+              ],
+              "class": 1
+            },
+            "right": {
+              "type": "node",
+              "feature": "sepal length",
+              "threshold": 5.0,
+              "gini": 0.5,
+              "samples": 3,
+              "value": [
+                0,
+                2,
+                2
+              ],
+              "left": {
+                "type": "leaf",
+                "gini": 0.0,
+                "samples": 1,
+                "value": [
+                  0,
+                  0,
+                  1
+                ],
+                "class": 2
+              },
+              "right": {
+                "type": "leaf",
+                "gini": 0.0,
+                "samples": 2,
+                "value": [
+                  0,
+                  2,
+                  0
+                ],
+                "class": 1
+              }
+            }
+          },
+          "right": {
+            "type": "leaf",
+            "gini": 0.0,
+            "samples": 29,
+            "value": [
+              29,
+              0,
+              0
+            ],
+            "class": 0
+          }
+        },
+        "right": {
+          "type": "node",
+          "feature": "sepal length",
+          "threshold": 6.25,
+          "gini": 0.527,
+          "samples": 62,
+          "value": [
+            2,
+            32,
+            28
+          ],
+          "left": {
+            "type": "node",
+            "feature": "petal width",
+            "threshold": 1.7,
+            "gini": 0.37,
+            "samples": 34,
+            "value": [
+              2,
+              26,
+              6
+            ],
+            "left": {
+              "type": "node",
+              "feature": "petal width",
+              "threshold": 0.6,
+              "gini": 0.165,
+              "samples": 27,
+              "value": [
+                2,
+                25,
+                1
+              ],
+              "left": {
+                "type": "leaf",
+                "gini": 0.0,
+                "samples": 3,
+                "value": [
+                  3,
+                  0,
+                  0
+                ],
+                "class": 0
+              },
+              "right": {
+                "type": "leaf",
+                "gini": 0.046,
+                "samples": 24,
+                "value": [
+                  0,
+                  23,
+                  1
+                ],
+                "class": 1
+              }
+            },
+            "right": {
+              "type": "leaf",
+              "gini": 0.0,
+              "samples": 7,
+              "value": [
+                0,
+                0,
+                7
+              ],
+              "class": 2
+            }
+          },
+          "right": {
+            "type": "node",
+            "feature": "petal width",
+            "threshold": 1.65,
+            "gini": 0.346,
+            "samples": 28,
+            "value": [
+              0,
+              6,
+              22
+            ],
+            "left": {
+              "type": "leaf",
+              "gini": 0.0,
+              "samples": 8,
+              "value": [
+                0,
+                8,
+                0
+              ],
+              "class": 1
+            },
+            "right": {
+              "type": "leaf",
+              "gini": 0.0,
+              "samples": 20,
+              "value": [
+                0,
+                0,
+                20
+              ],
+              "class": 2
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": 5,
+      "weight": 1,
+      "root": {
+        "type": "node",
+        "feature": "petal width",
+        "threshold": 0.7,
+        "gini": 0.656,
+        "samples": 95,
+        "value": [
+          32,
+          39,
+          25
+        ],
+        "left": {
+          "type": "leaf",
+          "gini": 0.0,
+          "samples": 31,
+          "value": [
+            31,
+            0,
+            0
+          ],
+          "class": 0
+        },
+        "right": {
+          "type": "node",
+          "feature": "petal width",
+          "threshold": 1.75,
+          "gini": 0.476,
+          "samples": 64,
+          "value": [
+            0,
+            39,
+            25
+          ],
+          "left": {
+            "type": "node",
+            "feature": "petal length",
+            "threshold": 5.05,
+            "gini": 0.163,
+            "samples": 41,
+            "value": [
+              0,
+              37,
+              4
+            ],
+            "left": {
+              "type": "node",
+              "feature": "petal length",
+              "threshold": 4.95,
+              "gini": 0.033,
+              "samples": 37,
+              "value": [
+                0,
+                36,
+                1
+              ],
+              "left": {
+                "type": "leaf",
+                "gini": 0.0,
+                "samples": 35,
+                "value": [
+                  0,
+                  35,
+                  0
+                ],
+                "class": 1
+              },
+              "right": {
+                "type": "leaf",
+                "gini": 0.375,
+                "samples": 2,
+                "value": [
+                  0,
+                  2,
+                  0
+                ],
+                "class": 1
+              }
+            },
+            "right": {
+              "type": "node",
+              "feature": "petal width",
+              "threshold": 1.55,
+              "gini": 0.408,
+              "samples": 4,
+              "value": [
+                0,
+                1,
+                3
+              ],
+              "left": {
+                "type": "leaf",
+                "gini": 0.0,
+                "samples": 2,
+                "value": [
+                  0,
+                  0,
+                  2
+                ],
+                "class": 2
+              },
+              "right": {
+                "type": "leaf",
+                "gini": 0.444,
+                "samples": 2,
+                "value": [
+                  0,
+                  1,
+                  1
+                ],
+                "class": 1
+              }
+            }
+          },
+          "right": {
+            "type": "leaf",
+            "gini": 0.0,
+            "samples": 23,
+            "value": [
+              0,
+              0,
+              23
+            ],
+            "class": 2
+          }
+        }
+      }
+    }
+  ]
+}

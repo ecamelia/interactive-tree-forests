@@ -3,30 +3,9 @@ function showEmptyState() {
     clearTreeView();
     resetZoom();
     setEmptySvgStyle();
-
-    const width = getAvailableSvgWidth();
-    const height = 360;
-
-    svg
-        .attr("width", width)
-        .attr("height", height);
-
-    zoomLayer.append("text")
-        .attr("class", "empty-message")
-        .attr("x", width / 2)
-        .attr("y", height / 2 - 12)
-        .attr("text-anchor", "middle")
-        .text("Chargez votre fichier JSON");
-
-    zoomLayer.append("text")
-        .attr("class", "empty-submessage")
-        .attr("x", width / 2)
-        .attr("y", height / 2 + 24)
-        .attr("text-anchor", "middle")
-        .text("L'outil affichera automatiquement un arbre ou une foret.");
 }
 
-// Affiche tous les arbres d'une foret les uns a cote des autres.
+// Affiche une foret en limitant le nombre d'arbres visibles si besoin.
 function drawForest(forest) {
     currentView = VIEW_TYPE.FOREST;
     currentForest = forest;
@@ -37,7 +16,10 @@ function drawForest(forest) {
     let currentX = 90;
     let maxHeight = 0;
 
-    forest.trees.forEach(function(tree, index) {
+    const visibleTrees = forest.trees.slice(0, forestTreeLimit);
+    const hiddenTreeCount = Math.max(0, forest.trees.length - visibleTrees.length);
+
+    visibleTrees.forEach(function(tree, index) {
         const treeId = tree.id || index + 1;
         const treeRoot = tree.root || tree;
         const visibleTreeRoot = getVisibleTreeRoot(treeRoot);
@@ -57,6 +39,11 @@ function drawForest(forest) {
         maxHeight = Math.max(maxHeight, treeConfig.layoutHeight);
     });
 
+    if (hiddenTreeCount > 0) {
+        currentX += drawHiddenTreesPlaceholder(currentX, hiddenTreeCount);
+        maxHeight = Math.max(maxHeight, 360);
+    }
+
     resizeSvg(currentX + 120, maxHeight + 220);
 }
 
@@ -75,6 +62,30 @@ function createForestTreeGroup(treeRoot, treeId, xPosition, config) {
         .text("Arbre " + treeId);
 
     return treeGroup;
+}
+
+// Bloc visuel utilise quand une foret contient plus d'arbres que la limite.
+function drawHiddenTreesPlaceholder(xPosition, hiddenTreeCount) {
+    const group = zoomLayer
+        .append("g")
+        .attr("class", "hidden-trees-group")
+        .attr("transform", "translate(" + xPosition + ", 70)");
+
+    group.append("text")
+        .attr("class", "hidden-trees-dots")
+        .attr("x", 120)
+        .attr("y", 170)
+        .attr("text-anchor", "middle")
+        .text("...");
+
+    group.append("text")
+        .attr("class", "hidden-trees-label")
+        .attr("x", 120)
+        .attr("y", 210)
+        .attr("text-anchor", "middle")
+        .text(hiddenTreeCount + " arbres masques");
+
+    return 280;
 }
 
 // Affiche un seul arbre dans la zone principale.
@@ -135,43 +146,31 @@ function resizeSvg(width, height) {
         .attr("height", Math.max(700, Math.ceil(height)));
 }
 
-// Largeur disponible pour l'ecran d'accueil, sans compter le padding de main.
-function getAvailableSvgWidth() {
-    const main = document.querySelector("main");
-
-    if (!main) {
-        return 1200;
-    }
-
-    const styles = window.getComputedStyle(main);
-    const paddingLeft = parseFloat(styles.paddingLeft) || 0;
-    const paddingRight = parseFloat(styles.paddingRight) || 0;
-    const availableWidth = main.clientWidth - paddingLeft - paddingRight;
-
-    return Math.max(700, availableWidth);
-}
-
 // Style plus leger quand aucun fichier n'est encore charge.
 function setEmptySvgStyle() {
     document.body.classList.add("empty-view");
     svg.classed("empty-state", true);
+    emptyState.classList.remove("is-hidden");
 }
 
 // Style normal quand une visualisation est affichee.
 function setActiveSvgStyle() {
     document.body.classList.remove("empty-view");
     svg.classed("empty-state", false);
+    emptyState.classList.add("is-hidden");
 }
 
 // Calcule un layout assez large pour eviter que les noeuds se chevauchent.
 function createAutoLayoutConfig(tree, baseConfig) {
     const leafCount = countLeaves(tree);
     const depth = getTreeDepth(tree);
-    const horizontalGap = baseConfig.boxWidth + (isOverviewMode() ? 90 : 130);
+    const maxBoxWidth = getMaxVisibleNodeBoxWidth(tree, baseConfig, getTreeInteractions());
+    const horizontalGap = maxBoxWidth + (isOverviewMode() ? 90 : 150);
     const verticalGap = baseConfig.boxHeight + (isOverviewMode() ? 80 : 95);
 
     return {
         ...baseConfig,
+        maxBoxWidth: maxBoxWidth,
         layoutWidth: Math.max(baseConfig.layoutWidth, Math.max(1, leafCount - 1) * horizontalGap),
         layoutHeight: Math.max(baseConfig.layoutHeight, Math.max(1, depth - 1) * verticalGap)
     };

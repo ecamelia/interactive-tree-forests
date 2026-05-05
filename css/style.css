@@ -54,6 +54,7 @@ label {
 
 button,
 .file-button,
+input[type="number"],
 select {
     min-width: 130px;
     padding: 8px 10px;
@@ -66,6 +67,11 @@ select {
 
 select {
     min-width: 80px;
+}
+
+input[type="number"] {
+    min-width: 70px;
+    width: 70px;
 }
 
 #json-file-input {
@@ -84,6 +90,7 @@ svg {
 }
 
 svg.empty-state {
+    display: none;
     background: transparent;
     border: 0;
     cursor: default;
@@ -142,14 +149,34 @@ svg.empty-state {
     font-weight: bold;
 }
 
-.empty-message {
-    fill: #222;
-    font-size: 30px;
+.hidden-trees-dots {
+    fill: #555;
+    font-size: 56px;
     font-weight: bold;
 }
 
-.empty-submessage {
+.hidden-trees-label {
     fill: #666;
+    font-size: 16px;
+}
+
+#empty-state {
+    padding: 120px 24px;
+    text-align: center;
+}
+
+#empty-state.is-hidden {
+    display: none;
+}
+
+#empty-state h2 {
+    margin: 0 0 12px;
+    font-size: 30px;
+}
+
+#empty-state p {
+    margin: 0;
+    color: #666;
     font-size: 17px;
 }
 

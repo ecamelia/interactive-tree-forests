@@ -13,6 +13,7 @@ const OPTION_SCOPE = {
 // Elements HTML utilises par les differents modules.
 const svg = d3.select("#tree-view");
 const tooltip = d3.select("#tooltip");
+const emptyState = document.getElementById("empty-state");
 const exportSvgButton = d3.select("#export-tree-button");
 const exportPngButton = d3.select("#export-tree-png");
 const exportD3CodeButton = d3.select("#export-d3-code-button");
@@ -20,6 +21,7 @@ const jsonFileInput = document.getElementById("json-file-input");
 const fileStatus = document.getElementById("file-status");
 const maxDepthSelect = document.getElementById("max-depth-select");
 const displayModeSelect = document.getElementById("display-mode-select");
+const forestTreeLimitInput = document.getElementById("forest-tree-limit-input");
 const pathModeCheckbox = document.getElementById("path-mode-checkbox");
 const clearPathButton = document.getElementById("clear-path-button");
 
@@ -96,4 +98,5 @@ let currentTree = null;
 let optionScope = OPTION_SCOPE.TREE;
 let maxVisibleDepth = "all";
 let displayMode = "detail";
+let forestTreeLimit = 3;
 let pathModeEnabled = false;

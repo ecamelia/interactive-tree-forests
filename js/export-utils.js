@@ -23,6 +23,8 @@ function exportPNG() {
         canvas.height = svgElement.clientHeight;
 
         const context = canvas.getContext("2d");
+        context.fillStyle = "white";
+        context.fillRect(0, 0, canvas.width, canvas.height);
         context.drawImage(image, 0, 0);
 
         const pngUrl = canvas.toDataURL("image/png");
@@ -68,6 +70,7 @@ function buildD3CodeExport(visualization) {
     const dataString = JSON.stringify(visualization.data, null, 4);
     const pathString = JSON.stringify(visualization.pathNodeIds || [], null, 4);
     const isForest = visualization.type === "forest";
+    const exportedForestTreeLimit = visualization.forestTreeLimit || 3;
 
     return `// Code D3.js exporte depuis le projet visualisation-arbres.
 // Pour l'utiliser, il faut charger D3.js dans la page HTML :
@@ -77,6 +80,7 @@ function buildD3CodeExport(visualization) {
 
 const exportedData = ${dataString};
 const exportedPathNodeIds = new Set(${pathString});
+const exportedForestTreeLimit = ${exportedForestTreeLimit};
 
 const svg = d3.select("#tree-view");
 const layer = svg.append("g");
@@ -84,6 +88,7 @@ const layer = svg.append("g");
 const config = {
     boxWidth: 190,
     boxHeight: 100,
+    maxBoxWidth: 430,
     layoutWidth: 780,
     layoutHeight: 560,
     textStartY: -30,
@@ -107,9 +112,11 @@ if (${isForest}) {
 function drawForest(forest) {
     layer.selectAll("*").remove();
 
-    const treeSpacing = 950;
+    const treeSpacing = 1200;
+    const visibleTrees = forest.trees.slice(0, exportedForestTreeLimit);
+    const hiddenTreeCount = Math.max(0, forest.trees.length - visibleTrees.length);
 
-    forest.trees.forEach(function(tree, index) {
+    visibleTrees.forEach(function(tree, index) {
         const treeId = tree.id || index + 1;
         const treeRoot = tree.root || tree;
         const titleX = getRootX(treeRoot);
@@ -131,6 +138,30 @@ function drawForest(forest) {
             "forest-" + treeId
         );
     });
+
+    if (hiddenTreeCount > 0) {
+        const placeholderX = 90 + visibleTrees.length * treeSpacing;
+        const group = layer
+            .append("g")
+            .attr("transform", "translate(" + placeholderX + ", 70)");
+
+        group.append("text")
+            .attr("x", 120)
+            .attr("y", 170)
+            .attr("text-anchor", "middle")
+            .attr("font-size", 56)
+            .attr("font-weight", "bold")
+            .attr("fill", "#555")
+            .text("...");
+
+        group.append("text")
+            .attr("x", 120)
+            .attr("y", 210)
+            .attr("text-anchor", "middle")
+            .attr("font-size", 16)
+            .attr("fill", "#666")
+            .text(hiddenTreeCount + " arbres masques");
+    }
 }
 
 function drawTree(tree) {
@@ -148,11 +179,13 @@ function drawTreeInGroup(data, group, idPrefix) {
         return [d.left, d.right].filter(Boolean);
     });
 
-    const layout = d3.tree().size([config.layoutWidth, config.layoutHeight]);
+    const localConfig = createAutoLayoutConfig(data);
+    const layout = d3.tree().size([localConfig.layoutWidth, localConfig.layoutHeight]);
     layout(root);
 
     root.descendants().forEach(function(d, index) {
         d.nodeId = idPrefix + "-node-" + index;
+        d.boxSize = getNodeBoxSize(d.data, localConfig);
     });
 
     group.selectAll(".link")
@@ -161,9 +194,9 @@ function drawTreeInGroup(data, group, idPrefix) {
         .append("line")
         .attr("class", "link")
         .attr("x1", function(d) { return d.source.x; })
-        .attr("y1", function(d) { return d.source.y + config.boxHeight / 2; })
+        .attr("y1", function(d) { return d.source.y + d.source.boxSize.height / 2; })
         .attr("x2", function(d) { return d.target.x; })
-        .attr("y2", function(d) { return d.target.y - config.boxHeight / 2; })
+        .attr("y2", function(d) { return d.target.y - d.target.boxSize.height / 2; })
         .attr("stroke", function(d) {
             return isPathLink(d) ? "#ff8c00" : "#111";
         })
@@ -199,10 +232,10 @@ function drawTreeInGroup(data, group, idPrefix) {
         });
 
     nodes.append("rect")
-        .attr("x", -config.boxWidth / 2)
-        .attr("y", -config.boxHeight / 2)
-        .attr("width", config.boxWidth)
-        .attr("height", config.boxHeight)
+        .attr("x", function(d) { return -d.boxSize.width / 2; })
+        .attr("y", function(d) { return -d.boxSize.height / 2; })
+        .attr("width", function(d) { return d.boxSize.width; })
+        .attr("height", function(d) { return d.boxSize.height; })
         .attr("fill", getNodeColor)
         .attr("stroke", function(d) {
             return exportedPathNodeIds.has(d.nodeId) ? "#ff8c00" : "#111";
@@ -222,7 +255,7 @@ function drawTreeInGroup(data, group, idPrefix) {
             .attr("class", "node-text")
             .attr("x", 0)
             .attr("y", function(_, index) {
-                return config.textStartY + index * config.textStep;
+                return localConfig.textStartY + index * localConfig.textStep;
             })
             .attr("text-anchor", "middle")
             .attr("font-size", 16)
@@ -238,14 +271,79 @@ function isPathLink(link) {
 }
 
 function getRootX(data) {
+    const localConfig = createAutoLayoutConfig(data);
     const root = d3.hierarchy(data, function(d) {
         return [d.left, d.right].filter(Boolean);
     });
 
-    const layout = d3.tree().size([config.layoutWidth, config.layoutHeight]);
+    const layout = d3.tree().size([localConfig.layoutWidth, localConfig.layoutHeight]);
     layout(root);
 
     return root.x;
+}
+
+function createAutoLayoutConfig(tree) {
+    const maxBoxWidth = getMaxNodeBoxWidth(tree);
+    const leafCount = countLeaves(tree);
+    const depth = getTreeDepth(tree);
+
+    return {
+        ...config,
+        layoutWidth: Math.max(config.layoutWidth, Math.max(1, leafCount - 1) * (maxBoxWidth + 150)),
+        layoutHeight: Math.max(config.layoutHeight, Math.max(1, depth - 1) * (config.boxHeight + 95))
+    };
+}
+
+function getNodeBoxSize(node, localConfig) {
+    const lines = getNodeText(node);
+    const longestLine = lines.reduce(function(longest, line) {
+        return Math.max(longest, line.length);
+    }, 0);
+    const width = Math.min(
+        localConfig.maxBoxWidth,
+        Math.max(localConfig.boxWidth, Math.ceil(longestLine * 7.4 + 34))
+    );
+    const height = Math.max(localConfig.boxHeight, lines.length * localConfig.textStep + 34);
+
+    return { width: width, height: height };
+}
+
+function getMaxNodeBoxWidth(tree) {
+    let maxWidth = config.boxWidth;
+
+    visitTreeNodes(tree, function(node) {
+        maxWidth = Math.max(maxWidth, getNodeBoxSize(node, config).width);
+    });
+
+    return maxWidth;
+}
+
+function countLeaves(node) {
+    if (!node.left && !node.right) {
+        return 1;
+    }
+
+    return (node.left ? countLeaves(node.left) : 0) +
+        (node.right ? countLeaves(node.right) : 0);
+}
+
+function getTreeDepth(node) {
+    const leftDepth = node.left ? getTreeDepth(node.left) : 0;
+    const rightDepth = node.right ? getTreeDepth(node.right) : 0;
+
+    return 1 + Math.max(leftDepth, rightDepth);
+}
+
+function visitTreeNodes(node, callback) {
+    callback(node);
+
+    if (node.left) {
+        visitTreeNodes(node.left, callback);
+    }
+
+    if (node.right) {
+        visitTreeNodes(node.right, callback);
+    }
 }
 
 function getNodeColor(d) {
@@ -346,9 +444,38 @@ function getStyledSvgCopy() {
             font-weight: bold;
             font-family: Arial, sans-serif;
         }
+
+        .hidden-trees-dots {
+            fill: #555;
+            font-size: 56px;
+            font-weight: bold;
+            font-family: Arial, sans-serif;
+        }
+
+        .hidden-trees-label {
+            fill: #666;
+            font-size: 16px;
+            font-family: Arial, sans-serif;
+        }
     `;
 
     svgCopy.insertBefore(style, svgCopy.firstChild);
+    svgCopy.insertBefore(createSvgBackground(svgCopy), style.nextSibling);
 
     return svgCopy;
+}
+
+// Ajoute un fond blanc reel dans le fichier exporte, pas seulement en CSS.
+function createSvgBackground(svgElement) {
+    const background = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    const width = svgElement.getAttribute("width") || svgElement.clientWidth || 1200;
+    const height = svgElement.getAttribute("height") || svgElement.clientHeight || 700;
+
+    background.setAttribute("x", 0);
+    background.setAttribute("y", 0);
+    background.setAttribute("width", width);
+    background.setAttribute("height", height);
+    background.setAttribute("fill", "white");
+
+    return background;
 }
