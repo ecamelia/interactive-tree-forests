@@ -1,6 +1,8 @@
+// Demarrage de l'application.
 startApp();
 
 function startApp() {
+    // On prepare les controles avant d'afficher l'ecran d'accueil.
     svg.call(zoomBehavior);
     setupEvents();
     updateOptionsPanel(globalDisplayOptions);
@@ -8,6 +10,7 @@ function startApp() {
     showEmptyState();
 }
 
+// Lie les boutons et menus HTML aux actions JavaScript.
 function setupEvents() {
     jsonFileInput.addEventListener("change", handleJsonFile);
 
@@ -22,6 +25,7 @@ function setupEvents() {
     exportD3CodeButton.on("click", handleD3CodeExport);
 
     maxDepthSelect.addEventListener("change", function(event) {
+        // Changer les niveaux peut masquer des noeuds du chemin.
         maxVisibleDepth = event.target.value;
         resetNodeSelection();
         clearPath();
@@ -29,6 +33,7 @@ function setupEvents() {
     });
 
     displayModeSelect.addEventListener("change", function(event) {
+        // Le mode general/detaille change la forme des noeuds.
         displayMode = event.target.value;
         resetNodeSelection();
         redrawCurrentView();
@@ -39,6 +44,7 @@ function setupEvents() {
     setupPathControls();
 }
 
+// Exporte le code D3 correspondant a ce qui est affiche.
 function handleD3CodeExport() {
     const visualization = getCurrentVisualizationData();
 
@@ -56,6 +62,7 @@ function handleD3CodeExport() {
     }
 }
 
+// Donnees utilisees par les exports.
 function getCurrentVisualizationData() {
     if (currentView === VIEW_TYPE.TREE) {
         return {

@@ -1,3 +1,4 @@
+// Lecture du fichier JSON choisi par l'utilisateur.
 function handleJsonFile(event) {
     const file = event.target.files[0];
 
@@ -20,6 +21,7 @@ function handleJsonFile(event) {
     event.target.value = "";
 }
 
+// FileReader transforme le fichier local en texte, puis en objet JavaScript.
 function readJsonFile(file, onSuccess) {
     const reader = new FileReader();
 
@@ -37,6 +39,7 @@ function readJsonFile(file, onSuccess) {
     reader.readAsText(file);
 }
 
+// Choisit automatiquement le bon affichage selon la structure du JSON.
 function renderJsonData(data) {
     clearPath();
 
@@ -53,10 +56,12 @@ function renderJsonData(data) {
     throw new Error("Format JSON non reconnu");
 }
 
+// Une foret contient une liste d'arbres.
 function isForestData(data) {
     return data && Array.isArray(data.trees);
 }
 
+// Un arbre peut etre donne directement, ou enveloppe dans une cle root.
 function isTreeData(data) {
     return data && (
         data.type === "node" ||
@@ -65,6 +70,7 @@ function isTreeData(data) {
     );
 }
 
+// Accepte les deux formats : { root: ... } ou directement le noeud racine.
 function getTreeRoot(data) {
     return data.root || data;
 }

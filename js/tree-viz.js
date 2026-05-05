@@ -1,8 +1,11 @@
+// Dessine un arbre D3 dans le groupe SVG donne.
 function drawDecisionTree(data, group, config, options = {}) {
+    // d3.hierarchy transforme le JSON recursif en structure exploitable par D3.
     const root = d3.hierarchy(data, function(d) {
         return [d.left, d.right].filter(Boolean);
     });
 
+    // d3.tree calcule les positions x/y des noeuds.
     const layout = d3.tree().size([config.layoutWidth, config.layoutHeight]);
     layout(root);
     const idPrefix = options.idPrefix || "tree";
@@ -13,6 +16,7 @@ function drawDecisionTree(data, group, config, options = {}) {
         d.treeKey = treeKey;
     });
 
+    // Liens parent-enfant.
     group.selectAll(".link")
         .data(root.links())
         .enter()
@@ -27,6 +31,7 @@ function drawDecisionTree(data, group, config, options = {}) {
         .attr("y2", function(d) { return d.target.y - getNodeVerticalOffset(config); });
 
     if (!isCircleMode(config)) {
+        // Les labels True/False sont gardes uniquement en mode detail.
         group.selectAll(".branch-label")
             .data(root.links())
             .enter()
@@ -45,6 +50,7 @@ function drawDecisionTree(data, group, config, options = {}) {
             });
     }
 
+    // Groupes SVG des noeuds.
     const nodes = group.selectAll(".node")
         .data(root.descendants())
         .enter()
@@ -61,6 +67,7 @@ function drawDecisionTree(data, group, config, options = {}) {
         });
 
     if (isCircleMode(config)) {
+        // Mode general : noeuds ronds, sans texte interne.
         nodes.append("circle")
             .attr("class", "node-circle")
             .attr("fill", getNodeColor)
@@ -76,6 +83,7 @@ function drawDecisionTree(data, group, config, options = {}) {
     }
 
     if (options.onNodeMouseOver) {
+        // Les interactions sont optionnelles pour garder la fonction reutilisable.
         nodes
             .on("mouseover", function(event, d) {
                 options.onNodeMouseOver(event, d.data);
@@ -98,6 +106,7 @@ function drawDecisionTree(data, group, config, options = {}) {
     }
 
     if (!isCircleMode(config)) {
+        // Mode detail : texte affiche dans chaque rectangle.
         nodes.each(function(d) {
             const displayOptions = options.getNodeDisplayOptions
                 ? options.getNodeDisplayOptions(d)
@@ -127,6 +136,7 @@ function isCircleMode(config) {
     return config.nodeShape === "circle";
 }
 
+// Permet aux lignes d'arriver au bord du noeud, pas au centre.
 function getNodeVerticalOffset(config) {
     if (isCircleMode(config)) {
         return config.nodeRadius;
@@ -135,6 +145,7 @@ function getNodeVerticalOffset(config) {
     return config.boxHeight / 2;
 }
 
+// Calcule la position horizontale de la racine pour centrer le titre.
 function getRootX(data, config) {
     const root = d3.hierarchy(data, function(d) {
         return [d.left, d.right].filter(Boolean);
@@ -146,6 +157,7 @@ function getRootX(data, config) {
     return root.x;
 }
 
+// Couleur simple des feuilles selon la classe predite.
 function getNodeColor(d) {
     if (d.data.type !== "leaf") {
         return "white";
@@ -166,6 +178,7 @@ function getNodeColor(d) {
     return "white";
 }
 
+// Affichage par defaut quand aucun choix utilisateur n'est donne.
 function getDefaultNodeDisplayOptions(node) {
     return {
         condition: node.type !== "leaf",
@@ -176,6 +189,7 @@ function getDefaultNodeDisplayOptions(node) {
     };
 }
 
+// Construit les lignes de texte visibles dans un noeud.
 function getNodeText(node, displayOptions) {
     const lines = [];
 

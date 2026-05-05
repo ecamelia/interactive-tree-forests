@@ -1,3 +1,4 @@
+// Exporte le SVG affiche, en ajoutant les styles necessaires dans le fichier.
 function exportSVG() {
     const serializer = new XMLSerializer();
     const svgString = serializer.serializeToString(getStyledSvgCopy());
@@ -6,6 +7,7 @@ function exportSVG() {
     downloadBlob(blob, "tree_visualization.svg");
 }
 
+// Convertit le SVG courant en image PNG via un canvas.
 function exportPNG() {
     const svgElement = document.getElementById("tree-view");
     const serializer = new XMLSerializer();
@@ -32,6 +34,7 @@ function exportPNG() {
     image.src = url;
 }
 
+// Genere un fichier JavaScript capable de redessiner la vue courante.
 function exportCurrentD3Code(visualization) {
     const code = buildD3CodeExport(visualization);
     const blob = new Blob([code], { type: "text/plain" });
@@ -39,6 +42,7 @@ function exportCurrentD3Code(visualization) {
     downloadBlob(blob, "tree_d3_export.js");
 }
 
+// Telecharge un Blob en laissant le temps au navigateur de demarrer le download.
 function downloadBlob(blob, filename) {
     const url = URL.createObjectURL(blob);
 
@@ -59,6 +63,7 @@ function downloadUrl(url, filename) {
     document.body.removeChild(link);
 }
 
+// Produit un exemple autonome de code D3 avec les donnees deja integrees.
 function buildD3CodeExport(visualization) {
     const dataString = JSON.stringify(visualization.data, null, 4);
     const pathString = JSON.stringify(visualization.pathNodeIds || [], null, 4);
@@ -283,6 +288,7 @@ function formatValue(value) {
 `;
 }
 
+// Clone le SVG et y injecte les styles utiles aux exports SVG/PNG.
 function getStyledSvgCopy() {
     const svgElement = document.getElementById("tree-view");
     const svgCopy = svgElement.cloneNode(true);

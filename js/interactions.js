@@ -1,3 +1,4 @@
+// Fonctions transmises au moteur de dessin pour rendre les noeuds interactifs.
 function getTreeInteractions() {
     return {
         onNodeMouseOver: showTooltip,
@@ -11,6 +12,7 @@ function getTreeInteractions() {
     };
 }
 
+// Affiche les details du noeud au survol.
 function showTooltip(event, node) {
     tooltip
         .style("display", "block")
@@ -29,6 +31,7 @@ function hideTooltip() {
     tooltip.style("display", "none");
 }
 
+// Texte affiche dans le tooltip selon le type de noeud.
 function getTooltipText(node) {
     if (node.type === "leaf") {
         return (
@@ -49,6 +52,7 @@ function getTooltipText(node) {
     );
 }
 
+// Selectionne un noeud et applique aussi le mode chemin s'il est active.
 function selectNodeForOptions(event, d) {
     selectedNode = d;
 
@@ -72,6 +76,7 @@ function isNodeSelected(d) {
     return selectedNode && selectedNode.nodeId === d.nodeId;
 }
 
+// Remet la selection locale a zero quand la structure affichee change.
 function resetNodeSelection() {
     selectedNode = null;
 

@@ -1,3 +1,4 @@
+// Message affiche avant qu'un fichier JSON soit charge.
 function showEmptyState() {
     clearTreeView();
     resetZoom();
@@ -25,6 +26,7 @@ function showEmptyState() {
         .text("L'outil affichera automatiquement un arbre ou une foret.");
 }
 
+// Affiche tous les arbres d'une foret les uns a cote des autres.
 function drawForest(forest) {
     currentView = VIEW_TYPE.FOREST;
     currentForest = forest;
@@ -58,6 +60,7 @@ function drawForest(forest) {
     resizeSvg(currentX + 120, maxHeight + 220);
 }
 
+// Cree le groupe SVG reserve a un arbre dans la vue foret.
 function createForestTreeGroup(treeRoot, treeId, xPosition, config) {
     const titleX = getRootX(treeRoot, config);
     const treeGroup = zoomLayer
@@ -74,6 +77,7 @@ function createForestTreeGroup(treeRoot, treeId, xPosition, config) {
     return treeGroup;
 }
 
+// Affiche un seul arbre dans la zone principale.
 function drawTree(tree) {
     currentView = VIEW_TYPE.TREE;
     currentTree = tree;
@@ -99,10 +103,12 @@ function drawTree(tree) {
     );
 }
 
+// Nettoie la zone de dessin avant un nouvel affichage.
 function clearTreeView() {
     zoomLayer.selectAll("*").remove();
 }
 
+// Redessine la vue actuelle apres un changement d'option.
 function redrawCurrentView() {
     if (currentView === VIEW_TYPE.TREE) {
         drawTree(currentTree);
@@ -117,16 +123,19 @@ function redrawCurrentView() {
     showEmptyState();
 }
 
+// Revient a la position initiale du zoom.
 function resetZoom() {
     svg.call(zoomBehavior.transform, d3.zoomIdentity);
 }
 
+// Ajuste le SVG a la taille necessaire pour l'arbre affiche.
 function resizeSvg(width, height) {
     svg
         .attr("width", Math.max(1200, Math.ceil(width)))
         .attr("height", Math.max(700, Math.ceil(height)));
 }
 
+// Largeur disponible pour l'ecran d'accueil, sans compter le padding de main.
 function getAvailableSvgWidth() {
     const main = document.querySelector("main");
 
@@ -142,16 +151,19 @@ function getAvailableSvgWidth() {
     return Math.max(700, availableWidth);
 }
 
+// Style plus leger quand aucun fichier n'est encore charge.
 function setEmptySvgStyle() {
     document.body.classList.add("empty-view");
     svg.classed("empty-state", true);
 }
 
+// Style normal quand une visualisation est affichee.
 function setActiveSvgStyle() {
     document.body.classList.remove("empty-view");
     svg.classed("empty-state", false);
 }
 
+// Calcule un layout assez large pour eviter que les noeuds se chevauchent.
 function createAutoLayoutConfig(tree, baseConfig) {
     const leafCount = countLeaves(tree);
     const depth = getTreeDepth(tree);
@@ -165,6 +177,7 @@ function createAutoLayoutConfig(tree, baseConfig) {
     };
 }
 
+// Le mode general remplace les rectangles par des cercles plus compacts.
 function getBaseTreeConfig(baseConfig) {
     if (!isOverviewMode()) {
         return baseConfig;
@@ -185,6 +198,7 @@ function isOverviewMode() {
     return displayMode === "overview";
 }
 
+// Retourne l'arbre entier ou seulement les premiers niveaux.
 function getVisibleTreeRoot(tree) {
     const maxDepth = getMaxVisibleDepth();
 
@@ -203,6 +217,7 @@ function getMaxVisibleDepth() {
     return Number(maxVisibleDepth);
 }
 
+// Copie l'arbre en coupant les branches au niveau demande.
 function cloneTreeUntilDepth(node, currentDepth, maxDepth) {
     const copy = { ...node };
 
@@ -227,6 +242,7 @@ function cloneTreeUntilDepth(node, currentDepth, maxDepth) {
     return copy;
 }
 
+// Nombre de feuilles utilise pour calculer l'espace horizontal.
 function countLeaves(node) {
     if (!node.left && !node.right) {
         return 1;
@@ -236,6 +252,7 @@ function countLeaves(node) {
         (node.right ? countLeaves(node.right) : 0);
 }
 
+// Profondeur utilisee pour calculer l'espace vertical.
 function getTreeDepth(node) {
     const leftDepth = node.left ? getTreeDepth(node.left) : 0;
     const rightDepth = node.right ? getTreeDepth(node.right) : 0;
