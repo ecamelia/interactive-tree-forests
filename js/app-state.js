@@ -19,19 +19,13 @@ const exportPngButton = d3.select("#export-tree-png");
 const exportD3CodeButton = d3.select("#export-d3-code-button");
 const jsonFileInput = document.getElementById("json-file-input");
 const fileStatus = document.getElementById("file-status");
-const maxDepthSelect = document.getElementById("max-depth-select");
 const displayModeSelect = document.getElementById("display-mode-select");
+const maxDepthInput = document.getElementById("max-depth-input");
 const forestTreeLimitInput = document.getElementById("forest-tree-limit-input");
+const forestTreeIndicesInput = document.getElementById("forest-tree-indices-input");
 const forestTotalStatus = document.getElementById("forest-total-status");
 const pathModeCheckbox = document.getElementById("path-mode-checkbox");
 const clearPathButton = document.getElementById("clear-path-button");
-const nodeStylePanel = document.getElementById("node-style-panel");
-const nodeStyleFillInput = document.getElementById("node-style-fill");
-const nodeStyleTextInput = document.getElementById("node-style-text");
-const nodeStyleFontSizeInput = document.getElementById("node-style-font-size");
-const nodeStyleWidthInput = document.getElementById("node-style-width");
-const nodeStyleHeightInput = document.getElementById("node-style-height");
-const resetNodeStyleButton = document.getElementById("reset-node-style-button");
 const nodeDetailsPanel = document.getElementById("node-details-panel");
 const nodeDetailsContent = document.getElementById("node-details-content");
 const observationPanel = document.getElementById("observation-panel");
@@ -59,14 +53,14 @@ const optionInputs = {
 // Ils peuvent etre agrandis automatiquement si l'arbre est plus large.
 const detailConfig = {
     nodeShape: "box",
-    boxWidth: 190,
-    boxHeight: 100,
-    layoutWidth: 700,
-    layoutHeight: 480,
-    translateX: 200,
-    translateY: 80,
+    boxWidth: 145,
+    boxHeight: 76,
+    layoutWidth: 560,
+    layoutHeight: 360,
+    translateX: 130,
+    translateY: 60,
     textStartY: -30,
-    textStep: 22
+    textStep: 16
 };
 
 // Reglages de depart pour les arbres d'une foret.
@@ -74,12 +68,12 @@ const detailConfig = {
 // affiches cote a cote.
 const overviewConfig = {
     nodeShape: "box",
-    boxWidth: 190,
-    boxHeight: 100,
-    layoutWidth: 780,
-    layoutHeight: 560,
+    boxWidth: 145,
+    boxHeight: 76,
+    layoutWidth: 620,
+    layoutHeight: 420,
     textStartY: -30,
-    textStep: 22
+    textStep: 16
 };
 
 // Affichage par defaut quand aucune personnalisation n'est appliquee.
@@ -93,7 +87,6 @@ const globalDisplayOptions = {
 
 // Personnalisations propres a certains noeuds.
 const nodeDisplayOptions = {};
-const nodeStyleOptions = {};
 
 // Noeuds actuellement marques comme faisant partie du chemin.
 const pathNodeIds = new Set();
@@ -112,7 +105,9 @@ let currentView = null;
 let currentForest = null;
 let currentTree = null;
 let optionScope = OPTION_SCOPE.TREE;
-let maxVisibleDepth = "all";
 let displayMode = "detail";
+let maxVisibleDepth = null;
+const defaultForestDepth = 4;
 let forestTreeLimit = 3;
+let forestTreeIndices = [];
 let pathModeEnabled = false;

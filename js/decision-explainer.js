@@ -10,18 +10,18 @@ function setupObservationControls() {
 }
 
 function updateObservationPanel() {
-    const root = getCurrentRootForFeatures();
+    const roots = getCurrentRootsForFeatures();
 
     observationInputs.innerHTML = "";
 
-    if (!root) {
+    if (!roots.length) {
         observationPanel.classList.add("is-disabled");
         observationResult.textContent = "Chargez un arbre ou une foret.";
         return;
     }
 
     observationPanel.classList.remove("is-disabled");
-    createObservationInputs(getFeatureNames(root));
+    createObservationInputs(getFeatureNames(roots));
 }
 
 function createObservationInputs(featureNames) {
@@ -77,11 +77,14 @@ function explainTreeObservation(tree, observation, idPrefix) {
 
 function explainForestObservation(observation) {
     const votes = {};
-    const visibleTrees = currentForest.trees.slice(0, forestTreeLimit);
+    const visibleTrees = getVisibleForestTreeItems(currentForest);
 
     currentForest.trees.forEach(function(tree, index) {
         const treeId = tree.id || index + 1;
-        const idPrefix = index < visibleTrees.length ? "forest-" + treeId : null;
+        const isVisibleTree = visibleTrees.some(function(item) {
+            return item.tree === tree;
+        });
+        const idPrefix = isVisibleTree ? "forest-" + treeId : null;
         const prediction = addDecisionPath(tree.root || tree, observation, idPrefix);
 
         votes[prediction] = (votes[prediction] || 0) + 1;
@@ -149,26 +152,29 @@ function readObservationValues() {
     return values;
 }
 
-function getCurrentRootForFeatures() {
+function getCurrentRootsForFeatures() {
     if (currentView === VIEW_TYPE.TREE && currentTree) {
-        return currentTree.root || currentTree;
+        return [currentTree.root || currentTree];
     }
 
     if (currentView === VIEW_TYPE.FOREST && currentForest && currentForest.trees.length) {
-        const firstTree = currentForest.trees[0];
-        return firstTree.root || firstTree;
+        return currentForest.trees.map(function(tree) {
+            return tree.root || tree;
+        });
     }
 
-    return null;
+    return [];
 }
 
-function getFeatureNames(root) {
+function getFeatureNames(roots) {
     const features = new Set();
 
-    visitTreeNodes(root, function(node) {
-        if (node.type !== "leaf" && node.feature) {
-            features.add(node.feature);
-        }
+    roots.forEach(function(root) {
+        visitTreeNodes(root, function(node) {
+            if (node.type !== "leaf" && node.feature) {
+                features.add(node.feature);
+            }
+        });
     });
 
     return Array.from(features);

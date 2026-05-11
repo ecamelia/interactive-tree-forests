@@ -7,7 +7,6 @@ function startApp() {
     setupEvents();
     updateOptionsPanel(globalDisplayOptions);
     updateOptionInputsState();
-    updateNodeStyleInputsState();
     syncNodeDetailsPanelWithSelection();
     showEmptyState();
 }
@@ -24,13 +23,15 @@ function setupEvents() {
         exportPNG();
     });
 
-    exportD3CodeButton.on("click", handleD3CodeExport);
+    exportD3CodeButton.on("click", function(){
+        handleD3CodeExport();
+    });
 
-    maxDepthSelect.addEventListener("change", function(event) {
-        // Changer les niveaux peut masquer des noeuds du chemin.
-        maxVisibleDepth = event.target.value;
+    forestTreeIndicesInput.addEventListener("change", function(event){
+        forestTreeIndices = parseForestTreeIndices(event.target.value);
         resetNodeSelection();
         clearPath();
+        updateForestTotalStatus();
         redrawCurrentView();
     });
 
@@ -38,7 +39,14 @@ function setupEvents() {
         // Le mode general/detaille change la forme des noeuds.
         displayMode = event.target.value;
         resetNodeSelection();
-        updateNodeStyleInputsState();
+        redrawCurrentView();
+    });
+
+    maxDepthInput.addEventListener("change", function(event) {
+        maxVisibleDepth = parseMaxVisibleDepth(event.target.value);
+        event.target.value = maxVisibleDepth || "";
+        resetNodeSelection();
+        clearPath();
         redrawCurrentView();
     });
 
@@ -54,7 +62,6 @@ function setupEvents() {
 
     setupOptionInputs();
     setupOptionScopeInputs();
-    setupNodeStyleControls();
     setupPathControls();
     setupObservationControls();
 }
@@ -67,7 +74,7 @@ function updateForestTotalStatus() {
     }
 
     const totalTrees = currentForest.trees.length;
-    const visibleTrees = Math.min(forestTreeLimit, totalTrees);
+    const visibleTrees = getVisibleForestTreeItems(currentForest).length;
 
     forestTotalStatus.textContent = visibleTrees + " / " + totalTrees + " arbres affiches";
 }
@@ -97,7 +104,7 @@ function getCurrentVisualizationData() {
             type: VIEW_TYPE.TREE,
             data: currentTree,
             pathNodeIds: Array.from(pathNodeIds),
-            nodeStyleOptions: nodeStyleOptions
+            maxVisibleDepth: maxVisibleDepth
         };
     }
 
@@ -106,6 +113,36 @@ function getCurrentVisualizationData() {
         data: currentForest,
         pathNodeIds: Array.from(pathNodeIds),
         forestTreeLimit: forestTreeLimit,
-        nodeStyleOptions: nodeStyleOptions
+        forestTreeIndices: forestTreeIndices,
+        maxVisibleDepth: maxVisibleDepth
     };
+}
+
+function parseMaxVisibleDepth(input) {
+    if (!input.trim()) {
+        return null;
+    }
+
+    const depth = Number(input);
+
+    if (!Number.isInteger(depth) || depth < 1) {
+        return null;
+    }
+
+    return depth;
+}
+
+function parseForestTreeIndices(input) {
+    if (!input.trim()) {
+        return [];
+    }
+
+    return input
+        .split(",")
+        .map(function(index) {
+            return Number(index.trim());
+        })
+        .filter(function(index) {
+            return Number.isInteger(index) && index > 0;
+        });
 }

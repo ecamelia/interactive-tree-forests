@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>Visualisation d'arbres</title>
-    <link rel="stylesheet" href="css/style.css?v=26">
+    <link rel="stylesheet" href="css/style.css?v=48">
 </head>
 <body>
     <header>
@@ -11,143 +11,124 @@
     </header>
 
     <main>
-        <section class="toolbar">
-            <label class="file-button" for="json-file-input">Charger JSON</label>
-            <input type="file" id="json-file-input" accept=".json,application/json">
-            <button id="export-tree-button">Exporter SVG</button>
-            <button id="export-tree-png">Exporter PNG</button>
-            <button id="export-d3-code-button">Exporter code D3.js</button>
-            <span id="file-status">Aucun fichier chargé</span>
+        <aside class="sidebar">
+            <section class="toolbar">
+                <h2>Données</h2>
+                <label class="file-button" for="json-file-input">Charger JSON</label>
+                <input type="file" id="json-file-input" accept=".json,application/json">
+
+                <div class="export-actions">
+                    <button id="export-tree-button">Exporter SVG</button>
+                    <button id="export-tree-png">Exporter PNG</button>
+                    <button id="export-d3-code-button">Exporter code D3.js</button>
+                </div>
+
+                <span id="file-status">Aucun fichier chargé</span>
+            </section>
+
+            <section id="node-options-panel">
+                <h2>Affichage</h2>
+
+                <label>
+                    <input type="radio" name="display-scope" id="scope-tree" value="tree" checked>
+                    tout l'arbre
+                </label>
+                <label>
+                    <input type="radio" name="display-scope" id="scope-node" value="node">
+                    noeud sélectionné
+                </label>
+
+                <div class="option-grid">
+                    <label>
+                        <input type="checkbox" id="node-show-condition">
+                        condition
+                    </label>
+                    <label>
+                        <input type="checkbox" id="node-show-gini">
+                        gini
+                    </label>
+                    <label>
+                        <input type="checkbox" id="node-show-samples">
+                        samples
+                    </label>
+                    <label>
+                        <input type="checkbox" id="node-show-value">
+                        value
+                    </label>
+                    <label>
+                        <input type="checkbox" id="node-show-class">
+                        class
+                    </label>
+                </div>
+
+                <label>
+                    mode
+                    <select id="display-mode-select">
+                        <option value="detail">détaillé</option>
+                        <option value="overview">général</option>
+                    </select>
+                </label>
+
+                <label>
+                    profondeur
+                    <input type="number" id="max-depth-input" min="1" placeholder="tous">
+                </label>
+
+                <label>
+                    arbres foret
+                    <input type="number" id="forest-tree-limit-input" min="1" value="3">
+                </label>
+
+                <label>
+                    indices arbres
+                    <input type="text" id="forest-tree-indices-input" placeholder="ex :1,2,3">
+                </label>
+
+                <span id="forest-total-status">Aucune foret chargee</span>
+
+                <label>
+                    <input type="checkbox" id="path-mode-checkbox">
+                    mode chemin
+                </label>
+                <button id="clear-path-button">Effacer chemin</button>
+            </section>
+
+            <section id="node-details-panel">
+                <h2>Noeud sélectionné</h2>
+                <p id="node-details-content">Aucun noeud sélectionné.</p>
+            </section>
+
+            <section id="observation-panel">
+                <h2>Tester une observation</h2>
+                <div id="observation-inputs"></div>
+                <button id="run-observation-button">Colorer le chemin</button>
+                <button id="clear-observation-button">Effacer</button>
+                <span id="observation-result">Chargez un arbre ou une foret.</span>
+            </section>
+        </aside>
+
+        <section class="visualization-area">
+            <section id="empty-state">
+                <h2>Chargez votre fichier JSON</h2>
+                <p>L'outil affichera automatiquement un arbre ou une foret.</p>
+            </section>
+
+            <svg id="tree-view" width="3000" height="900"></svg>
         </section>
 
-        <section id = "node-options-panel">
-            <h2>Affichage des noeuds</h2>
-
-            <label>
-                <input type="radio" name="display-scope" id="scope-tree" value="tree" checked>
-                tout l'arbre
-            </label>
-            <label>
-                <input type="radio" name="display-scope" id="scope-node" value="node">
-                noeud sélectionné
-            </label>
-
-            <label>
-                <input type="checkbox" id="node-show-condition">
-                condition
-            </label>
-            <label>
-                <input type="checkbox" id="node-show-gini">
-                gini
-            </label>
-            <label>
-                <input type="checkbox" id="node-show-samples">
-                samples
-            </label>
-            <label>
-                <input type="checkbox" id="node-show-value">
-                value
-            </label>
-            <label>
-                <input type="checkbox" id="node-show-class">
-                class
-            </label>
-
-            <label>
-                niveaux
-                <select id="max-depth-select">
-                    <option value="all">tous</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                </select>
-            </label>
-
-            <label>
-                mode
-                <select id="display-mode-select">
-                    <option value="detail">détaillé</option>
-                    <option value="overview">général</option>
-                </select>
-            </label>
-
-            <label>
-                arbres foret
-                <input type="number" id="forest-tree-limit-input" min="1" value="3">
-            </label>
-            <span id="forest-total-status">Aucune foret chargee</span>
-
-            <label>
-                <input type="checkbox" id="path-mode-checkbox">
-                mode chemin
-            </label>
-            <button id="clear-path-button">Effacer chemin</button>
-        </section>
-
-        <section id="node-style-panel">
-            <h2>Style du noeud sélectionné</h2>
-
-            <label>
-                fond
-                <input type="color" id="node-style-fill" value="#ffffff">
-            </label>
-
-            <label>
-                texte
-                <input type="color" id="node-style-text" value="#111111">
-            </label>
-
-            <label>
-                taille texte
-                <input type="number" id="node-style-font-size" min="10" max="28" value="16">
-            </label>
-
-            <label>
-                largeur
-                <input type="number" id="node-style-width" min="60" max="500" value="190">
-            </label>
-
-            <label>
-                hauteur
-                <input type="number" id="node-style-height" min="40" max="260" value="100">
-            </label>
-
-            <button id="reset-node-style-button">Réinitialiser</button>
-        </section>
-
-        <section id="node-details-panel">
-            <h2>Détails du noeud sélectionné</h2>
-            <p id="node-details-content">Aucun noeud sélectionné.</p>
-        </section>
-
-        <section id="observation-panel">
-            <h2>Tester une observation</h2>
-            <div id="observation-inputs"></div>
-            <button id="run-observation-button">Colorer le chemin</button>
-            <button id="clear-observation-button">Effacer</button>
-            <span id="observation-result">Chargez un arbre ou une foret.</span>
-        </section>
-
-        <section id="empty-state">
-            <h2>Chargez votre fichier JSON</h2>
-            <p>L'outil affichera automatiquement un arbre ou une foret.</p>
-        </section>
-
-        <svg id="tree-view" width="3000" height="900"></svg>
         <div id="tooltip"></div>
     </main>
 
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="js/tree-viz.js?v=26"></script>
-    <script src="js/export-utils.js?v=26"></script>
-    <script src="js/app-state.js?v=26"></script>
-    <script src="js/renderer.js?v=26"></script>
-    <script src="js/path-tools.js?v=26"></script>
-    <script src="js/interactions.js?v=26"></script>
-    <script src="js/display-options.js?v=26"></script>
-    <script src="js/decision-explainer.js?v=26"></script>
-    <script src="js/data-loader.js?v=26"></script>
-    <script src="js/app.js?v=26"></script>
+    <script src="js/tree-viz.js?v=44"></script>
+    <script src="js/export-utils.js?v=44"></script>
+    <script src="js/app-state.js?v=44"></script>
+    <script src="js/renderer.js?v=47"></script>
+    <script src="js/path-tools.js?v=44"></script>
+    <script src="js/interactions.js?v=44"></script>
+    <script src="js/display-options.js?v=44"></script>
+    <script src="js/decision-explainer.js?v=44"></script>
+    <script src="js/data-loader.js?v=44"></script>
+    <script src="js/app.js?v=44"></script>
 </body>
 </html>

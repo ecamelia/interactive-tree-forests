@@ -6,8 +6,9 @@ function drawDecisionTree(data, group, config, options = {}) {
     });
 
     // d3.tree calcule les positions x/y des noeuds.
-    const layout = d3.tree().size([config.layoutWidth, config.layoutHeight]);
+    const layout = createTreeLayout(config);
     layout(root);
+    normalizeTreeLayout(root, config);
     const idPrefix = options.idPrefix || "tree";
     const treeKey = options.treeKey || idPrefix;
 
@@ -36,18 +37,26 @@ function drawDecisionTree(data, group, config, options = {}) {
 
     if (!isCircleMode(config)) {
         // Les labels True/False sont gardes uniquement en mode detail.
-        group.selectAll(".branch-label")
+        const branchLabels = group.selectAll(".branch-label-group")
             .data(root.links())
             .enter()
-            .append("text")
-            .attr("class", "branch-label")
-            .attr("x", function(d) {
-                const middle = (d.source.x + d.target.x) / 2;
-                const offset = d.source.children[0] === d.target ? -22 : 22;
+            .append("g")
+            .attr("class", "branch-label-group")
+            .attr("transform", function(d) {
+                return "translate(" + getBranchLabelX(d) + "," + getBranchLabelY(d) + ")";
+            });
 
-                return middle + offset;
-            })
-            .attr("y", function(d) { return (d.source.y + d.target.y) / 2 - 18; })
+        branchLabels.append("rect")
+            .attr("class", "branch-label-bg")
+            .attr("x", -24)
+            .attr("y", -13)
+            .attr("width", 48)
+            .attr("height", 18);
+
+        branchLabels.append("text")
+            .attr("class", "branch-label")
+            .attr("x", 0)
+            .attr("y", 0)
             .attr("text-anchor", "middle")
             .text(function(d) {
                 return d.source.children[0] === d.target ? "True" : "False";
@@ -79,9 +88,7 @@ function drawDecisionTree(data, group, config, options = {}) {
     } else {
         nodes.append("rect")
             .attr("class", "node-box")
-            .attr("fill", function(d) {
-                return getNodeStyleForHierarchyNode(d, options).fill;
-            })
+            .attr("fill", getNodeColor)
             .attr("x", function(d) { return -d.boxSize.width / 2; })
             .attr("y", function(d) { return -d.boxSize.height / 2; })
             .attr("width", function(d) { return d.boxSize.width; })
@@ -115,8 +122,7 @@ function drawDecisionTree(data, group, config, options = {}) {
         // Mode detail : texte affiche dans chaque rectangle.
         nodes.each(function(d) {
             const lines = getNodeTextForHierarchyNode(d, options);
-            const style = getNodeStyleForHierarchyNode(d, options);
-            const textStep = getNodeTextStep(config, style);
+            const textStep = getNodeTextStep(config);
             const textStartY = getNodeTextStartY(lines, textStep);
 
             d3.select(this)
@@ -130,8 +136,6 @@ function drawDecisionTree(data, group, config, options = {}) {
                     return textStartY + index * textStep;
                 })
                 .attr("text-anchor", "middle")
-                .attr("fill", style.textColor)
-                .attr("font-size", style.fontSize)
                 .text(function(line) {
                     return line;
                 });
@@ -152,16 +156,56 @@ function getNodeVerticalOffset(d, config) {
     return d.boxSize.height / 2;
 }
 
+function getBranchLabelX(link) {
+    const middle = (link.source.x + link.target.x) / 2;
+    const direction = link.source.children[0] === link.target ? -1 : 1;
+
+    return middle + direction * 18;
+}
+
+function getBranchLabelY(link) {
+    const sourceBottom = link.source.y + link.source.boxSize.height / 2;
+    const targetTop = link.target.y - link.target.boxSize.height / 2;
+
+    return sourceBottom + (targetTop - sourceBottom) * 0.45;
+}
+
 // Calcule la position horizontale de la racine pour centrer le titre.
 function getRootX(data, config) {
     const root = d3.hierarchy(data, function(d) {
         return [d.left, d.right].filter(Boolean);
     });
 
-    const layout = d3.tree().size([config.layoutWidth, config.layoutHeight]);
+    const layout = createTreeLayout(config);
     layout(root);
+    normalizeTreeLayout(root, config);
 
     return root.x;
+}
+
+function createTreeLayout(config) {
+    const layout = d3.tree();
+
+    if (config.nodeGapX && config.nodeGapY) {
+        return layout.nodeSize([config.nodeGapX, config.nodeGapY]);
+    }
+
+    return layout.size([config.layoutWidth, config.layoutHeight]);
+}
+
+function normalizeTreeLayout(root, config) {
+    if (!config.nodeGapX || !config.nodeGapY) {
+        return;
+    }
+
+    const padding = (config.maxBoxWidth || config.boxWidth) / 2;
+    const minX = d3.min(root.descendants(), function(d) {
+        return d.x;
+    });
+
+    root.descendants().forEach(function(d) {
+        d.x = d.x - minX + padding;
+    });
 }
 
 // Couleur simple des feuilles selon la classe predite.
@@ -195,11 +239,8 @@ function getNodeBoxSize(d, config, options = {}) {
     }
 
     const lines = getNodeTextForHierarchyNode(d, options);
-    const style = getNodeStyleForHierarchyNode(d, options);
-    const autoWidth = estimateNodeTextWidth(lines, config, style);
-    const autoHeight = estimateNodeTextHeight(lines, config, style);
-    const width = style.width || autoWidth;
-    const height = style.height || autoHeight;
+    const width = estimateNodeTextWidth(lines, config);
+    const height = estimateNodeTextHeight(lines, config);
 
     return {
         width: width,
@@ -215,23 +256,13 @@ function getNodeTextForHierarchyNode(d, options = {}) {
     return getNodeText(d.data, displayOptions);
 }
 
-function getNodeStyleForHierarchyNode(d, options = {}) {
-    if (options.getNodeStyleOptions) {
-        return options.getNodeStyleOptions(d);
-    }
-
-    return {
-        fill: getNodeColor(d),
-        textColor: "#111111",
-        fontSize: 16
-    };
-}
-
-function estimateNodeTextWidth(lines, config, style = { fontSize: 16 }) {
+function estimateNodeTextWidth(lines, config) {
     const longestLine = lines.reduce(function(longest, line) {
         return Math.max(longest, line.length);
     }, 0);
-    const estimatedWidth = longestLine * style.fontSize * 0.47 + 34;
+    const charWidth = 6.1;
+    const horizontalPadding = 24;
+    const estimatedWidth = longestLine * charWidth + horizontalPadding;
 
     return Math.min(
         config.maxBoxWidth || 430,
@@ -239,15 +270,15 @@ function estimateNodeTextWidth(lines, config, style = { fontSize: 16 }) {
     );
 }
 
-function estimateNodeTextHeight(lines, config, style = { fontSize: 16 }) {
-    const verticalPadding = 34;
-    const estimatedHeight = lines.length * getNodeTextStep(config, style) + verticalPadding;
+function estimateNodeTextHeight(lines, config) {
+    const verticalPadding = 24;
+    const estimatedHeight = lines.length * getNodeTextStep(config) + verticalPadding;
 
     return Math.max(config.boxHeight, estimatedHeight);
 }
 
-function getNodeTextStep(config, style) {
-    return Math.max(config.textStep, style.fontSize + 6);
+function getNodeTextStep(config) {
+    return config.textStep;
 }
 
 function getNodeTextStartY(lines, textStep) {
@@ -265,8 +296,7 @@ function getMaxVisibleNodeBoxWidth(tree, config, options = {}) {
     visitTreeNodes(tree, function(node) {
         const fakeHierarchyNode = { data: node };
         const lines = getNodeTextForHierarchyNode(fakeHierarchyNode, options);
-        const style = getNodeStyleForHierarchyNode(fakeHierarchyNode, options);
-        maxWidth = Math.max(maxWidth, style.width || estimateNodeTextWidth(lines, config, style));
+        maxWidth = Math.max(maxWidth, estimateNodeTextWidth(lines, config));
     });
 
     return maxWidth;
@@ -317,6 +347,10 @@ function getNodeText(node, displayOptions) {
 
     if (displayOptions.class && node.type === "leaf") {
         lines.push("classe " + node.class);
+    }
+
+    if (node.collapsed) {
+        lines.push("...");
     }
 
     return lines;

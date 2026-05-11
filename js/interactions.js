@@ -8,8 +8,7 @@ function getTreeInteractions() {
         getNodeDisplayOptions: getNodeDisplayOptions,
         isNodeSelected: isNodeSelected,
         isPathNode: isPathNode,
-        isPathLink: isPathLink,
-        getNodeStyleOptions: getNodeStyleOptions
+        isPathLink: isPathLink
     };
 }
 
@@ -67,7 +66,6 @@ function selectNodeForOptions(event, d) {
         updateOptionsPanel(nodeDisplayOptions[d.nodeId]);
     }
 
-    syncNodeStylePanelWithSelection();
     syncNodeDetailsPanelWithSelection();
 
     if (pathModeEnabled) {
@@ -91,17 +89,7 @@ function resetNodeSelection() {
 
     updateOptionsPanel(globalDisplayOptions);
     updateOptionInputsState();
-    syncNodeStylePanelWithSelection();
     syncNodeDetailsPanelWithSelection();
-}
-
-// Les personnalisations de style sont liees au fichier JSON courant.
-function clearNodeStyleOptions() {
-    Object.keys(nodeStyleOptions).forEach(function(nodeId) {
-        delete nodeStyleOptions[nodeId];
-    });
-
-    syncNodeStylePanelWithSelection();
 }
 
 function syncNodeDetailsPanelWithSelection() {

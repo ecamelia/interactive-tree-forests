@@ -18,25 +18,6 @@ function setupOptionScopeInputs() {
     });
 }
 
-// Active les controles de style du noeud selectionne.
-function setupNodeStyleControls() {
-    nodeStyleFillInput.addEventListener("input", updateSelectedNodeStyle);
-    nodeStyleTextInput.addEventListener("input", updateSelectedNodeStyle);
-    nodeStyleFontSizeInput.addEventListener("change", updateSelectedNodeStyle);
-    nodeStyleWidthInput.addEventListener("change", updateSelectedNodeStyle);
-    nodeStyleHeightInput.addEventListener("change", updateSelectedNodeStyle);
-
-    resetNodeStyleButton.addEventListener("click", function() {
-        if (!selectedNode) {
-            return;
-        }
-
-        delete nodeStyleOptions[selectedNode.nodeId];
-        syncNodeStylePanelWithSelection();
-        redrawCurrentView();
-    });
-}
-
 // Applique une option soit a tout l'arbre, soit au noeud selectionne.
 function updateDisplayOption(optionName, isChecked) {
     if (optionScope === OPTION_SCOPE.TREE) {
@@ -95,46 +76,6 @@ function updateOptionInputsState() {
     });
 }
 
-// Le style direct est volontairement limite au mode detaille.
-function updateNodeStyleInputsState() {
-    const shouldDisable = !selectedNode || displayMode !== "detail";
-
-    nodeStylePanel.classList.toggle("is-disabled", shouldDisable);
-    nodeStyleFillInput.disabled = shouldDisable;
-    nodeStyleTextInput.disabled = shouldDisable;
-    nodeStyleFontSizeInput.disabled = shouldDisable;
-    nodeStyleWidthInput.disabled = shouldDisable;
-    nodeStyleHeightInput.disabled = shouldDisable;
-    resetNodeStyleButton.disabled = shouldDisable;
-}
-
-function updateSelectedNodeStyle() {
-    if (!selectedNode || displayMode !== "detail") {
-        return;
-    }
-
-    nodeStyleOptions[selectedNode.nodeId] = {
-        fill: nodeStyleFillInput.value,
-        textColor: nodeStyleTextInput.value,
-        fontSize: Number(nodeStyleFontSizeInput.value) || 16,
-        width: Number(nodeStyleWidthInput.value) || detailConfig.boxWidth,
-        height: Number(nodeStyleHeightInput.value) || detailConfig.boxHeight
-    };
-
-    redrawCurrentView();
-}
-
-function syncNodeStylePanelWithSelection() {
-    const style = selectedNode ? getNodeStyleOptions(selectedNode) : getDefaultNodeStyle();
-
-    nodeStyleFillInput.value = style.fill;
-    nodeStyleTextInput.value = style.textColor;
-    nodeStyleFontSizeInput.value = style.fontSize;
-    nodeStyleWidthInput.value = style.width;
-    nodeStyleHeightInput.value = style.height;
-    updateNodeStyleInputsState();
-}
-
 // Priorite aux options propres au noeud, sinon options globales.
 function getNodeDisplayOptions(d) {
     if (nodeDisplayOptions[d.nodeId]) {
@@ -142,24 +83,6 @@ function getNodeDisplayOptions(d) {
     }
 
     return globalDisplayOptions;
-}
-
-function getNodeStyleOptions(d) {
-    if (nodeStyleOptions[d.nodeId]) {
-        return nodeStyleOptions[d.nodeId];
-    }
-
-    return getDefaultNodeStyle(d);
-}
-
-function getDefaultNodeStyle(d) {
-    return {
-        fill: d ? getNodeColor(d) : "#ffffff",
-        textColor: "#111111",
-        fontSize: 16,
-        width: detailConfig.boxWidth,
-        height: detailConfig.boxHeight
-    };
 }
 
 // Un noeud personnalise part toujours de l'affichage courant.

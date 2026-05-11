@@ -9,9 +9,9 @@ function exportSVG() {
 
 // Convertit le SVG courant en image PNG via un canvas.
 function exportPNG() {
-    const svgElement = document.getElementById("tree-view");
+    const svgCopy = getStyledSvgCopy();
     const serializer = new XMLSerializer();
-    const svgString = serializer.serializeToString(getStyledSvgCopy());
+    const svgString = serializer.serializeToString(svgCopy);
     const blob = new Blob([svgString], { type: "image/svg+xml" });
     const url = URL.createObjectURL(blob);
 
@@ -19,8 +19,8 @@ function exportPNG() {
 
     image.onload = function() {
         const canvas = document.createElement("canvas");
-        canvas.width = svgElement.clientWidth;
-        canvas.height = svgElement.clientHeight;
+        canvas.width = Number(svgCopy.getAttribute("width"));
+        canvas.height = Number(svgCopy.getAttribute("height"));
 
         const context = canvas.getContext("2d");
         context.fillStyle = "white";
@@ -69,9 +69,10 @@ function downloadUrl(url, filename) {
 function buildD3CodeExport(visualization) {
     const dataString = JSON.stringify(visualization.data, null, 4);
     const pathString = JSON.stringify(visualization.pathNodeIds || [], null, 4);
-    const nodeStyleString = JSON.stringify(visualization.nodeStyleOptions || {}, null, 4);
+    const indicesString = JSON.stringify(visualization.forestTreeIndices || [], null, 4);
     const isForest = visualization.type === "forest";
     const exportedForestTreeLimit = visualization.forestTreeLimit || 3;
+    const exportedMaxVisibleDepth = visualization.maxVisibleDepth || null;
 
     return `// Code D3.js exporte depuis le projet visualisation-arbres.
 // Pour l'utiliser, il faut charger D3.js dans la page HTML :
@@ -81,8 +82,9 @@ function buildD3CodeExport(visualization) {
 
 const exportedData = ${dataString};
 const exportedPathNodeIds = new Set(${pathString});
-const exportedNodeStyleOptions = ${nodeStyleString};
 const exportedForestTreeLimit = ${exportedForestTreeLimit};
+const exportedForestTreeIndices = ${indicesString};
+const exportedMaxVisibleDepth = ${exportedMaxVisibleDepth};
 
 const svg = d3.select("#tree-view");
 const layer = svg.append("g");
@@ -115,12 +117,13 @@ function drawForest(forest) {
     layer.selectAll("*").remove();
 
     const treeSpacing = 1200;
-    const visibleTrees = forest.trees.slice(0, exportedForestTreeLimit);
+    const visibleTrees = getVisibleForestTreeItems(forest);
     const hiddenTreeCount = Math.max(0, forest.trees.length - visibleTrees.length);
 
-    visibleTrees.forEach(function(tree, index) {
-        const treeId = tree.id || index + 1;
-        const treeRoot = tree.root || tree;
+    visibleTrees.forEach(function(item, index) {
+        const tree = item.tree;
+        const treeId = tree.id || item.originalIndex;
+        const treeRoot = getVisibleTreeRoot(tree.root || tree);
         const titleX = getRootX(treeRoot);
 
         const treeGroup = layer
@@ -166,6 +169,30 @@ function drawForest(forest) {
     }
 }
 
+function getVisibleForestTreeItems(forest) {
+    if (exportedForestTreeIndices.length) {
+        return exportedForestTreeIndices
+            .map(function(treeIndex) {
+                return {
+                    tree: forest.trees[treeIndex - 1],
+                    originalIndex: treeIndex
+                };
+            })
+            .filter(function(item) {
+                return item.tree;
+            });
+    }
+
+    return forest.trees
+        .slice(0, exportedForestTreeLimit)
+        .map(function(tree, index) {
+            return {
+                tree: tree,
+                originalIndex: index + 1
+            };
+        });
+}
+
 function drawTree(tree) {
     layer.selectAll("*").remove();
 
@@ -173,7 +200,36 @@ function drawTree(tree) {
         .append("g")
         .attr("transform", "translate(200, 80)");
 
-    drawTreeInGroup(tree.root || tree, group, "single");
+    drawTreeInGroup(getVisibleTreeRoot(tree.root || tree), group, "single");
+}
+
+function getVisibleTreeRoot(tree) {
+    if (!exportedMaxVisibleDepth) {
+        return tree;
+    }
+
+    return cloneTreeUntilDepth(tree, 1, exportedMaxVisibleDepth);
+}
+
+function cloneTreeUntilDepth(node, currentDepth, maxDepth) {
+    const copy = { ...node };
+
+    if (currentDepth >= maxDepth && (node.left || node.right)) {
+        delete copy.left;
+        delete copy.right;
+        copy.collapsed = true;
+        return copy;
+    }
+
+    if (node.left) {
+        copy.left = cloneTreeUntilDepth(node.left, currentDepth + 1, maxDepth);
+    }
+
+    if (node.right) {
+        copy.right = cloneTreeUntilDepth(node.right, currentDepth + 1, maxDepth);
+    }
+
+    return copy;
 }
 
 function drawTreeInGroup(data, group, idPrefix) {
@@ -187,8 +243,7 @@ function drawTreeInGroup(data, group, idPrefix) {
 
     root.descendants().forEach(function(d, index) {
         d.nodeId = idPrefix + "-node-" + index;
-        d.nodeStyle = getNodeStyle(d);
-        d.boxSize = getNodeBoxSize(d.data, localConfig, d.nodeStyle);
+        d.boxSize = getNodeBoxSize(d.data, localConfig);
     });
 
     group.selectAll(".link")
@@ -207,17 +262,26 @@ function drawTreeInGroup(data, group, idPrefix) {
             return isPathLink(d) ? 6 : 2;
         });
 
-    group.selectAll(".branch-label")
+    const branchLabels = group.selectAll(".branch-label-group")
         .data(root.links())
         .enter()
-        .append("text")
+        .append("g")
+        .attr("class", "branch-label-group")
+        .attr("transform", function(d) {
+            return "translate(" + getBranchLabelX(d) + "," + getBranchLabelY(d) + ")";
+        });
+
+    branchLabels.append("rect")
+        .attr("class", "branch-label-bg")
+        .attr("x", -24)
+        .attr("y", -13)
+        .attr("width", 48)
+        .attr("height", 18);
+
+    branchLabels.append("text")
         .attr("class", "branch-label")
-        .attr("x", function(d) {
-            const middle = (d.source.x + d.target.x) / 2;
-            const offset = d.source.children[0] === d.target ? -22 : 22;
-            return middle + offset;
-        })
-        .attr("y", function(d) { return (d.source.y + d.target.y) / 2 - 18; })
+        .attr("x", 0)
+        .attr("y", 0)
         .attr("text-anchor", "middle")
         .attr("font-size", 16)
         .attr("font-weight", "bold")
@@ -239,7 +303,7 @@ function drawTreeInGroup(data, group, idPrefix) {
         .attr("y", function(d) { return -d.boxSize.height / 2; })
         .attr("width", function(d) { return d.boxSize.width; })
         .attr("height", function(d) { return d.boxSize.height; })
-        .attr("fill", function(d) { return d.nodeStyle.fill; })
+        .attr("fill", getNodeColor)
         .attr("stroke", function(d) {
             return exportedPathNodeIds.has(d.nodeId) ? "#ff8c00" : "#111";
         })
@@ -249,7 +313,7 @@ function drawTreeInGroup(data, group, idPrefix) {
 
     nodes.each(function(d) {
         const lines = getNodeText(d.data);
-        const textStep = getNodeTextStep(localConfig, d.nodeStyle);
+        const textStep = getNodeTextStep(localConfig);
         const textStartY = getNodeTextStartY(lines, textStep);
 
         d3.select(this)
@@ -263,8 +327,7 @@ function drawTreeInGroup(data, group, idPrefix) {
                 return textStartY + index * textStep;
             })
             .attr("text-anchor", "middle")
-            .attr("fill", d.nodeStyle.textColor)
-            .attr("font-size", d.nodeStyle.fontSize)
+            .attr("font-size", 16)
             .text(function(line) {
                 return line;
             });
@@ -274,6 +337,20 @@ function drawTreeInGroup(data, group, idPrefix) {
 function isPathLink(link) {
     return exportedPathNodeIds.has(link.source.nodeId) &&
         exportedPathNodeIds.has(link.target.nodeId);
+}
+
+function getBranchLabelX(link) {
+    const middle = (link.source.x + link.target.x) / 2;
+    const direction = link.source.children[0] === link.target ? -1 : 1;
+
+    return middle + direction * 18;
+}
+
+function getBranchLabelY(link) {
+    const sourceBottom = link.source.y + link.source.boxSize.height / 2;
+    const targetTop = link.target.y - link.target.boxSize.height / 2;
+
+    return sourceBottom + (targetTop - sourceBottom) * 0.45;
 }
 
 function getRootX(data) {
@@ -300,38 +377,22 @@ function createAutoLayoutConfig(tree) {
     };
 }
 
-function getNodeBoxSize(node, localConfig, style) {
+function getNodeBoxSize(node, localConfig) {
     const lines = getNodeText(node);
     const longestLine = lines.reduce(function(longest, line) {
         return Math.max(longest, line.length);
     }, 0);
-    const autoWidth = Math.min(
+    const width = Math.min(
         localConfig.maxBoxWidth,
-        Math.max(localConfig.boxWidth, Math.ceil(longestLine * style.fontSize * 0.47 + 34))
+        Math.max(localConfig.boxWidth, Math.ceil(longestLine * 7.4 + 34))
     );
-    const autoHeight = Math.max(localConfig.boxHeight, lines.length * getNodeTextStep(localConfig, style) + 34);
-    const width = style.width || autoWidth;
-    const height = style.height || autoHeight;
+    const height = Math.max(localConfig.boxHeight, lines.length * getNodeTextStep(localConfig) + 34);
 
     return { width: width, height: height };
 }
 
-function getNodeStyle(d) {
-    if (exportedNodeStyleOptions[d.nodeId]) {
-        return exportedNodeStyleOptions[d.nodeId];
-    }
-
-    return {
-        fill: getNodeColor(d),
-        textColor: "#111111",
-        fontSize: 16,
-        width: config.boxWidth,
-        height: config.boxHeight
-    };
-}
-
-function getNodeTextStep(localConfig, style) {
-    return Math.max(localConfig.textStep, style.fontSize + 6);
+function getNodeTextStep(localConfig) {
+    return localConfig.textStep;
 }
 
 function getNodeTextStartY(lines, textStep) {
@@ -342,13 +403,7 @@ function getMaxNodeBoxWidth(tree) {
     let maxWidth = config.boxWidth;
 
     visitTreeNodes(tree, function(node) {
-        maxWidth = Math.max(maxWidth, getNodeBoxSize(node, config, {
-            fill: "white",
-            textColor: "#111111",
-            fontSize: 16,
-            width: config.boxWidth,
-            height: config.boxHeight
-        }).width);
+        maxWidth = Math.max(maxWidth, getNodeBoxSize(node, config).width);
     });
 
     return maxWidth;
@@ -413,6 +468,10 @@ function getNodeText(node) {
         lines.push("classe " + node.class);
     }
 
+    if (node.collapsed) {
+        lines.push("...");
+    }
+
     return lines;
 }
 
@@ -434,8 +493,22 @@ function formatNodeValue(value) {
 function getStyledSvgCopy() {
     const svgElement = document.getElementById("tree-view");
     const svgCopy = svgElement.cloneNode(true);
+    const exportBounds = getSvgExportBounds();
+    const drawingLayer = getFirstSvgGroup(svgCopy);
 
     svgCopy.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    svgCopy.setAttribute("viewBox", [
+        exportBounds.x,
+        exportBounds.y,
+        exportBounds.width,
+        exportBounds.height
+    ].join(" "));
+    svgCopy.setAttribute("width", exportBounds.width);
+    svgCopy.setAttribute("height", exportBounds.height);
+
+    if (drawingLayer) {
+        drawingLayer.removeAttribute("transform");
+    }
 
     const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
     style.textContent = `
@@ -478,9 +551,15 @@ function getStyledSvgCopy() {
         }
 
         .branch-label {
+            dominant-baseline: middle;
             font-size: 16px;
             font-weight: bold;
             font-family: Arial, sans-serif;
+        }
+
+        .branch-label-bg {
+            fill: white;
+            opacity: 0.9;
         }
 
         .tree-title {
@@ -509,16 +588,51 @@ function getStyledSvgCopy() {
     return svgCopy;
 }
 
+function getSvgExportBounds() {
+    const margin = 40;
+
+    try {
+        const box = zoomLayer.node().getBBox();
+
+        if (box.width > 0 && box.height > 0) {
+            return {
+                x: Math.floor(box.x - margin),
+                y: Math.floor(box.y - margin),
+                width: Math.ceil(box.width + margin * 2),
+                height: Math.ceil(box.height + margin * 2)
+            };
+        }
+    } catch (error) {
+        console.warn("Impossible de calculer la zone exportee.", error);
+    }
+
+    const svgElement = document.getElementById("tree-view");
+
+    return {
+        x: 0,
+        y: 0,
+        width: Number(svgElement.getAttribute("width")) || 1200,
+        height: Number(svgElement.getAttribute("height")) || 700
+    };
+}
+
+function getFirstSvgGroup(svgElement) {
+    return Array.from(svgElement.children).find(function(child) {
+        return child.tagName.toLowerCase() === "g";
+    });
+}
+
 // Ajoute un fond blanc reel dans le fichier exporte, pas seulement en CSS.
 function createSvgBackground(svgElement) {
     const background = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-    const width = svgElement.getAttribute("width") || svgElement.clientWidth || 1200;
-    const height = svgElement.getAttribute("height") || svgElement.clientHeight || 700;
+    const viewBox = svgElement.getAttribute("viewBox")
+        ? svgElement.getAttribute("viewBox").split(" ").map(Number)
+        : [0, 0, svgElement.clientWidth || 1200, svgElement.clientHeight || 700];
 
-    background.setAttribute("x", 0);
-    background.setAttribute("y", 0);
-    background.setAttribute("width", width);
-    background.setAttribute("height", height);
+    background.setAttribute("x", viewBox[0]);
+    background.setAttribute("y", viewBox[1]);
+    background.setAttribute("width", viewBox[2]);
+    background.setAttribute("height", viewBox[3]);
     background.setAttribute("fill", "white");
 
     return background;

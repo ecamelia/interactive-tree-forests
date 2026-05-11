@@ -9,7 +9,6 @@ function handleJsonFile(event) {
     readJsonFile(file, function(data) {
         try {
             resetNodeSelection();
-            clearNodeStyleOptions();
             renderJsonData(data);
             fileStatus.textContent = "Fichier charge : " + file.name;
         } catch (error) {
