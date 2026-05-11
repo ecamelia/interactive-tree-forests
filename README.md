@@ -45,8 +45,12 @@ visualisation-arbres/
 │   ├── display-options.js
 │   ├── decision-explainer.js
 │   ├── interactions.js
+│   ├── layout-utils.js
 │   ├── path-tools.js
 │   ├── renderer.js
+│   ├── tree-depth-utils.js
+│   ├── tree-renderer.js
+│   ├── forest-renderer.js
 │   ├── tree-viz.js
 │   └── export-utils.js
 ├── data/
@@ -162,15 +166,50 @@ La detection se fait simplement :
 
 ### `js/renderer.js`
 
-Ce fichier gere l'affichage principal :
+Ce fichier garde les fonctions generales du rendu :
 
-- l'affichage d'un arbre simple;
-- l'affichage d'une foret;
-- le zoom et le deplacement dans le SVG;
-- l'ajustement automatique de l'espace pour les arbres plus grands;
-- le choix du nombre de niveaux affiches.
-- le mode d'affichage detaille ou general.
-- le remplacement des arbres caches d'une foret par un bloc `...`.
+- l'affichage de l'ecran vide;
+- le nettoyage du SVG;
+- le redessin de la vue courante apres un changement d'option;
+- la remise a zero du zoom;
+- l'ajustement de la taille du SVG.
+
+### `js/tree-renderer.js`
+
+Ce fichier gere l'affichage d'un arbre simple :
+
+- preparation de l'interface avant le dessin;
+- creation du groupe SVG de l'arbre;
+- appel a `drawDecisionTree(...)` avec la configuration detaillee.
+
+### `js/forest-renderer.js`
+
+Ce fichier gere l'affichage d'une foret :
+
+- choix des arbres visibles;
+- ajout d'un bloc `...` quand certains arbres sont masques;
+- placement des arbres de gauche a droite;
+- passage a la ligne quand la largeur maximale est atteinte;
+- creation du titre `Arbre X` pour chaque arbre.
+
+### `js/tree-depth-utils.js`
+
+Ce fichier gere la limitation de profondeur :
+
+- conservation de l'arbre complet quand aucune limite n'est demandee;
+- limitation par defaut des arbres en vue foret;
+- clonage partiel de l'arbre pour ne pas modifier le JSON original;
+- ajout du marqueur `collapsed` pour afficher `...` dans les noeuds coupes.
+
+### `js/layout-utils.js`
+
+Ce fichier gere les calculs de layout :
+
+- nombre de feuilles;
+- profondeur de l'arbre;
+- espacement horizontal et vertical automatique;
+- taille minimale du SVG;
+- passage du mode detaille au mode general avec des cercles.
 
 ### `js/interactions.js`
 

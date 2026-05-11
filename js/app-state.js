@@ -76,7 +76,7 @@ const overviewConfig = {
     textStep: 16
 };
 
-// Affichage par defaut quand aucune personnalisation n'est appliquee.
+// Affichage par defaut quand aucune personnalisation n'est appliquee
 const globalDisplayOptions = {
     condition: true,
     gini: true,
