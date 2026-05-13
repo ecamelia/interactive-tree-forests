@@ -108,6 +108,7 @@ label:has(input[type="checkbox"]) {
 }
 
 button,
+.nav-button,
 .file-button,
 input[type="number"],
 input[type="text"],
@@ -120,6 +121,12 @@ select {
     cursor: pointer;
     font-weight: bold;
     box-sizing: border-box;
+}
+
+.nav-button {
+    color: #111;
+    text-decoration: none;
+    text-align: center;
 }
 
 .file-button,
@@ -310,4 +317,13 @@ svg.empty-state {
 
 #export-d3-code-button {
     grid-column: 1 / -1;
+}
+
+.construction-placeholder {
+    max-width: 720px;
+    margin: 120px auto 0;
+    padding: 24px;
+    background: white;
+    border: 1px solid #ddd;
+    text-align: center;
 }
