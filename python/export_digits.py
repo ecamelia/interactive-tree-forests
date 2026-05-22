@@ -2,7 +2,7 @@ from sklearn.datasets import load_digits
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
 
-from sklearn_export_utils import forest_to_json, save_json, tree_to_json
+from sklearn_export_utils import forest_to_json, samples_to_json, save_json, tree_to_json
 
 
 digits = load_digits()
@@ -26,10 +26,23 @@ forest_model.fit(X, y)
 tree_json = {
     "dataset": "digits",
     "classes": [int(label) for label in tree_model.classes_],
+    "features": feature_names,
     "root": tree_to_json(tree_model.tree_, feature_names)
 }
 
 forest_json = forest_to_json(forest_model, feature_names, "digits")
+digits_samples = samples_to_json(X, y, feature_names)
+tree_with_data_json = {
+    **tree_json,
+    "data": digits_samples
+}
+forest_with_data_json = {
+    **forest_json,
+    "features": feature_names,
+    "data": digits_samples
+}
 
 save_json(tree_json, "digits_tree.json")
 save_json(forest_json, "digits_forest.json")
+save_json(tree_with_data_json, "digits_tree_with_data.json")
+save_json(forest_with_data_json, "digits_forest_with_data.json")

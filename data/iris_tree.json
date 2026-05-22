@@ -5,6 +5,12 @@
     1,
     2
   ],
+  "features": [
+    "sepal length",
+    "sepal width",
+    "petal length",
+    "petal width"
+  ],
   "root": {
     "type": "node",
     "feature": "petal width",

@@ -36,40 +36,41 @@ Python / scikit-learn -> JSON -> JavaScript / D3.js -> SVG dans le navigateur
 ```text
 visualisation-arbres/
 ├── index.html
+├── construction.html
 ├── css/
 │   └── style.css
 ├── js/
-│   ├── app-state.js
-│   ├── app.js
-│   ├── data-loader.js
-│   ├── display-options.js
-│   ├── decision-explainer.js
-│   ├── interactions.js
-│   ├── layout-utils.js
-│   ├── path-tools.js
-│   ├── renderer.js
-│   ├── tree-depth-utils.js
-│   ├── tree-renderer.js
-│   ├── forest-renderer.js
-│   ├── tree-viz.js
-│   └── export-utils.js
+│   ├── shared/
+│   │   ├── tree-viz.js
+│   │   └── layout-utils.js
+│   ├── main/
+│   │   ├── app-state.js
+│   │   ├── app.js
+│   │   ├── data-loader.js
+│   │   ├── display-options.js
+│   │   ├── decision-explainer.js
+│   │   ├── interactions.js
+│   │   ├── path-tools.js
+│   │   ├── renderer.js
+│   │   ├── tree-depth-utils.js
+│   │   ├── tree-renderer.js
+│   │   ├── forest-renderer.js
+│   │   └── export-utils.js
+│   └── construction/
+│       ├── app.js
+│       ├── steps.js
+│       ├── tree-renderer.js
+│       └── decision-regions.js
 ├── data/
-│   ├── tree.json
 │   ├── tree-small.json
 │   ├── tree-medium.json
-│   ├── tree-big.json
-│   ├── leaf-only.json
-│   ├── forest.json
+│   ├── tree-regions-2-classes.json
+│   ├── tree-regions-3-classes.json
 │   ├── forest-small.json
-│   ├── forest-medium.json
 │   ├── iris_tree.json
-│   ├── iris_forest.json
-│   ├── digits_tree.json
-│   └── digits_forest.json
+│   └── iris_forest.json
 └── python/
     ├── sklearn_export_utils.py
-    ├── export_tree.py
-    ├── export_forest.py
     ├── export_iris.py
     └── export_digits.py
 ```
@@ -78,7 +79,7 @@ visualisation-arbres/
 
 ### `index.html`
 
-C'est la page de demonstration. Elle contient :
+C'est la page principale de visualisation. Elle contient :
 
 - un bouton pour charger un fichier JSON;
 - les boutons d'export SVG, PNG et code D3.js;
@@ -88,6 +89,19 @@ C'est la page de demonstration. Elle contient :
 
 Le bouton `Charger JSON` remplace les anciens boutons "arbre" et "foret". Le
 programme regarde le contenu du fichier et decide automatiquement quoi afficher.
+
+### `construction.html`
+
+C'est la page dediee a la construction pas a pas d'un arbre. Elle contient :
+
+- un bouton pour charger un arbre JSON;
+- des boutons pour passer a l'etape precedente ou suivante;
+- un affichage de l'arbre qui se developpe progressivement;
+- un graphique des regions de decision avec fond colore;
+- une legende des classes.
+
+Cette page est utile pour expliquer comment les conditions de l'arbre decoupent
+le plan en regions.
 
 ### `css/style.css`
 
@@ -101,7 +115,18 @@ Ce fichier contient le style de la page :
 - les couleurs des feuilles;
 - le tooltip au survol.
 
-### `js/tree-viz.js`
+### Organisation du JavaScript
+
+La partie JavaScript est separee en trois dossiers :
+
+- `js/shared/` : fonctions communes aux deux pages;
+- `js/main/` : code de la page principale `index.html`;
+- `js/construction/` : code de la page `construction.html`.
+
+L'ordre de chargement dans les fichiers HTML est important, car les fichiers
+partagent des fonctions globales simples.
+
+### `js/shared/tree-viz.js`
 
 C'est le fichier le plus important pour la visualisation.
 
@@ -122,15 +147,17 @@ la position des noeuds avec `d3.tree`, puis dessine :
 
 Ce fichier est la base de la future librairie.
 
-### Organisation du JavaScript
+### `js/shared/layout-utils.js`
 
-La partie JavaScript est separee en plusieurs fichiers pour eviter d'avoir un
-seul fichier trop long.
+Ce fichier gere les calculs de layout :
 
-L'ordre de chargement dans `index.html` est important, car les fichiers
-partagent des fonctions globales simples.
+- nombre de feuilles;
+- profondeur de l'arbre;
+- espacement horizontal et vertical automatique;
+- taille minimale du SVG;
+- passage du mode detaille au mode general avec des cercles.
 
-### `js/app-state.js`
+### `js/main/app-state.js`
 
 Ce fichier contient l'etat general de la page :
 
@@ -141,7 +168,7 @@ Ce fichier contient l'etat general de la page :
 - l'etat courant : arbre affiche, foret affichee, noeud selectionne, niveau
   maximal affiche.
 
-### `js/app.js`
+### `js/main/app.js`
 
 Ce fichier sert seulement au demarrage de l'application.
 
@@ -151,7 +178,7 @@ Il fait :
 - la connexion des boutons aux fonctions;
 - l'affichage du message d'accueil avant le chargement d'un JSON.
 
-### `js/data-loader.js`
+### `js/main/data-loader.js`
 
 Ce fichier gere les donnees JSON :
 
@@ -164,7 +191,7 @@ La detection se fait simplement :
 - si le JSON contient `trees`, c'est une foret;
 - si le JSON contient `type: "node"` ou `type: "leaf"`, c'est un arbre.
 
-### `js/renderer.js`
+### `js/main/renderer.js`
 
 Ce fichier garde les fonctions generales du rendu :
 
@@ -174,7 +201,7 @@ Ce fichier garde les fonctions generales du rendu :
 - la remise a zero du zoom;
 - l'ajustement de la taille du SVG.
 
-### `js/tree-renderer.js`
+### `js/main/tree-renderer.js`
 
 Ce fichier gere l'affichage d'un arbre simple :
 
@@ -182,7 +209,7 @@ Ce fichier gere l'affichage d'un arbre simple :
 - creation du groupe SVG de l'arbre;
 - appel a `drawDecisionTree(...)` avec la configuration detaillee.
 
-### `js/forest-renderer.js`
+### `js/main/forest-renderer.js`
 
 Ce fichier gere l'affichage d'une foret :
 
@@ -192,7 +219,7 @@ Ce fichier gere l'affichage d'une foret :
 - passage a la ligne quand la largeur maximale est atteinte;
 - creation du titre `Arbre X` pour chaque arbre.
 
-### `js/tree-depth-utils.js`
+### `js/main/tree-depth-utils.js`
 
 Ce fichier gere la limitation de profondeur :
 
@@ -201,24 +228,14 @@ Ce fichier gere la limitation de profondeur :
 - clonage partiel de l'arbre pour ne pas modifier le JSON original;
 - ajout du marqueur `collapsed` pour afficher `...` dans les noeuds coupes.
 
-### `js/layout-utils.js`
-
-Ce fichier gere les calculs de layout :
-
-- nombre de feuilles;
-- profondeur de l'arbre;
-- espacement horizontal et vertical automatique;
-- taille minimale du SVG;
-- passage du mode detaille au mode general avec des cercles.
-
-### `js/interactions.js`
+### `js/main/interactions.js`
 
 Ce fichier gere les interactions avec les noeuds :
 
 - le tooltip au survol;
 - la selection d'un noeud;
 
-### `js/path-tools.js`
+### `js/main/path-tools.js`
 
 Ce fichier gere le mode chemin :
 
@@ -227,14 +244,14 @@ Ce fichier gere le mode chemin :
 - effacement du chemin;
 - detection des noeuds et liens qui doivent etre colores.
 
-### `js/display-options.js`
+### `js/main/display-options.js`
 
 Ce fichier gere les cases du panneau d'affichage :
 
 - les options d'affichage pour tout l'arbre;
 - les options d'affichage pour un seul noeud selectionne.
 
-### `js/decision-explainer.js`
+### `js/main/decision-explainer.js`
 
 Ce fichier gere l'explication d'une prediction :
 
@@ -243,7 +260,7 @@ Ce fichier gere l'explication d'une prediction :
 - coloration du chemin suivi par cette observation;
 - resume des votes quand une foret est affichee.
 
-### `js/export-utils.js`
+### `js/main/export-utils.js`
 
 Ce fichier contient les fonctions d'export :
 
@@ -262,51 +279,34 @@ L'export PNG transforme d'abord le SVG en image, puis le dessine dans un
 L'export D3.js telecharge un fichier `.js` qui contient les donnees affichees et
 un exemple de code D3 pour redessiner l'arbre ou la foret dans un autre SVG.
 
+### `js/construction/`
+
+Ce dossier contient le code de la page de construction pas a pas :
+
+- `app.js` : point d'entree, lecture du JSON, boutons et etat courant;
+- `steps.js` : creation des etapes de construction de l'arbre;
+- `tree-renderer.js` : dessin de l'arbre a l'etape courante;
+- `decision-regions.js` : dessin des regions de decision, des points et des frontieres.
+
 ### `data/`
 
 Ce dossier contient des fichiers JSON pour tester l'outil.
 
 Arbres simples :
 
-- `tree.json` : arbre de base;
 - `tree-small.json` : petit arbre avec une seule condition;
 - `tree-medium.json` : arbre un peu plus complet;
-- `tree-big.json` : arbre plus grand avec plusieurs niveaux;
-- `leaf-only.json` : cas special avec seulement une feuille.
-- `iris_tree.json` : arbre entraine sur le dataset Iris;
-- `digits_tree.json` : arbre entraine sur le dataset Digits.
+- `tree-regions-2-classes.json` : exemple pedagogique pour les regions de decision avec deux classes;
+- `tree-regions-3-classes.json` : exemple pedagogique pour les regions de decision avec trois classes;
+- `iris_tree.json` : arbre entraine sur le dataset Iris.
 
 Forets :
 
-- `forest.json` : foret de base;
 - `forest-small.json` : petite foret;
-- `forest-medium.json` : foret avec plusieurs arbres.
-- `iris_forest.json` : foret entrainee sur Iris;
-- `digits_forest.json` : foret entrainee sur Digits.
+- `iris_forest.json` : foret entrainee sur Iris.
 
 Ces fichiers servent surtout a verifier que le bouton `Charger JSON` fonctionne
 bien avec plusieurs formes de donnees.
-
-### `python/export_tree.py`
-
-Ce script entraine un `DecisionTreeClassifier` avec `scikit-learn`, puis exporte
-sa structure en JSON.
-
-Le but est de recuperer les informations importantes de l'arbre :
-
-- la feature utilisee dans chaque noeud;
-- le seuil de separation;
-- le gini;
-- le nombre d'echantillons;
-- les valeurs par classe;
-- la classe predite dans les feuilles.
-
-### `python/export_forest.py`
-
-Ce script fait la meme chose, mais avec un `RandomForestClassifier`.
-
-Une foret contient plusieurs arbres. Le script exporte donc une liste `trees`,
-ou chaque element contient la racine d'un arbre.
 
 ### `python/export_iris.py` et `python/export_digits.py`
 
@@ -357,6 +357,13 @@ chargement de fichiers JSON si on ouvre seulement le fichier HTML directement.
 5. Le programme affiche automatiquement un arbre ou une foret.
 6. Utiliser les cases pour choisir les informations visibles dans les noeuds.
 7. Utiliser `Exporter SVG`, `Exporter PNG` ou `Exporter code D3.js` si besoin.
+
+Pour la construction pas a pas :
+
+1. Ouvrir `construction.html`.
+2. Cliquer sur `Charger JSON`.
+3. Choisir par exemple `tree-regions-2-classes.json`.
+4. Utiliser `Etape suivante` pour voir les decoupes apparaitre.
 
 ## Personnalisation des noeuds
 
@@ -457,6 +464,8 @@ simple.
 - Export SVG.
 - Export PNG.
 - Export du code D3.js de la visualisation courante.
+- Construction pas a pas d'un arbre.
+- Affichage des regions de decision avec fond colore et legende.
 
 ## Limites actuelles
 
@@ -467,7 +476,7 @@ ameliorer pour avoir une vraie librairie :
 - les tres grands arbres peuvent encore necessiter des modes plus avances;
 - les forets avec beaucoup d'arbres devront avoir un systeme de filtrage;
 - l'export du code D3.js est un premier exemple, pas encore une API complete;
-- les zones de decision ne sont pas encore implementees.
+- les regions de decision fonctionnent surtout pour des arbres avec deux features numeriques.
 
 ## Prochaines etapes
 
@@ -477,7 +486,7 @@ Les prochaines ameliorations possibles sont :
 - creer une API simple, par exemple `TreeViz.drawTree(...)`;
 - ameliorer le mode grands arbres avec recherche, mini-carte ou focus sur une branche;
 - ajouter un champ pour choisir les indices des arbres a afficher dans une foret;
-- ajouter les zones de decision;
+- ameliorer les regions de decision pour les datasets plus complexes;
 - documenter le format JSON attendu;
 - preparer des exemples avec des jeux de donnees plus connus, comme Iris ou
   Digits.

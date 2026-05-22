@@ -47,6 +47,19 @@ def forest_to_json(model, feature_names, dataset_name):
     }
 
 
+def samples_to_json(X, y, feature_names):
+    return [
+        {
+            **{
+                feature_names[index]: round(float(value), 6)
+                for index, value in enumerate(row)
+            },
+            "class": int(label)
+        }
+        for row, label in zip(X, y)
+    ]
+
+
 def save_json(data, filename):
     DATA_DIR.mkdir(exist_ok=True)
     output_path = DATA_DIR / filename

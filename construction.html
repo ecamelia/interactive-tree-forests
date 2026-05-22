@@ -3,8 +3,9 @@
 <head>
     <meta charset="utf-8">
     <title>Construction d'un arbre</title>
-    <link rel="stylesheet" href="css/style.css?v=51">
+    <link rel="stylesheet" href="css/style.css?v=61">
 </head>
+
 <body>
     <header>
         <h1>Construction pas à pas d'un arbre</h1>
@@ -18,11 +19,25 @@
             </section>
 
             <section class="toolbar">
-                <h2>Étapes</h2>
-                <button disabled>Étape précédente</button>
-                <button disabled>Étape suivante</button>
-                <button disabled>Recommencer</button>
+                <h2>Données</h2>
+                <label class="file-button" for="construction-json-file-input">Charger JSON</label>
+                <input type="file" id="construction-json-file-input" accept=".json,application/json">
+                <span id="construction-file-status">Aucun fichier chargé</span>
             </section>
+
+            <section class="toolbar">
+                <h2>Étapes</h2>
+                <button id="prev-build-step" disabled>Étape précédente</button>
+                <button id="next-build-step" disabled>Étape suivante</button>
+                <button id="reset-build-step" disabled>Recommencer</button>
+                <span id="build-step-status">Aucun arbre chargé</span>
+            </section>
+
+            <section class="toolbar">
+                <h2>Explication</h2>
+                <p id="build-step-explanation">Chargez un arbre JSON pour afficher sa construction pas à pas.</p>
+            </section>
+
         </aside>
 
         <section class="visualization-area">
@@ -30,8 +45,34 @@
                 <h2>Mode construction</h2>
                 <p>La visualisation pas à pas sera ajoutée ici.</p>
             </section>
-            <svg id = "construction-tree-view" width="1200" height="700"></svg>
+
+            <div class="construction-workspace">
+                <section class="construction-panel">
+                    <h2>Arbre</h2>
+                    <svg id="construction-tree-view" width="1200" height="700"></svg>
+                </section>
+
+                <section class="construction-panel">
+                    <h2>Régions de décision</h2>
+                    <svg id="construction-region-view" width="520" height="520"></svg>
+                    <div class="region-legend" aria-label="Légende des classes">
+                        <span><span class="legend-swatch class-0"></span>Classe 0</span>
+                        <span><span class="legend-swatch class-1"></span>Classe 1</span>
+                        <span><span class="legend-swatch class-2"></span>Classe 2</span>
+                    </div>
+                </section>
+            </div>
         </section>
     </main>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="js/shared/tree-viz.js?v=50"></script>
+    <script src="js/shared/layout-utils.js?v=50"></script>
+    <script src="js/construction/steps.js?v=14"></script>
+    <script src="js/construction/tree-renderer.js?v=14"></script>
+    <script src="js/construction/decision-regions.js?v=14"></script>
+    <script src="js/construction/app.js?v=15"></script>
+
 </body>
+
 </html>

@@ -327,3 +327,103 @@ svg.empty-state {
     border: 1px solid #ddd;
     text-align: center;
 }
+
+#construction-tree-view {
+    display: none;
+    background: white;
+    border: 0;
+    max-width: 100%;
+}
+
+body.construction-active #construction-tree-view,
+body.construction-active #construction-region-view {
+    display: block;
+}
+
+body.construction-active .construction-placeholder {
+    display: none;
+}
+
+.construction-workspace {
+    display: none;
+    grid-template-columns: minmax(680px, 1fr) 520px;
+    gap: 24px;
+    align-items: start;
+}
+
+body.construction-active .construction-workspace {
+    display: grid;
+}
+
+.construction-panel {
+    background: white;
+    border: 0;
+    padding: 0;
+}
+
+.construction-panel h2 {
+    margin: 0 0 14px;
+    font-size: 18px;
+}
+
+#construction-region-view {
+    display: none;
+    background: white;
+    border: 0;
+}
+
+body.construction-active .region-legend {
+    display: flex;
+}
+
+.region-legend {
+    display: none;
+    gap: 14px;
+    align-items: center;
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.region-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.legend-swatch {
+    width: 16px;
+    height: 16px;
+    border: 1px solid #777;
+}
+
+.legend-swatch.class-0 {
+    background: #a6cee3;
+}
+
+.legend-swatch.class-1 {
+    background: #fb9a99;
+}
+
+.legend-swatch.class-2 {
+    background: #c7b9ff;
+}
+
+.region-background {
+    opacity: 0.55;
+}
+
+.region-point {
+    stroke: white;
+    stroke-width: 2;
+}
+
+.region-split-line {
+    stroke: #111;
+    stroke-width: 3;
+}
+
+.region-split-line.is-active {
+    stroke: #ff8c00;
+    stroke-width: 5;
+}
