@@ -49,8 +49,8 @@ function resetZoom() {
 // Ajuste le SVG a la taille necessaire pour l'arbre affiche.
 function resizeSvg(width, height) {
     svg
-        .attr("width", Math.max(1200, Math.ceil(width)))
-        .attr("height", Math.max(700, Math.ceil(height)));
+        .attr("width", Math.max(760, Math.ceil(width)))
+        .attr("height", Math.max(480, Math.ceil(height)));
 }
 
 // Style plus leger quand aucun fichier n'est encore charge.

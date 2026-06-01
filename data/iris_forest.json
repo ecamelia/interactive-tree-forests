@@ -12,8 +12,8 @@
       "weight": 1,
       "root": {
         "type": "node",
-        "feature": "petal width",
-        "threshold": 0.75,
+        "feature": "petal length (cm)",
+        "threshold": 2.6,
         "gini": 0.661,
         "samples": 94,
         "value": [
@@ -34,8 +34,8 @@
         },
         "right": {
           "type": "node",
-          "feature": "petal length",
-          "threshold": 4.85,
+          "feature": "petal width (cm)",
+          "threshold": 1.75,
           "gini": 0.489,
           "samples": 63,
           "value": [
@@ -45,47 +45,36 @@
           ],
           "left": {
             "type": "node",
-            "feature": "petal width",
-            "threshold": 1.65,
-            "gini": 0.122,
-            "samples": 32,
+            "feature": "petal length (cm)",
+            "threshold": 4.9,
+            "gini": 0.265,
+            "samples": 35,
             "value": [
               0,
               30,
-              2
+              5
             ],
             "left": {
-              "type": "leaf",
-              "gini": 0.0,
-              "samples": 29,
+              "type": "node",
+              "feature": "petal width (cm)",
+              "threshold": 1.65,
+              "gini": 0.045,
+              "samples": 30,
               "value": [
                 0,
                 29,
-                0
-              ],
-              "class": 1
-            },
-            "right": {
-              "type": "node",
-              "feature": "sepal width",
-              "threshold": 3.0,
-              "gini": 0.375,
-              "samples": 3,
-              "value": [
-                0,
-                1,
-                2
+                1
               ],
               "left": {
                 "type": "leaf",
                 "gini": 0.0,
-                "samples": 2,
+                "samples": 29,
                 "value": [
                   0,
-                  0,
-                  2
+                  29,
+                  0
                 ],
-                "class": 2
+                "class": 1
               },
               "right": {
                 "type": "leaf",
@@ -93,68 +82,102 @@
                 "samples": 1,
                 "value": [
                   0,
+                  0,
+                  1
+                ],
+                "class": 2
+              }
+            },
+            "right": {
+              "type": "node",
+              "feature": "petal length (cm)",
+              "threshold": 5.05,
+              "gini": 0.219,
+              "samples": 5,
+              "value": [
+                0,
+                1,
+                4
+              ],
+              "left": {
+                "type": "leaf",
+                "gini": 0.5,
+                "samples": 2,
+                "value": [
+                  0,
                   1,
-                  0
+                  1
                 ],
                 "class": 1
+              },
+              "right": {
+                "type": "leaf",
+                "gini": 0.0,
+                "samples": 3,
+                "value": [
+                  0,
+                  0,
+                  3
+                ],
+                "class": 2
               }
             }
           },
           "right": {
             "type": "node",
-            "feature": "sepal length",
-            "threshold": 6.6,
-            "gini": 0.034,
-            "samples": 31,
+            "feature": "petal width (cm)",
+            "threshold": 1.85,
+            "gini": 0.038,
+            "samples": 28,
             "value": [
               0,
               1,
-              30
+              27
             ],
             "left": {
-              "type": "leaf",
-              "gini": 0.0,
-              "samples": 15,
-              "value": [
-                0,
-                0,
-                15
-              ],
-              "class": 2
-            },
-            "right": {
               "type": "node",
-              "feature": "petal length",
-              "threshold": 5.2,
-              "gini": 0.064,
-              "samples": 16,
+              "feature": "petal length (cm)",
+              "threshold": 5.15,
+              "gini": 0.198,
+              "samples": 6,
               "value": [
                 0,
                 1,
-                15
+                5
               ],
               "left": {
                 "type": "leaf",
-                "gini": 0.0,
-                "samples": 1,
+                "gini": 0.444,
+                "samples": 2,
                 "value": [
                   0,
                   1,
-                  0
+                  1
                 ],
                 "class": 1
               },
               "right": {
                 "type": "leaf",
                 "gini": 0.0,
-                "samples": 15,
+                "samples": 4,
                 "value": [
                   0,
                   0,
-                  15
+                  4
                 ],
                 "class": 2
               }
+            },
+            "right": {
+              "type": "leaf",
+              "gini": 0.0,
+              "samples": 22,
+              "value": [
+                0,
+                0,
+                22
+              ],
+              "class": 2
             }
           }
         }
@@ -165,7 +188,7 @@
       "weight": 1,
       "root": {
         "type": "node",
-        "feature": "petal width",
+        "feature": "petal width (cm)",
         "threshold": 0.8,
         "gini": 0.657,
         "samples": 100,
@@ -187,7 +210,7 @@
         },
         "right": {
           "type": "node",
-          "feature": "petal width",
+          "feature": "petal width (cm)",
           "threshold": 1.75,
           "gini": 0.482,
           "samples": 67,
@@ -198,8 +221,8 @@
           ],
           "left": {
             "type": "node",
-            "feature": "petal length",
-            "threshold": 4.95,
+            "feature": "petal width (cm)",
+            "threshold": 1.55,
             "gini": 0.14,
             "samples": 39,
             "value": [
@@ -208,19 +231,42 @@
               3
             ],
             "left": {
-              "type": "leaf",
-              "gini": 0.0,
+              "type": "node",
+              "feature": "petal width (cm)",
+              "threshold": 1.45,
+              "gini": 0.067,
               "samples": 35,
               "value": [
                 0,
-                35,
-                0
+                34,
+                1
               ],
-              "class": 1
+              "left": {
+                "type": "leaf",
+                "gini": 0.0,
+                "samples": 27,
+                "value": [
+                  0,
+                  27,
+                  0
+                ],
+                "class": 1
+              },
+              "right": {
+                "type": "leaf",
+                "gini": 0.26,
+                "samples": 8,
+                "value": [
+                  0,
+                  7,
+                  1
+                ],
+                "class": 1
+              }
             },
             "right": {
               "type": "node",
-              "feature": "petal length",
+              "feature": "petal length (cm)",
               "threshold": 5.45,
               "gini": 0.469,
               "samples": 4,
@@ -231,12 +277,12 @@
               ],
               "left": {
                 "type": "leaf",
-                "gini": 0.48,
+                "gini": 0.0,
                 "samples": 3,
                 "value": [
                   0,
-                  2,
-                  1
+                  3,
+                  0
                 ],
                 "class": 1
               },
@@ -255,7 +301,7 @@
           },
           "right": {
             "type": "node",
-            "feature": "petal width",
+            "feature": "petal width (cm)",
             "threshold": 1.9,
             "gini": 0.051,
             "samples": 28,
@@ -266,7 +312,7 @@
             ],
             "left": {
               "type": "node",
-              "feature": "petal length",
+              "feature": "petal length (cm)",
               "threshold": 4.85,
               "gini": 0.142,
               "samples": 8,
@@ -318,8 +364,8 @@
       "weight": 1,
       "root": {
         "type": "node",
-        "feature": "sepal length",
-        "threshold": 5.55,
+        "feature": "petal width (cm)",
+        "threshold": 0.8,
         "gini": 0.666,
         "samples": 98,
         "value": [
@@ -328,113 +374,67 @@
           35
         ],
         "left": {
-          "type": "node",
-          "feature": "petal width",
-          "threshold": 0.8,
-          "gini": 0.338,
-          "samples": 40,
+          "type": "leaf",
+          "gini": 0.0,
+          "samples": 31,
           "value": [
-            32,
-            8,
-            1
+            31,
+            0,
+            0
+          ],
+          "class": 0
+        },
+        "right": {
+          "type": "node",
+          "feature": "petal width (cm)",
+          "threshold": 1.55,
+          "gini": 0.498,
+          "samples": 67,
+          "value": [
+            0,
+            31,
+            36
           ],
           "left": {
-            "type": "leaf",
-            "gini": 0.0,
-            "samples": 29,
-            "value": [
-              29,
-              0,
-              0
-            ],
-            "class": 0
-          },
-          "right": {
             "type": "node",
-            "feature": "petal width",
-            "threshold": 1.6,
-            "gini": 0.142,
-            "samples": 11,
+            "feature": "petal width (cm)",
+            "threshold": 1.45,
+            "gini": 0.043,
+            "samples": 32,
             "value": [
               0,
-              10,
+              31,
               1
             ],
             "left": {
               "type": "leaf",
               "gini": 0.0,
-              "samples": 10,
+              "samples": 25,
               "value": [
                 0,
-                10,
+                25,
                 0
               ],
               "class": 1
             },
             "right": {
-              "type": "leaf",
-              "gini": 0.0,
-              "samples": 1,
-              "value": [
-                0,
-                0,
-                1
-              ],
-              "class": 2
-            }
-          }
-        },
-        "right": {
-          "type": "node",
-          "feature": "petal width",
-          "threshold": 1.55,
-          "gini": 0.501,
-          "samples": 58,
-          "value": [
-            1,
-            22,
-            34
-          ],
-          "left": {
-            "type": "node",
-            "feature": "petal width",
-            "threshold": 0.75,
-            "gini": 0.16,
-            "samples": 24,
-            "value": [
-              1,
-              22,
-              1
-            ],
-            "left": {
-              "type": "leaf",
-              "gini": 0.0,
-              "samples": 2,
-              "value": [
-                2,
-                0,
-                0
-              ],
-              "class": 0
-            },
-            "right": {
               "type": "node",
-              "feature": "petal length",
+              "feature": "petal length (cm)",
               "threshold": 5.0,
-              "gini": 0.059,
-              "samples": 22,
+              "gini": 0.18,
+              "samples": 7,
               "value": [
                 0,
-                21,
+                6,
                 1
               ],
               "left": {
                 "type": "leaf",
                 "gini": 0.0,
-                "samples": 21,
+                "samples": 6,
                 "value": [
                   0,
-                  21,
+                  6,
                   0
                 ],
                 "class": 1
@@ -454,59 +454,59 @@
           },
           "right": {
             "type": "node",
-            "feature": "petal length",
-            "threshold": 4.65,
-            "gini": 0.073,
-            "samples": 34,
+            "feature": "petal width (cm)",
+            "threshold": 1.65,
+            "gini": 0.071,
+            "samples": 35,
             "value": [
               0,
               1,
-              33
+              34
             ],
             "left": {
-              "type": "leaf",
-              "gini": 0.0,
-              "samples": 1,
-              "value": [
-                0,
-                1,
-                0
-              ],
-              "class": 1
-            },
-            "right": {
               "type": "node",
-              "feature": "petal width",
-              "threshold": 1.7,
-              "gini": 0.038,
-              "samples": 33,
+              "feature": "petal length (cm)",
+              "threshold": 5.45,
+              "gini": 0.48,
+              "samples": 3,
               "value": [
                 0,
                 1,
-                32
+                2
               ],
               "left": {
                 "type": "leaf",
-                "gini": 0.375,
+                "gini": 0.0,
                 "samples": 2,
                 "value": [
                   0,
-                  0,
-                  2
+                  2,
+                  0
                 ],
-                "class": 2
+                "class": 1
               },
               "right": {
                 "type": "leaf",
                 "gini": 0.0,
-                "samples": 31,
+                "samples": 1,
                 "value": [
                   0,
                   0,
-                  31
+                  1
                 ],
                 "class": 2
               }
+            },
+            "right": {
+              "type": "leaf",
+              "gini": 0.0,
+              "samples": 32,
+              "value": [
+                0,
+                0,
+                32
+              ],
+              "class": 2
             }
           }
         }
@@ -517,8 +517,8 @@
       "weight": 1,
       "root": {
         "type": "node",
-        "feature": "sepal length",
-        "threshold": 5.45,
+        "feature": "petal length (cm)",
+        "threshold": 2.45,
         "gini": 0.661,
         "samples": 96,
         "value": [
@@ -527,68 +527,79 @@
           30
         ],
         "left": {
-          "type": "node",
-          "feature": "sepal width",
-          "threshold": 2.8,
-          "gini": 0.351,
-          "samples": 34,
+          "type": "leaf",
+          "gini": 0.0,
+          "samples": 32,
           "value": [
-            27,
-            5,
-            2
+            32,
+            0,
+            0
+          ],
+          "class": 0
+        },
+        "right": {
+          "type": "node",
+          "feature": "petal width (cm)",
+          "threshold": 1.65,
+          "gini": 0.494,
+          "samples": 64,
+          "value": [
+            0,
+            36,
+            28
           ],
           "left": {
             "type": "node",
-            "feature": "sepal width",
-            "threshold": 2.45,
-            "gini": 0.397,
-            "samples": 5,
+            "feature": "petal width (cm)",
+            "threshold": 1.45,
+            "gini": 0.033,
+            "samples": 36,
             "value": [
               0,
-              4,
+              35,
               1
             ],
             "left": {
               "type": "leaf",
               "gini": 0.0,
-              "samples": 2,
+              "samples": 26,
               "value": [
                 0,
-                2,
+                26,
                 0
               ],
               "class": 1
             },
             "right": {
               "type": "node",
-              "feature": "sepal length",
-              "threshold": 5.0,
-              "gini": 0.5,
-              "samples": 3,
+              "feature": "petal length (cm)",
+              "threshold": 4.95,
+              "gini": 0.133,
+              "samples": 10,
               "value": [
                 0,
-                2,
-                2
+                9,
+                1
               ],
               "left": {
                 "type": "leaf",
                 "gini": 0.0,
-                "samples": 1,
+                "samples": 8,
                 "value": [
                   0,
-                  0,
-                  1
+                  8,
+                  0
                 ],
-                "class": 2
+                "class": 1
               },
               "right": {
                 "type": "leaf",
-                "gini": 0.0,
+                "gini": 0.5,
                 "samples": 2,
                 "value": [
                   0,
-                  2,
-                  0
+                  1,
+                  1
                 ],
                 "class": 1
               }
@@ -597,116 +608,13 @@
           "right": {
             "type": "leaf",
             "gini": 0.0,
-            "samples": 29,
-            "value": [
-              29,
-              0,
-              0
-            ],
-            "class": 0
-          }
-        },
-        "right": {
-          "type": "node",
-          "feature": "sepal length",
-          "threshold": 6.25,
-          "gini": 0.527,
-          "samples": 62,
-          "value": [
-            2,
-            32,
-            28
-          ],
-          "left": {
-            "type": "node",
-            "feature": "petal width",
-            "threshold": 1.7,
-            "gini": 0.37,
-            "samples": 34,
-            "value": [
-              2,
-              26,
-              6
-            ],
-            "left": {
-              "type": "node",
-              "feature": "petal width",
-              "threshold": 0.6,
-              "gini": 0.165,
-              "samples": 27,
-              "value": [
-                2,
-                25,
-                1
-              ],
-              "left": {
-                "type": "leaf",
-                "gini": 0.0,
-                "samples": 3,
-                "value": [
-                  3,
-                  0,
-                  0
-                ],
-                "class": 0
-              },
-              "right": {
-                "type": "leaf",
-                "gini": 0.046,
-                "samples": 24,
-                "value": [
-                  0,
-                  23,
-                  1
-                ],
-                "class": 1
-              }
-            },
-            "right": {
-              "type": "leaf",
-              "gini": 0.0,
-              "samples": 7,
-              "value": [
-                0,
-                0,
-                7
-              ],
-              "class": 2
-            }
-          },
-          "right": {
-            "type": "node",
-            "feature": "petal width",
-            "threshold": 1.65,
-            "gini": 0.346,
             "samples": 28,
             "value": [
               0,
-              6,
-              22
+              0,
+              28
             ],
-            "left": {
-              "type": "leaf",
-              "gini": 0.0,
-              "samples": 8,
-              "value": [
-                0,
-                8,
-                0
-              ],
-              "class": 1
-            },
-            "right": {
-              "type": "leaf",
-              "gini": 0.0,
-              "samples": 20,
-              "value": [
-                0,
-                0,
-                20
-              ],
-              "class": 2
-            }
+            "class": 2
           }
         }
       }
@@ -716,7 +624,7 @@
       "weight": 1,
       "root": {
         "type": "node",
-        "feature": "petal width",
+        "feature": "petal width (cm)",
         "threshold": 0.7,
         "gini": 0.656,
         "samples": 95,
@@ -738,8 +646,8 @@
         },
         "right": {
           "type": "node",
-          "feature": "petal width",
-          "threshold": 1.75,
+          "feature": "petal length (cm)",
+          "threshold": 5.05,
           "gini": 0.476,
           "samples": 64,
           "value": [
@@ -749,53 +657,76 @@
           ],
           "left": {
             "type": "node",
-            "feature": "petal length",
-            "threshold": 5.05,
-            "gini": 0.163,
+            "feature": "petal length (cm)",
+            "threshold": 4.75,
+            "gini": 0.144,
             "samples": 41,
             "value": [
               0,
-              37,
-              4
+              38,
+              3
             ],
             "left": {
-              "type": "node",
-              "feature": "petal length",
-              "threshold": 4.95,
-              "gini": 0.033,
-              "samples": 37,
+              "type": "leaf",
+              "gini": 0.0,
+              "samples": 32,
               "value": [
                 0,
-                36,
-                1
+                32,
+                0
+              ],
+              "class": 1
+            },
+            "right": {
+              "type": "node",
+              "feature": "petal width (cm)",
+              "threshold": 1.75,
+              "gini": 0.459,
+              "samples": 9,
+              "value": [
+                0,
+                6,
+                3
               ],
               "left": {
                 "type": "leaf",
-                "gini": 0.0,
-                "samples": 35,
+                "gini": 0.18,
+                "samples": 5,
                 "value": [
                   0,
-                  35,
+                  4,
                   0
                 ],
                 "class": 1
               },
               "right": {
                 "type": "leaf",
-                "gini": 0.375,
-                "samples": 2,
+                "gini": 0.0,
+                "samples": 4,
                 "value": [
                   0,
-                  2,
-                  0
+                  0,
+                  4
                 ],
-                "class": 1
+                "class": 2
               }
-            },
-            "right": {
+            }
+          },
+          "right": {
+            "type": "node",
+            "feature": "petal width (cm)",
+            "threshold": 1.7,
+            "gini": 0.105,
+            "samples": 23,
+            "value": [
+              0,
+              1,
+              22
+            ],
+            "left": {
               "type": "node",
-              "feature": "petal width",
-              "threshold": 1.55,
+              "feature": "petal length (cm)",
+              "threshold": 5.35,
               "gini": 0.408,
               "samples": 4,
               "value": [
@@ -805,6 +736,17 @@
               ],
               "left": {
                 "type": "leaf",
+                "gini": 0.5,
+                "samples": 2,
+                "value": [
+                  0,
+                  1,
+                  1
+                ],
+                "class": 1
+              },
+              "right": {
+                "type": "leaf",
                 "gini": 0.0,
                 "samples": 2,
                 "value": [
@@ -813,33 +755,778 @@
                   2
                 ],
                 "class": 2
-              },
-              "right": {
-                "type": "leaf",
-                "gini": 0.444,
-                "samples": 2,
-                "value": [
-                  0,
-                  1,
-                  1
-                ],
-                "class": 1
               }
+            },
+            "right": {
+              "type": "leaf",
+              "gini": 0.0,
+              "samples": 19,
+              "value": [
+                0,
+                0,
+                19
+              ],
+              "class": 2
             }
-          },
-          "right": {
-            "type": "leaf",
-            "gini": 0.0,
-            "samples": 23,
-            "value": [
-              0,
-              0,
-              23
-            ],
-            "class": 2
           }
         }
       }
+    }
+  ],
+  "features": [
+    "petal length (cm)",
+    "petal width (cm)"
+  ],
+  "data": [
+    {
+      "petal length (cm)": 1.4,
+      "petal width (cm)": 0.2,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.4,
+      "petal width (cm)": 0.2,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.3,
+      "petal width (cm)": 0.2,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.5,
+      "petal width (cm)": 0.2,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.4,
+      "petal width (cm)": 0.2,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.7,
+      "petal width (cm)": 0.4,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.4,
+      "petal width (cm)": 0.3,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.5,
+      "petal width (cm)": 0.2,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.4,
+      "petal width (cm)": 0.2,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.5,
+      "petal width (cm)": 0.1,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.5,
+      "petal width (cm)": 0.2,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.6,
+      "petal width (cm)": 0.2,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.4,
+      "petal width (cm)": 0.1,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.1,
+      "petal width (cm)": 0.1,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.2,
+      "petal width (cm)": 0.2,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.5,
+      "petal width (cm)": 0.4,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.3,
+      "petal width (cm)": 0.4,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.4,
+      "petal width (cm)": 0.3,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.7,
+      "petal width (cm)": 0.3,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.5,
+      "petal width (cm)": 0.3,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.7,
+      "petal width (cm)": 0.2,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.5,
+      "petal width (cm)": 0.4,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.0,
+      "petal width (cm)": 0.2,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.7,
+      "petal width (cm)": 0.5,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.9,
+      "petal width (cm)": 0.2,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.6,
+      "petal width (cm)": 0.2,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.6,
+      "petal width (cm)": 0.4,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.5,
+      "petal width (cm)": 0.2,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.4,
+      "petal width (cm)": 0.2,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.6,
+      "petal width (cm)": 0.2,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.6,
+      "petal width (cm)": 0.2,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.5,
+      "petal width (cm)": 0.4,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.5,
+      "petal width (cm)": 0.1,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.4,
+      "petal width (cm)": 0.2,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.5,
+      "petal width (cm)": 0.2,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.2,
+      "petal width (cm)": 0.2,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.3,
+      "petal width (cm)": 0.2,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.4,
+      "petal width (cm)": 0.1,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.3,
+      "petal width (cm)": 0.2,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.5,
+      "petal width (cm)": 0.2,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.3,
+      "petal width (cm)": 0.3,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.3,
+      "petal width (cm)": 0.3,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.3,
+      "petal width (cm)": 0.2,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.6,
+      "petal width (cm)": 0.6,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.9,
+      "petal width (cm)": 0.4,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.4,
+      "petal width (cm)": 0.3,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.6,
+      "petal width (cm)": 0.2,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.4,
+      "petal width (cm)": 0.2,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.5,
+      "petal width (cm)": 0.2,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 1.4,
+      "petal width (cm)": 0.2,
+      "class": 0
+    },
+    {
+      "petal length (cm)": 4.7,
+      "petal width (cm)": 1.4,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.5,
+      "petal width (cm)": 1.5,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.9,
+      "petal width (cm)": 1.5,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.0,
+      "petal width (cm)": 1.3,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.6,
+      "petal width (cm)": 1.5,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.5,
+      "petal width (cm)": 1.3,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.7,
+      "petal width (cm)": 1.6,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 3.3,
+      "petal width (cm)": 1.0,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.6,
+      "petal width (cm)": 1.3,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 3.9,
+      "petal width (cm)": 1.4,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 3.5,
+      "petal width (cm)": 1.0,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.2,
+      "petal width (cm)": 1.5,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.0,
+      "petal width (cm)": 1.0,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.7,
+      "petal width (cm)": 1.4,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 3.6,
+      "petal width (cm)": 1.3,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.4,
+      "petal width (cm)": 1.4,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.5,
+      "petal width (cm)": 1.5,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.1,
+      "petal width (cm)": 1.0,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.5,
+      "petal width (cm)": 1.5,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 3.9,
+      "petal width (cm)": 1.1,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.8,
+      "petal width (cm)": 1.8,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.0,
+      "petal width (cm)": 1.3,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.9,
+      "petal width (cm)": 1.5,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.7,
+      "petal width (cm)": 1.2,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.3,
+      "petal width (cm)": 1.3,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.4,
+      "petal width (cm)": 1.4,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.8,
+      "petal width (cm)": 1.4,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 5.0,
+      "petal width (cm)": 1.7,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.5,
+      "petal width (cm)": 1.5,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 3.5,
+      "petal width (cm)": 1.0,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 3.8,
+      "petal width (cm)": 1.1,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 3.7,
+      "petal width (cm)": 1.0,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 3.9,
+      "petal width (cm)": 1.2,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 5.1,
+      "petal width (cm)": 1.6,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.5,
+      "petal width (cm)": 1.5,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.5,
+      "petal width (cm)": 1.6,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.7,
+      "petal width (cm)": 1.5,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.4,
+      "petal width (cm)": 1.3,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.1,
+      "petal width (cm)": 1.3,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.0,
+      "petal width (cm)": 1.3,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.4,
+      "petal width (cm)": 1.2,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.6,
+      "petal width (cm)": 1.4,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.0,
+      "petal width (cm)": 1.2,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 3.3,
+      "petal width (cm)": 1.0,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.2,
+      "petal width (cm)": 1.3,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.2,
+      "petal width (cm)": 1.2,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.2,
+      "petal width (cm)": 1.3,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.3,
+      "petal width (cm)": 1.3,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 3.0,
+      "petal width (cm)": 1.1,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 4.1,
+      "petal width (cm)": 1.3,
+      "class": 1
+    },
+    {
+      "petal length (cm)": 6.0,
+      "petal width (cm)": 2.5,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.1,
+      "petal width (cm)": 1.9,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.9,
+      "petal width (cm)": 2.1,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.6,
+      "petal width (cm)": 1.8,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.8,
+      "petal width (cm)": 2.2,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 6.6,
+      "petal width (cm)": 2.1,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 4.5,
+      "petal width (cm)": 1.7,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 6.3,
+      "petal width (cm)": 1.8,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.8,
+      "petal width (cm)": 1.8,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 6.1,
+      "petal width (cm)": 2.5,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.1,
+      "petal width (cm)": 2.0,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.3,
+      "petal width (cm)": 1.9,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.5,
+      "petal width (cm)": 2.1,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.0,
+      "petal width (cm)": 2.0,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.1,
+      "petal width (cm)": 2.4,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.3,
+      "petal width (cm)": 2.3,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.5,
+      "petal width (cm)": 1.8,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 6.7,
+      "petal width (cm)": 2.2,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 6.9,
+      "petal width (cm)": 2.3,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.0,
+      "petal width (cm)": 1.5,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.7,
+      "petal width (cm)": 2.3,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 4.9,
+      "petal width (cm)": 2.0,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 6.7,
+      "petal width (cm)": 2.0,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 4.9,
+      "petal width (cm)": 1.8,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.7,
+      "petal width (cm)": 2.1,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 6.0,
+      "petal width (cm)": 1.8,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 4.8,
+      "petal width (cm)": 1.8,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 4.9,
+      "petal width (cm)": 1.8,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.6,
+      "petal width (cm)": 2.1,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.8,
+      "petal width (cm)": 1.6,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 6.1,
+      "petal width (cm)": 1.9,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 6.4,
+      "petal width (cm)": 2.0,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.6,
+      "petal width (cm)": 2.2,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.1,
+      "petal width (cm)": 1.5,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.6,
+      "petal width (cm)": 1.4,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 6.1,
+      "petal width (cm)": 2.3,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.6,
+      "petal width (cm)": 2.4,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.5,
+      "petal width (cm)": 1.8,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 4.8,
+      "petal width (cm)": 1.8,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.4,
+      "petal width (cm)": 2.1,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.6,
+      "petal width (cm)": 2.4,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.1,
+      "petal width (cm)": 2.3,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.1,
+      "petal width (cm)": 1.9,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.9,
+      "petal width (cm)": 2.3,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.7,
+      "petal width (cm)": 2.5,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.2,
+      "petal width (cm)": 2.3,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.0,
+      "petal width (cm)": 1.9,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.2,
+      "petal width (cm)": 2.0,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.4,
+      "petal width (cm)": 2.3,
+      "class": 2
+    },
+    {
+      "petal length (cm)": 5.1,
+      "petal width (cm)": 1.8,
+      "class": 2
     }
   ]
 }

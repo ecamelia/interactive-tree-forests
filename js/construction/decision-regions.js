@@ -1,6 +1,8 @@
 // Dessin des regions de decision de l'arbre courant.
 
-function drawDecisionRegions(tree, activePath) {
+let lastForestDecisionMaps = null;
+
+function drawDecisionRegions(tree, activePath, model) {
     regionLayer.selectAll("*").remove();
 
     const margin = {
@@ -20,10 +22,17 @@ function drawDecisionRegions(tree, activePath) {
         .domain(yDomain)
         .range([margin.top + innerHeight, margin.top]);
 
-    drawRegionBackgrounds(tree, xScale, yScale, xDomain, yDomain);
+    if (isForestModel(model)) {
+        drawForestDecisionMap(model, xScale, yScale, xDomain, yDomain);
+    } else {
+        drawRegionBackgrounds(tree, xScale, yScale, xDomain, yDomain);
+    }
     drawRegionAxes(xScale, yScale, margin, innerWidth, innerHeight);
-    drawRegionSplitLines(tree, activePath, xScale, yScale, xDomain, yDomain);
+    if (!isForestModel(model)) {
+        drawRegionSplitLines(tree, activePath, xScale, yScale, xDomain, yDomain);
+    }
     drawRegionPoints(xScale, yScale);
+    drawRegionLegend(model);
 }
 
 function drawRegionBackgrounds(tree, xScale, yScale, xDomain, yDomain) {
@@ -54,6 +63,106 @@ function drawRegionBackgrounds(tree, xScale, yScale, xDomain, yDomain) {
         .attr("fill", function(region) {
             return getRegionColor(region.className);
         });
+}
+
+function drawForestDecisionMap(forest, xScale, yScale, xDomain, yDomain) {
+    lastForestDecisionMaps = createForestDecisionMaps(forest, xDomain, yDomain);
+    window.lastForestDecisionMaps = lastForestDecisionMaps;
+
+    regionLayer.selectAll(".forest-vote-cell")
+        .data(lastForestDecisionMaps.forestMap)
+        .enter()
+        .append("rect")
+        .attr("class", "forest-vote-cell")
+        .attr("x", function(cell) {
+            return xScale(cell.xMin);
+        })
+        .attr("y", function(cell) {
+            return yScale(cell.yMax);
+        })
+        .attr("width", function(cell) {
+            return Math.max(0, xScale(cell.xMax) - xScale(cell.xMin));
+        })
+        .attr("height", function(cell) {
+            return Math.max(0, yScale(cell.yMin) - yScale(cell.yMax));
+        })
+        .attr("fill", function(cell) {
+            return getRegionColor(cell.className);
+        })
+        .attr("fill-opacity", function(cell) {
+            return 0.2 + cell.confidence * 0.5;
+        });
+}
+
+function createForestDecisionMaps(forest, xDomain, yDomain) {
+    const grid = createDecisionGrid(xDomain, yDomain, 80);
+    const treeMaps = forest.trees.map(function(tree) {
+        return createTreeDecisionMap(tree.root || tree, grid);
+    });
+    const forestMap = createForestVoteMap(grid, treeMaps);
+
+    return {
+        grid: grid,
+        treeMaps: treeMaps,
+        forestMap: forestMap
+    };
+}
+
+function createDecisionGrid(xDomain, yDomain, gridSize) {
+    const cells = [];
+    const xStep = (xDomain[1] - xDomain[0]) / gridSize;
+    const yStep = (yDomain[1] - yDomain[0]) / gridSize;
+
+    for (let xIndex = 0; xIndex < gridSize; xIndex += 1) {
+        for (let yIndex = 0; yIndex < gridSize; yIndex += 1) {
+            const xMin = xDomain[0] + xIndex * xStep;
+            const yMin = yDomain[0] + yIndex * yStep;
+
+            cells.push({
+                xMin: xMin,
+                xMax: xMin + xStep,
+                yMin: yMin,
+                yMax: yMin + yStep,
+                x: xMin + xStep / 2,
+                y: yMin + yStep / 2
+            });
+        }
+    }
+
+    return cells;
+}
+
+function createTreeDecisionMap(tree, grid) {
+    return grid.map(function(cell) {
+        const observation = {};
+
+        observation[regionFeatureNames[0]] = cell.x;
+        observation[regionFeatureNames[1]] = cell.y;
+
+        return {
+            className: predictTreeClass(tree, observation)
+        };
+    });
+}
+
+function createForestVoteMap(grid, treeMaps) {
+    return grid.map(function(cell, cellIndex) {
+        const votes = {};
+
+        treeMaps.forEach(function(treeMap) {
+            const className = treeMap[cellIndex].className;
+            votes[className] = (votes[className] || 0) + 1;
+        });
+
+        const majorityClass = getMajorityClass(votes);
+
+        return {
+            ...cell,
+            className: majorityClass,
+            confidence: votes[majorityClass] / treeMaps.length,
+            votes: votes
+        };
+    });
 }
 
 function drawRegionAxes(xScale, yScale, margin, innerWidth, innerHeight) {
@@ -185,7 +294,7 @@ function isSupportedRegionSplit(node) {
 }
 
 function getRegionFeatureNames(data, tree) {
-    const treeFeatures = getTreeFeatureNames(tree);
+    const treeFeatures = isForestModel(data) ? getModelFeatureNames(data) : getTreeFeatureNames(tree);
     const dataFeatures = Array.isArray(data.features) ? data.features : getDataFeatureNames(data);
     const dataFeaturesInTree = dataFeatures.filter(function(featureName) {
         return treeFeatures.includes(featureName);
@@ -204,6 +313,16 @@ function getRegionFeatureNames(data, tree) {
     }
 
     return ["x1", "x2"];
+}
+
+function getModelFeatureNames(model) {
+    const features = [];
+
+    getModelRoots(model).forEach(function(root) {
+        visitTreeForFeatures(root, features);
+    });
+
+    return features;
 }
 
 function getTreeFeatureNames(tree) {
@@ -246,7 +365,7 @@ function getRegionPoints(data, tree) {
         }
     }
 
-    return createDemoPoints(tree);
+    return createDemoPoints(isForestModel(data) ? data : tree);
 }
 
 function normalizeRegionPoint(point) {
@@ -286,12 +405,14 @@ function getRegionDomain(points, propertyName) {
     return [minValue - padding, maxValue + padding];
 }
 
-function createDemoPoints(tree) {
+function createDemoPoints(model) {
     const points = [];
+    const xDomain = getDemoFeatureDomain(model, regionFeatureNames[0]);
+    const yDomain = getDemoFeatureDomain(model, regionFeatureNames[1]);
 
     for (let index = 0; index < 120; index += 1) {
-        const x1 = seededRandom(index * 2 + 1);
-        const x2 = seededRandom(index * 2 + 2);
+        const x1 = interpolateDomain(xDomain, seededRandom(index * 2 + 1));
+        const x2 = interpolateDomain(yDomain, seededRandom(index * 2 + 2));
         const observation = {};
 
         observation[regionFeatureNames[0]] = x1;
@@ -300,11 +421,65 @@ function createDemoPoints(tree) {
         points.push({
             x1: x1,
             x2: x2,
-            class: predictTreeClass(tree, observation)
+            class: predictRegionModelClass(model, observation)
         });
     }
 
     return points;
+}
+
+function getDemoFeatureDomain(model, featureName) {
+    const thresholds = getModelFeatureThresholds(model, featureName);
+
+    if (!thresholds.length) {
+        return [0, 1];
+    }
+
+    const minThreshold = d3.min(thresholds);
+    const maxThreshold = d3.max(thresholds);
+    const range = Math.max(0.1, maxThreshold - minThreshold);
+    const padding = range * 0.35;
+    const minValue = minThreshold >= 0 ? 0 : minThreshold - padding;
+    const maxValue = maxThreshold + padding;
+
+    return minValue === maxValue ? [minValue - 1, maxValue + 1] : [minValue, maxValue];
+}
+
+function getModelFeatureThresholds(model, featureName) {
+    const thresholds = [];
+
+    getModelRoots(model).forEach(function(root) {
+        collectFeatureThresholds(root, featureName, thresholds);
+    });
+
+    return thresholds;
+}
+
+function getModelRoots(model) {
+    if (isForestModel(model)) {
+        return model.trees.map(function(tree) {
+            return tree.root || tree;
+        });
+    }
+
+    return [model];
+}
+
+function collectFeatureThresholds(node, featureName, thresholds) {
+    if (!node || (!node.left && !node.right)) {
+        return;
+    }
+
+    if (node.feature === featureName && Number.isFinite(Number(node.threshold))) {
+        thresholds.push(Number(node.threshold));
+    }
+
+    collectFeatureThresholds(node.left, featureName, thresholds);
+    collectFeatureThresholds(node.right, featureName, thresholds);
+}
+
+function interpolateDomain(domain, ratio) {
+    return domain[0] + ratio * (domain[1] - domain[0]);
 }
 
 function seededRandom(seed) {
@@ -328,6 +503,36 @@ function predictTreeClass(tree, observation) {
     return getMostLikelyClass(node || tree);
 }
 
+function predictRegionModelClass(model, observation) {
+    if (isForestModel(model)) {
+        return predictForestClass(model, observation);
+    }
+
+    return predictTreeClass(model, observation);
+}
+
+function predictForestClass(forest, observation) {
+    const votes = {};
+
+    forest.trees.forEach(function(tree) {
+        const root = tree.root || tree;
+        const predictedClass = predictTreeClass(root, observation);
+        votes[predictedClass] = (votes[predictedClass] || 0) + 1;
+    });
+
+    return getMajorityClass(votes);
+}
+
+function getMajorityClass(votes) {
+    return Number(Object.keys(votes).reduce(function(bestClass, currentClass) {
+        if (votes[currentClass] === votes[bestClass]) {
+            return Number(currentClass) < Number(bestClass) ? currentClass : bestClass;
+        }
+
+        return votes[currentClass] > votes[bestClass] ? currentClass : bestClass;
+    }));
+}
+
 function getMostLikelyClass(node) {
     if (!node) {
         return 0;
@@ -349,4 +554,41 @@ function getMostLikelyClass(node) {
 function getRegionColor(className) {
     const colors = ["#a6cee3", "#fb9a99", "#c7b9ff"];
     return colors[className] || "#dddddd";
+}
+
+function drawRegionLegend(model) {
+    const legend = document.getElementById("region-legend");
+    legend.innerHTML = "";
+
+    const classes = getRegionLegendClasses(model);
+
+    classes.forEach(function(className){
+        const item = document.createElement("span");
+        const colorBox = document.createElement("span");
+
+        colorBox.className = "legend-swatch class-" + className;
+
+        item.appendChild(colorBox);
+        item.append("Class " + className);
+
+        legend.appendChild(item);
+    })
+}
+
+function getRegionLegendClasses(model) {
+    if (model && Array.isArray(model.classes) && model.classes.length) {
+        return model.classes.slice().sort(function(a, b) {
+            return Number(a) - Number(b);
+        });
+    }
+
+    return Array.from(new Set(demoPoints.map(function(point) {
+        return point.class;
+    }))).sort(function(a, b) {
+        return Number(a) - Number(b);
+    });
+}
+
+function isForestModel(model) {
+    return model && Array.isArray(model.trees) && model.trees.length;
 }

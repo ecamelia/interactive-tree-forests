@@ -32,7 +32,9 @@ const observationPanel = document.getElementById("observation-panel");
 const observationInputs = document.getElementById("observation-inputs");
 const runObservationButton = document.getElementById("run-observation-button");
 const clearObservationButton = document.getElementById("clear-observation-button");
+const testObservationsFileInput = document.getElementById("test-observations-file-input");
 const observationResult = document.getElementById("observation-result");
+const testObservationResults = document.getElementById("test-observation-results");
 
 // Choix du niveau d'application des options d'affichage.
 const optionScopeInputs = {
@@ -53,14 +55,14 @@ const optionInputs = {
 // Ils peuvent etre agrandis automatiquement si l'arbre est plus large.
 const detailConfig = {
     nodeShape: "box",
-    boxWidth: 145,
-    boxHeight: 76,
-    layoutWidth: 560,
-    layoutHeight: 360,
-    translateX: 130,
-    translateY: 60,
-    textStartY: -30,
-    textStep: 16
+    boxWidth: 118,
+    boxHeight: 62,
+    layoutWidth: 460,
+    layoutHeight: 300,
+    translateX: 95,
+    translateY: 45,
+    textStartY: -24,
+    textStep: 13
 };
 
 // Reglages de depart pour les arbres d'une foret.
@@ -68,12 +70,12 @@ const detailConfig = {
 // affiches cote a cote.
 const overviewConfig = {
     nodeShape: "box",
-    boxWidth: 145,
-    boxHeight: 76,
-    layoutWidth: 620,
-    layoutHeight: 420,
-    textStartY: -30,
-    textStep: 16
+    boxWidth: 118,
+    boxHeight: 62,
+    layoutWidth: 520,
+    layoutHeight: 340,
+    textStartY: -24,
+    textStep: 13
 };
 
 // Affichage par defaut quand aucune personnalisation n'est appliquee

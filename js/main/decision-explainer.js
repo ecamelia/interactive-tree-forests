@@ -1,10 +1,12 @@
 // Outils d'explication : tester une observation et colorer le chemin suivi.
 function setupObservationControls() {
     runObservationButton.addEventListener("click", runObservationExplanation);
+    testObservationsFileInput.addEventListener("change", loadTestObservationsFile);
 
     clearObservationButton.addEventListener("click", function() {
         clearPath();
         observationResult.textContent = "Chemin effacé.";
+        testObservationResults.innerHTML = "";
         redrawCurrentView();
     });
 }
@@ -13,6 +15,7 @@ function updateObservationPanel() {
     const roots = getCurrentRootsForFeatures();
 
     observationInputs.innerHTML = "";
+    testObservationResults.innerHTML = "";
 
     if (!roots.length) {
         observationPanel.classList.add("is-disabled");
@@ -39,7 +42,7 @@ function createObservationInputs(featureNames) {
     });
 
     observationResult.textContent = featureNames.length
-        ? "Entrez une observation pour colorer son chemin."
+        ? "Entrez une observation ou chargez un fichier test."
         : "Aucune feature trouvée dans cet arbre.";
 }
 
@@ -91,6 +94,189 @@ function explainForestObservation(observation) {
     });
 
     observationResult.textContent = "Votes foret : " + formatVotes(votes);
+}
+
+function loadTestObservationsFile(event) {
+    const file = event.target.files[0];
+
+    if (!file) {
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function(loadEvent) {
+        try {
+            const data = JSON.parse(loadEvent.target.result);
+            const observations = normalizeTestObservations(data);
+
+            if (!observations.length) {
+                observationResult.textContent = "Le fichier test ne contient aucune observation valide.";
+                return;
+            }
+
+            const results = observations.map(predictObservationFromCurrentModel);
+            observationResult.textContent = "Fichier test : " + results.length + " observations";
+            renderTestObservationResults(results);
+        } catch (error) {
+            console.error(error);
+            observationResult.textContent = "Erreur : fichier test JSON invalide.";
+            testObservationResults.innerHTML = "";
+        }
+    };
+
+    reader.readAsText(file);
+    event.target.value = "";
+}
+
+function normalizeTestObservations(data) {
+    const rows = Array.isArray(data)
+        ? data
+        : data.observations || data.tests || data.data || [];
+
+    return rows
+        .map(normalizeTestObservation)
+        .filter(Boolean);
+}
+
+function normalizeTestObservation(row, index) {
+    if (!row || typeof row !== "object") {
+        return null;
+    }
+
+    const observation = {};
+
+    getFeatureNames(getCurrentRootsForFeatures()).forEach(function(featureName) {
+        const value = Number(row[featureName]);
+
+        if (Number.isFinite(value)) {
+            observation[featureName] = value;
+        }
+    });
+
+    if (!Object.keys(observation).length || !hasAllFeatureValues(observation)) {
+        return null;
+    }
+
+    return {
+        index: Number.isFinite(Number(row.id)) ? row.id : index + 1,
+        observation: observation,
+        expectedClass: row.class !== undefined ? row.class : row.expected
+    };
+}
+
+function hasAllFeatureValues(observation) {
+    return getFeatureNames(getCurrentRootsForFeatures()).every(function(featureName) {
+        return observation[featureName] !== undefined;
+    });
+}
+
+function predictObservationFromCurrentModel(testCase) {
+    if (currentView === VIEW_TYPE.TREE) {
+        const prediction = predictTreeObservation(currentTree.root || currentTree, testCase.observation);
+
+        return {
+            ...testCase,
+            prediction: prediction
+        };
+    }
+
+    const votes = getForestVotes(testCase.observation);
+
+    return {
+        ...testCase,
+        prediction: getBestVoteClass(votes),
+        votes: votes
+    };
+}
+
+function predictTreeObservation(tree, observation) {
+    let currentNode = tree;
+
+    while (currentNode && currentNode.type !== "leaf") {
+        const featureValue = observation[currentNode.feature];
+        currentNode = featureValue <= currentNode.threshold ? currentNode.left : currentNode.right;
+    }
+
+    return currentNode ? currentNode.class : undefined;
+}
+
+function getForestVotes(observation) {
+    const votes = {};
+
+    currentForest.trees.forEach(function(tree) {
+        const prediction = predictTreeObservation(tree.root || tree, observation);
+        votes[prediction] = (votes[prediction] || 0) + 1;
+    });
+
+    return votes;
+}
+
+function getBestVoteClass(votes) {
+    return Object.keys(votes).reduce(function(bestClass, currentClass) {
+        if (votes[currentClass] === votes[bestClass]) {
+            return Number(currentClass) < Number(bestClass) ? currentClass : bestClass;
+        }
+
+        return votes[currentClass] > votes[bestClass] ? currentClass : bestClass;
+    });
+}
+
+function renderTestObservationResults(results) {
+    testObservationResults.innerHTML = "";
+
+    const table = document.createElement("table");
+    table.className = "test-results-table";
+
+    const header = document.createElement("thead");
+    header.innerHTML = "<tr><th>#</th><th>Prédit</th><th>Attendu</th><th>Statut</th><th>Votes</th></tr>";
+    table.appendChild(header);
+
+    const body = document.createElement("tbody");
+
+    results.forEach(function(result) {
+        const row = document.createElement("tr");
+        const isCorrect = result.expectedClass === undefined ||
+            String(result.prediction) === String(result.expectedClass);
+
+        row.className = isCorrect ? "is-correct" : "is-wrong";
+        row.innerHTML =
+            "<td>" + result.index + "</td>" +
+            "<td>Classe " + result.prediction + "</td>" +
+            "<td>" + formatExpectedClass(result.expectedClass) + "</td>" +
+            "<td>" + formatResultStatus(result.expectedClass, isCorrect) + "</td>" +
+            "<td>" + formatVoteBadges(result.votes) + "</td>";
+
+        body.appendChild(row);
+    });
+
+    table.appendChild(body);
+    testObservationResults.appendChild(table);
+}
+
+function formatExpectedClass(expectedClass) {
+    return expectedClass === undefined ? "-" : "Classe " + expectedClass;
+}
+
+function formatResultStatus(expectedClass, isCorrect) {
+    if (expectedClass === undefined) {
+        return "-";
+    }
+
+    return isCorrect ? "OK" : "Erreur";
+}
+
+function formatVoteBadges(votes) {
+    if (!votes) {
+        return "-";
+    }
+
+    return Object.keys(votes)
+        .sort()
+        .map(function(className) {
+            return "<span class=\"vote-badge\">C" + className + " : " + votes[className] + "</span>";
+        })
+        .join("");
 }
 
 function addDecisionPath(tree, observation, idPrefix) {

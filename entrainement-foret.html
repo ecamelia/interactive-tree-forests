@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>Entraînement interactif d'une forêt</title>
+    <link rel="stylesheet" href="css/style.css?v=75">
+</head>
+<body class="forest-training-page">
+    <header>
+        <div class="app-header-title">
+            <h1>Entraînement interactif d'une forêt</h1>
+            <span>Ajouter les arbres un par un et observer le vote collectif</span>
+        </div>
+        <nav class="top-nav" aria-label="Navigation principale">
+            <a href="index.html">Visualisation</a>
+            <a href="construction.html">Construction</a>
+            <a class="is-active" href="entrainement-foret.html">Entraînement forêt</a>
+        </nav>
+    </header>
+
+    <section class="training-playbar">
+        <button id="training-reset" class="training-icon-button" title="Recommencer">↺</button>
+        <button id="training-play" class="training-play-button" title="Lancer l'entraînement">▶</button>
+        <button id="training-step" class="training-icon-button" title="Ajouter un arbre">▸|</button>
+        <div class="training-counter">
+            <span>Arbres</span>
+            <strong id="training-epoch">0 / 12</strong>
+        </div>
+        <div class="training-counter">
+            <span>Accord moyen</span>
+            <strong id="training-agreement">-</strong>
+        </div>
+        <div class="training-counter">
+            <span>Exactitude</span>
+            <strong id="training-accuracy">-</strong>
+        </div>
+    </section>
+
+    <main class="training-layout">
+        <aside class="sidebar">
+            <section class="toolbar">
+                <h2>Données</h2>
+                <label>
+                    dataset
+                    <select id="training-dataset-select">
+                        <option value="moons">lunes</option>
+                        <option value="circles">cercles</option>
+                        <option value="diagonal">diagonale</option>
+                    </select>
+                </label>
+                <label>
+                    points
+                    <input type="number" id="training-point-count" min="40" max="400" step="20" value="160">
+                </label>
+                <label>
+                    bruit
+                    <input type="number" id="training-noise-input" min="0" max="0.5" step="0.02" value="0.08">
+                </label>
+                <button id="training-regenerate-data">Régénérer données</button>
+                <label class="file-button" for="training-json-file-input">Charger données JSON</label>
+                <input type="file" id="training-json-file-input" accept=".json,application/json">
+            </section>
+
+            <section class="toolbar">
+                <h2>Forêt</h2>
+                <label>
+                    arbres
+                    <input type="number" id="training-tree-count" min="1" max="80" step="1" value="12">
+                </label>
+                <label>
+                    profondeur
+                    <input type="number" id="training-max-depth" min="1" max="8" step="1" value="4">
+                </label>
+                <label>
+                    min samples
+                    <input type="number" id="training-min-samples" min="2" max="30" step="1" value="6">
+                </label>
+                <label>
+                    bootstrap
+                    <input type="number" id="training-bootstrap-ratio" min="0.4" max="1.5" step="0.1" value="1">
+                </label>
+                <button id="training-run">Calculer directement</button>
+            </section>
+
+            <section class="toolbar">
+                <h2>Résultat</h2>
+                <span id="training-status">Aucun modèle entraîné.</span>
+            </section>
+        </aside>
+
+        <section class="training-workspace">
+            <section class="training-panel training-output-panel">
+                <h2>Décision collective de la forêt</h2>
+                <svg id="training-decision-map" width="620" height="520"></svg>
+            </section>
+
+            <section class="training-panel">
+                <h2>Cartes individuelles des arbres</h2>
+                <div id="training-tree-maps" class="training-tree-maps"></div>
+            </section>
+        </section>
+    </main>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="js/training/state.js?v=1"></script>
+    <script src="js/training/data.js?v=1"></script>
+    <script src="js/training/trainer.js?v=1"></script>
+    <script src="js/training/prediction.js?v=1"></script>
+    <script src="js/training/render.js?v=1"></script>
+    <script src="js/training/metrics.js?v=1"></script>
+    <script src="js/training/utils.js?v=1"></script>
+    <script src="js/training/forest-playground.js?v=16"></script>
+</body>
+</html>

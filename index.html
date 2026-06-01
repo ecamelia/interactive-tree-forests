@@ -3,18 +3,25 @@
 <head>
     <meta charset="utf-8">
     <title>Visualisation d'arbres</title>
-    <link rel="stylesheet" href="css/style.css?v=61">
+    <link rel="stylesheet" href="css/style.css?v=75">
 </head>
 <body>
     <header>
-        <h1>Visualisation d'arbres et de forets</h1>
+        <div class="app-header-title">
+            <h1>Visualisation d'arbres et de forêts</h1>
+            <span>Explorer, tester et entraîner des modèles</span>
+        </div>
+        <nav class="top-nav" aria-label="Navigation principale">
+            <a class="is-active" href="index.html">Visualisation</a>
+            <a href="construction.html">Construction</a>
+            <a href="entrainement-foret.html">Entraînement forêt</a>
+        </nav>
     </header>
 
     <main>
         <aside class="sidebar">
             <section class="toolbar">
                 <h2>Données</h2>
-                <a class="nav-button" href="construction.html">Construction pas à pas</a>
                 <label class="file-button" for="json-file-input">Charger JSON</label>
                 <input type="file" id="json-file-input" accept=".json,application/json">
 
@@ -104,35 +111,48 @@
                 <div id="observation-inputs"></div>
                 <button id="run-observation-button">Colorer le chemin</button>
                 <button id="clear-observation-button">Effacer</button>
+                <label class="file-button" for="test-observations-file-input">Charger fichier test</label>
+                <input type="file" id="test-observations-file-input" accept=".json,application/json">
                 <span id="observation-result">Chargez un arbre ou une foret.</span>
             </section>
         </aside>
 
         <section class="visualization-area">
-            <section id="empty-state">
-                <h2>Chargez votre fichier JSON</h2>
-                <p>L'outil affichera automatiquement un arbre ou une foret.</p>
-            </section>
+            <div class="visualization-content">
+                <section class="tree-canvas">
+                    <section id="empty-state">
+                        <h2>Chargez votre fichier JSON</h2>
+                        <p>L'outil affichera automatiquement un arbre ou une foret.</p>
+                    </section>
 
-            <svg id="tree-view" width="3000" height="900"></svg>
+                    <svg id="tree-view" width="3000" height="900"></svg>
+                </section>
+
+                <aside class="test-results-panel">
+                    <h2>Résultats du test</h2>
+                    <div id="test-observation-results">
+                        <p class="test-results-empty">Chargez un fichier test pour voir les prédictions.</p>
+                    </div>
+                </aside>
+            </div>
         </section>
 
         <div id="tooltip"></div>
     </main>
 
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="js/shared/tree-viz.js?v=50"></script>
-    <script src="js/shared/layout-utils.js?v=50"></script>
-    <script src="js/main/export-utils.js?v=50"></script>
-    <script src="js/main/app-state.js?v=51"></script>
+    <script src="js/shared/tree-viz.js?v=53"></script>
+    <script src="js/shared/layout-utils.js?v=60"></script>
+    <script src="js/main/export-utils.js?v=53"></script>
+    <script src="js/main/app-state.js?v=54"></script>
     <script src="js/main/tree-depth-utils.js?v=50"></script>
     <script src="js/main/tree-renderer.js?v=50"></script>
     <script src="js/main/forest-renderer.js?v=50"></script>
-    <script src="js/main/renderer.js?v=50"></script>
+    <script src="js/main/renderer.js?v=51"></script>
     <script src="js/main/path-tools.js?v=50"></script>
     <script src="js/main/interactions.js?v=50"></script>
     <script src="js/main/display-options.js?v=50"></script>
-    <script src="js/main/decision-explainer.js?v=50"></script>
+    <script src="js/main/decision-explainer.js?v=53"></script>
     <script src="js/main/data-loader.js?v=51"></script>
     <script src="js/main/app.js?v=51"></script>
 </body>

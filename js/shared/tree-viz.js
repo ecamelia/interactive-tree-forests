@@ -35,34 +35,6 @@ function drawDecisionTree(data, group, config, options = {}) {
         .attr("x2", function(d) { return d.target.x; })
         .attr("y2", function(d) { return d.target.y - getNodeVerticalOffset(d.target, config); });
 
-    if (!isCircleMode(config)) {
-        // Les labels True/False sont gardes uniquement en mode detail.
-        const branchLabels = group.selectAll(".branch-label-group")
-            .data(root.links())
-            .enter()
-            .append("g")
-            .attr("class", "branch-label-group")
-            .attr("transform", function(d) {
-                return "translate(" + getBranchLabelX(d) + "," + getBranchLabelY(d) + ")";
-            });
-
-        branchLabels.append("rect")
-            .attr("class", "branch-label-bg")
-            .attr("x", -24)
-            .attr("y", -13)
-            .attr("width", 48)
-            .attr("height", 18);
-
-        branchLabels.append("text")
-            .attr("class", "branch-label")
-            .attr("x", 0)
-            .attr("y", 0)
-            .attr("text-anchor", "middle")
-            .text(function(d) {
-                return d.source.children[0] === d.target ? "True" : "False";
-            });
-    }
-
     // Groupes SVG des noeuds.
     const nodes = group.selectAll(".node")
         .data(root.descendants())
@@ -260,8 +232,8 @@ function estimateNodeTextWidth(lines, config) {
     const longestLine = lines.reduce(function(longest, line) {
         return Math.max(longest, line.length);
     }, 0);
-    const charWidth = 6.1;
-    const horizontalPadding = 24;
+    const charWidth = 5.6;
+    const horizontalPadding = 18;
     const estimatedWidth = longestLine * charWidth + horizontalPadding;
 
     return Math.min(
@@ -271,7 +243,7 @@ function estimateNodeTextWidth(lines, config) {
 }
 
 function estimateNodeTextHeight(lines, config) {
-    const verticalPadding = 24;
+    const verticalPadding = 16;
     const estimatedHeight = lines.length * getNodeTextStep(config) + verticalPadding;
 
     return Math.max(config.boxHeight, estimatedHeight);
@@ -330,7 +302,7 @@ function getNodeText(node, displayOptions) {
     const lines = [];
 
     if (displayOptions.condition && node.type !== "leaf") {
-        lines.push(node.feature + " <= " + node.threshold);
+        lines.push(formatFeatureName(node.feature) + " <= " + node.threshold);
     }
 
     if (displayOptions.gini) {
@@ -358,6 +330,10 @@ function getNodeText(node, displayOptions) {
 
 function formatValue(value) {
     return "[" + value.join(", ") + "]";
+}
+
+function formatFeatureName(featureName) {
+    return String(featureName).replace(/\s*\(cm\)/g, "");
 }
 
 // Affichage compact utile pour les datasets multi-classes comme digits.

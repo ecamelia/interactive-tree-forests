@@ -262,33 +262,6 @@ function drawTreeInGroup(data, group, idPrefix) {
             return isPathLink(d) ? 6 : 2;
         });
 
-    const branchLabels = group.selectAll(".branch-label-group")
-        .data(root.links())
-        .enter()
-        .append("g")
-        .attr("class", "branch-label-group")
-        .attr("transform", function(d) {
-            return "translate(" + getBranchLabelX(d) + "," + getBranchLabelY(d) + ")";
-        });
-
-    branchLabels.append("rect")
-        .attr("class", "branch-label-bg")
-        .attr("x", -24)
-        .attr("y", -13)
-        .attr("width", 48)
-        .attr("height", 18);
-
-    branchLabels.append("text")
-        .attr("class", "branch-label")
-        .attr("x", 0)
-        .attr("y", 0)
-        .attr("text-anchor", "middle")
-        .attr("font-size", 16)
-        .attr("font-weight", "bold")
-        .text(function(d) {
-            return d.source.children[0] === d.target ? "True" : "False";
-        });
-
     const nodes = group.selectAll(".node")
         .data(root.descendants())
         .enter()
@@ -372,7 +345,7 @@ function createAutoLayoutConfig(tree) {
 
     return {
         ...config,
-        layoutWidth: Math.max(config.layoutWidth, Math.max(1, leafCount - 1) * (maxBoxWidth + 150)),
+        layoutWidth: Math.max(config.layoutWidth, Math.max(1, leafCount - 1) * Math.max(138, maxBoxWidth * 0.86)),
         layoutHeight: Math.max(config.layoutHeight, Math.max(1, depth - 1) * (config.boxHeight + 95))
     };
 }
@@ -393,6 +366,10 @@ function getNodeBoxSize(node, localConfig) {
 
 function getNodeTextStep(localConfig) {
     return localConfig.textStep;
+}
+
+function formatFeatureName(featureName) {
+    return String(featureName).replace(/\s*\(cm\)/g, "");
 }
 
 function getNodeTextStartY(lines, textStep) {
@@ -457,7 +434,7 @@ function getNodeText(node) {
     const lines = [];
 
     if (node.type !== "leaf") {
-        lines.push(node.feature + " <= " + node.threshold);
+        lines.push(formatFeatureName(node.feature) + " <= " + node.threshold);
     }
 
     lines.push("gini = " + node.gini);
@@ -548,18 +525,6 @@ function getStyledSvgCopy() {
         .node-text {
             font-size: 16px;
             font-family: Arial, sans-serif;
-        }
-
-        .branch-label {
-            dominant-baseline: middle;
-            font-size: 16px;
-            font-weight: bold;
-            font-family: Arial, sans-serif;
-        }
-
-        .branch-label-bg {
-            fill: white;
-            opacity: 0.9;
         }
 
         .tree-title {

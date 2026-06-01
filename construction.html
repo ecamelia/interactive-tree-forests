@@ -3,21 +3,24 @@
 <head>
     <meta charset="utf-8">
     <title>Construction d'un arbre</title>
-    <link rel="stylesheet" href="css/style.css?v=61">
+    <link rel="stylesheet" href="css/style.css?v=75">
 </head>
 
 <body>
     <header>
-        <h1>Construction pas à pas d'un arbre</h1>
+        <div class="app-header-title">
+            <h1>Construction pas à pas</h1>
+            <span>Voir comment les régions de décision apparaissent</span>
+        </div>
+        <nav class="top-nav" aria-label="Navigation principale">
+            <a href="index.html">Visualisation</a>
+            <a class="is-active" href="construction.html">Construction</a>
+            <a href="entrainement-foret.html">Entraînement forêt</a>
+        </nav>
     </header>
 
     <main>
         <aside class="sidebar">
-            <section class="toolbar">
-                <h2>Navigation</h2>
-                <a class="nav-button" href="index.html">Retour à la visualisation</a>
-            </section>
-
             <section class="toolbar">
                 <h2>Données</h2>
                 <label class="file-button" for="construction-json-file-input">Charger JSON</label>
@@ -31,11 +34,6 @@
                 <button id="next-build-step" disabled>Étape suivante</button>
                 <button id="reset-build-step" disabled>Recommencer</button>
                 <span id="build-step-status">Aucun arbre chargé</span>
-            </section>
-
-            <section class="toolbar">
-                <h2>Explication</h2>
-                <p id="build-step-explanation">Chargez un arbre JSON pour afficher sa construction pas à pas.</p>
             </section>
 
         </aside>
@@ -55,23 +53,19 @@
                 <section class="construction-panel">
                     <h2>Régions de décision</h2>
                     <svg id="construction-region-view" width="520" height="520"></svg>
-                    <div class="region-legend" aria-label="Légende des classes">
-                        <span><span class="legend-swatch class-0"></span>Classe 0</span>
-                        <span><span class="legend-swatch class-1"></span>Classe 1</span>
-                        <span><span class="legend-swatch class-2"></span>Classe 2</span>
-                    </div>
+                    <div id="region-legend" class="region-legend" aria-label="Légende des classes"></div>
                 </section>
             </div>
         </section>
     </main>
 
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="js/shared/tree-viz.js?v=50"></script>
-    <script src="js/shared/layout-utils.js?v=50"></script>
-    <script src="js/construction/steps.js?v=14"></script>
-    <script src="js/construction/tree-renderer.js?v=14"></script>
-    <script src="js/construction/decision-regions.js?v=14"></script>
-    <script src="js/construction/app.js?v=15"></script>
+    <script src="js/shared/tree-viz.js?v=53"></script>
+    <script src="js/shared/layout-utils.js?v=60"></script>
+    <script src="js/construction/steps.js?v=15"></script>
+    <script src="js/construction/tree-renderer.js?v=19"></script>
+    <script src="js/construction/decision-regions.js?v=21"></script>
+    <script src="js/construction/app.js?v=21"></script>
 
 </body>
 

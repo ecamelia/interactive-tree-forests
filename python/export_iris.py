@@ -6,10 +6,12 @@ from sklearn_export_utils import forest_to_json, samples_to_json, save_json, tre
 
 
 iris = load_iris()
-X = iris.data
+# *2 et 3* data set genere 2D tjrs / pas tre false tensorflow.js,
+# entrenemnt arbre via javascript, lanser du python, trouver une libra
+selected_features = [2, 3]
+X = iris.data[:, selected_features]
 y = iris.target
-feature_names = [name.replace(" (cm)", "") for name in iris.feature_names]
-
+feature_names = [iris.feature_names[i] for i in selected_features]
 tree_model = DecisionTreeClassifier(max_depth=4, random_state=0)
 tree_model.fit(X, y)
 
@@ -39,7 +41,5 @@ forest_with_data_json = {
     "data": iris_samples
 }
 
-save_json(tree_json, "iris_tree.json")
-save_json(forest_json, "iris_forest.json")
-save_json(tree_with_data_json, "iris_tree_with_data.json")
-save_json(forest_with_data_json, "iris_forest_with_data.json")
+save_json(tree_with_data_json, "iris_tree.json")
+save_json(forest_with_data_json, "iris_forest.json")

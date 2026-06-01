@@ -23,33 +23,32 @@ function createAutoLayoutConfig(tree, baseConfig) {
 }
 
 function getAutoHorizontalGap(maxBoxWidth, leafCount) {
-    // Plus il y a de feuilles, plus l'espace supplementaire est reduit
-    // pour eviter que les grands arbres deviennent trop larges.
-    const extraSpace = leafCount <= 2 ? 34 : Math.max(22, 52 - leafCount * 4);
+    const minimumGap = leafCount <= 4 ? 138 : 124;
+    const compactGap = Math.round(maxBoxWidth * 0.86);
 
-    return maxBoxWidth + extraSpace;
+    return Math.max(minimumGap, compactGap);
 }
 
 function getAutoVerticalGap(baseConfig, depth) {
-    // Les arbres profonds sont rendus plus compacts verticalement.
+    // On garde plus d'espace entre les niveaux pour obtenir un arbre plus vertical.
     if (depth <= 2) {
-        return baseConfig.boxHeight + 42;
+        return baseConfig.boxHeight + 48;
     }
 
     if (depth <= 4) {
-        return baseConfig.boxHeight + 34;
+        return baseConfig.boxHeight + 42;
     }
 
-    return baseConfig.boxHeight + 28;
+    return baseConfig.boxHeight + 36;
 }
 
 function getAutoMinLayoutWidth(baseConfig, leafCount) {
     if (leafCount <= 2) {
-        return 240;
+        return 170;
     }
 
     if (leafCount <= 4) {
-        return 340;
+        return 230;
     }
 
     return baseConfig.layoutWidth;
@@ -57,11 +56,11 @@ function getAutoMinLayoutWidth(baseConfig, leafCount) {
 
 function getAutoMinLayoutHeight(baseConfig, depth) {
     if (depth <= 2) {
-        return 140;
+        return 155;
     }
 
     if (depth <= 4) {
-        return 250;
+        return 300;
     }
 
     return baseConfig.layoutHeight;
