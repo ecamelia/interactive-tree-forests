@@ -1,42 +1,127 @@
 # Visualisation d'arbres et de forets
 
-Ce projet est un debut d'outil JavaScript pour afficher des arbres de decision
-et des forets d'arbres dans une page web avec D3.js.
-
-L'idee principale est de faire le lien entre un modele entraine en Python avec
-`scikit-learn` et une visualisation dans le navigateur. Python sert a exporter
-la structure du modele en JSON, puis JavaScript lit ce JSON et dessine l'arbre.
-
-Ce n'est pas encore une librairie complete, mais le code est organise pour
-aller dans cette direction.
-
-## Objectif du projet
-
-L'objectif n'est pas seulement de faire une page HTML qui affiche un arbre. Le
-but est de construire progressivement un outil reutilisable qui pourra :
-
-- lire un arbre de decision exporte depuis `scikit-learn`;
-- lire une foret contenant plusieurs arbres;
-- afficher automatiquement le bon type de visualisation selon le fichier JSON;
-- limiter le nombre d'arbres visibles dans une foret;
-- personnaliser les informations visibles dans les noeuds;
-- afficher les details d'un noeud selectionne;
-- tester une observation et colorer automatiquement le chemin suivi;
-- exporter la visualisation en SVG ou en PNG;
-- exporter un fichier JavaScript contenant le code D3.js de la visualisation.
+Ce projet est une application web pour visualiser, tester et expliquer des
+arbres de decision et des forets d'arbres. L'objectif est de faire le lien entre
+un modele appris avec Python, un format JSON lisible, et une visualisation
+interactive dans le navigateur avec D3.js.
 
 Le principe general est :
 
 ```text
-Python / scikit-learn -> JSON -> JavaScript / D3.js -> SVG dans le navigateur
+Python / scikit-learn -> JSON -> JavaScript / D3.js -> SVG interactif
 ```
 
-## Structure du projet
+Le projet contient trois pages :
+
+- `index.html` : visualisation principale d'un arbre ou d'une foret;
+- `construction.html` : construction pas a pas d'un arbre et regions de decision;
+- `entrainement-foret.html` : entrainement interactif d'une foret, arbre par arbre.
+
+## Lancer le projet
+
+Depuis le dossier `visualisation-arbres` :
+
+```bash
+python3 -m http.server 8003
+```
+
+Puis ouvrir :
+
+```text
+http://localhost:8003/index.html
+```
+
+Un serveur local est preferable, car le navigateur bloque parfois certains
+chargements quand on ouvre directement les fichiers HTML.
+
+## Methode
+
+Le projet se base sur une separation simple :
+
+- Python entraine les modeles et exporte leur structure;
+- JSON garde les arbres sous une forme independante du langage;
+- JavaScript lit le JSON, calcule le placement, puis dessine avec D3.js;
+- l'utilisateur peut ensuite explorer, tester et exporter la visualisation.
+
+Pour un arbre, chaque noeud contient une condition comme
+`petal width <= 0.8`. Les feuilles contiennent la classe predite. Pour une
+foret, le fichier contient plusieurs arbres, puis la prediction finale se fait
+par vote majoritaire.
+
+## Visualisation principale
+
+La page `index.html` permet de charger un fichier JSON. Le code detecte
+automatiquement le type de fichier :
+
+- si le JSON contient `trees`, il affiche une foret;
+- si le JSON contient `root` ou un noeud `type: "node"`, il affiche un arbre.
+
+Fonctionnalites principales :
+
+- affichage d'un arbre ou d'une foret;
+- zoom et deplacement dans le SVG;
+- choix des informations visibles dans les noeuds;
+- limitation de la profondeur affichee;
+- selection d'un noeud et panneau de details;
+- test d'une observation saisie a la main;
+- test d'un fichier contenant plusieurs observations;
+- export SVG, PNG et code D3.js.
+
+Les resultats de test sont affiches dans un panneau separe avec :
+
+- le nombre d'observations;
+- le nombre de predictions correctes;
+- le nombre d'erreurs;
+- l'exactitude;
+- le detail ligne par ligne.
+
+## Construction pas a pas
+
+La page `construction.html` sert a expliquer comment un arbre construit des
+regions de decision.
+
+A chaque etape :
+
+- un nouveau noeud de l'arbre apparait;
+- la frontiere correspondante apparait dans le graphique;
+- les regions colorees montrent quelle classe est predite dans chaque zone;
+- la legende associe chaque couleur a une classe.
+
+Cette page est surtout pedagogique : elle montre que chaque condition de l'arbre
+coupe l'espace selon une feature et un seuil.
+
+## Entrainement interactif d'une foret
+
+La page `entrainement-foret.html` permet d'observer l'effet d'une foret qui se
+construit progressivement.
+
+Le bouton de lecture ajoute les arbres un par un. A chaque arbre ajoute :
+
+- une carte individuelle montre la decision de cet arbre;
+- la carte collective est recalculee;
+- chaque point de la grille recoit les votes des arbres deja entraines;
+- la classe finale est la classe qui a le plus de votes.
+
+Le bouton `Calculer directement` construit toute la foret en une seule fois.
+
+Cette partie utilise un entrainement JavaScript maison inspire du principe CART :
+
+- on cherche des seuils possibles sur les deux features;
+- on choisit la coupe qui reduit le mieux l'impurete de Gini;
+- on repete recursivement jusqu'a la profondeur maximale;
+- chaque arbre utilise un echantillon bootstrap;
+- la foret combine les arbres par vote majoritaire.
+
+L'objectif n'est pas de remplacer scikit-learn, mais de rendre le fonctionnement
+visible et interactif dans le navigateur.
+
+## Fichiers importants
 
 ```text
 visualisation-arbres/
 ├── index.html
 ├── construction.html
+├── entrainement-foret.html
 ├── css/
 │   └── style.css
 ├── js/
@@ -44,357 +129,75 @@ visualisation-arbres/
 │   │   ├── tree-viz.js
 │   │   └── layout-utils.js
 │   ├── main/
-│   │   ├── app-state.js
-│   │   ├── app.js
-│   │   ├── data-loader.js
-│   │   ├── display-options.js
-│   │   ├── decision-explainer.js
-│   │   ├── interactions.js
-│   │   ├── path-tools.js
-│   │   ├── renderer.js
-│   │   ├── tree-depth-utils.js
-│   │   ├── tree-renderer.js
-│   │   ├── forest-renderer.js
-│   │   └── export-utils.js
-│   └── construction/
-│       ├── app.js
-│       ├── steps.js
-│       ├── tree-renderer.js
-│       └── decision-regions.js
+│   ├── construction/
+│   └── training/
 ├── data/
-│   ├── tree-small.json
-│   ├── tree-medium.json
-│   ├── tree-regions-2-classes.json
-│   ├── tree-regions-3-classes.json
-│   ├── forest-small.json
-│   ├── iris_tree.json
-│   └── iris_forest.json
 └── python/
-    ├── sklearn_export_utils.py
-    ├── export_iris.py
-    └── export_digits.py
 ```
 
-## Role des fichiers
+### `js/shared/`
 
-### `index.html`
+Ce dossier contient les fonctions communes :
 
-C'est la page principale de visualisation. Elle contient :
+- `tree-viz.js` dessine les noeuds, les liens, les textes et les couleurs;
+- `layout-utils.js` calcule la profondeur, le nombre de feuilles et les espacements.
 
-- un bouton pour charger un fichier JSON;
-- les boutons d'export SVG, PNG et code D3.js;
-- un panneau pour choisir les informations affichees dans les noeuds;
-- le SVG principal ou les arbres sont dessines;
-- le chargement des fichiers JavaScript.
+### `js/main/`
 
-Le bouton `Charger JSON` remplace les anciens boutons "arbre" et "foret". Le
-programme regarde le contenu du fichier et decide automatiquement quoi afficher.
+Ce dossier gere la page principale :
 
-### `construction.html`
-
-C'est la page dediee a la construction pas a pas d'un arbre. Elle contient :
-
-- un bouton pour charger un arbre JSON;
-- des boutons pour passer a l'etape precedente ou suivante;
-- un affichage de l'arbre qui se developpe progressivement;
-- un graphique des regions de decision avec fond colore;
-- une legende des classes.
-
-Cette page est utile pour expliquer comment les conditions de l'arbre decoupent
-le plan en regions.
-
-### `css/style.css`
-
-Ce fichier contient le style de la page :
-
-- la mise en page generale;
-- les boutons;
-- le panneau d'options;
-- les noeuds;
-- les liens entre les noeuds;
-- les couleurs des feuilles;
-- le tooltip au survol.
-
-### Organisation du JavaScript
-
-La partie JavaScript est separee en trois dossiers :
-
-- `js/shared/` : fonctions communes aux deux pages;
-- `js/main/` : code de la page principale `index.html`;
-- `js/construction/` : code de la page `construction.html`.
-
-L'ordre de chargement dans les fichiers HTML est important, car les fichiers
-partagent des fonctions globales simples.
-
-### `js/shared/tree-viz.js`
-
-C'est le fichier le plus important pour la visualisation.
-
-Il contient la fonction :
-
-```js
-drawDecisionTree(data, group, config, options)
-```
-
-Cette fonction transforme le JSON en structure D3 avec `d3.hierarchy`, calcule
-la position des noeuds avec `d3.tree`, puis dessine :
-
-- les lignes entre les noeuds;
-- les labels `True` et `False`;
-- les rectangles des noeuds;
-- les textes dans les noeuds;
-- les couleurs des feuilles selon la classe.
-
-Ce fichier est la base de la future librairie.
-
-### `js/shared/layout-utils.js`
-
-Ce fichier gere les calculs de layout :
-
-- nombre de feuilles;
-- profondeur de l'arbre;
-- espacement horizontal et vertical automatique;
-- taille minimale du SVG;
-- passage du mode detaille au mode general avec des cercles.
-
-### `js/main/app-state.js`
-
-Ce fichier contient l'etat general de la page :
-
-- les constantes `VIEW_TYPE` et `OPTION_SCOPE`;
-- les elements HTML recuperes avec `document.getElementById`;
-- les configurations de taille des arbres;
-- les options d'affichage globales;
-- l'etat courant : arbre affiche, foret affichee, noeud selectionne, niveau
-  maximal affiche.
-
-### `js/main/app.js`
-
-Ce fichier sert seulement au demarrage de l'application.
-
-Il fait :
-
-- l'initialisation du zoom;
-- la connexion des boutons aux fonctions;
-- l'affichage du message d'accueil avant le chargement d'un JSON.
-
-### `js/main/data-loader.js`
-
-Ce fichier gere les donnees JSON :
-
-- le chargement du fichier JSON choisi par l'utilisateur;
-- la detection automatique entre arbre simple et foret;
-- la verification du format JSON.
-
-La detection se fait simplement :
-
-- si le JSON contient `trees`, c'est une foret;
-- si le JSON contient `type: "node"` ou `type: "leaf"`, c'est un arbre.
-
-### `js/main/renderer.js`
-
-Ce fichier garde les fonctions generales du rendu :
-
-- l'affichage de l'ecran vide;
-- le nettoyage du SVG;
-- le redessin de la vue courante apres un changement d'option;
-- la remise a zero du zoom;
-- l'ajustement de la taille du SVG.
-
-### `js/main/tree-renderer.js`
-
-Ce fichier gere l'affichage d'un arbre simple :
-
-- preparation de l'interface avant le dessin;
-- creation du groupe SVG de l'arbre;
-- appel a `drawDecisionTree(...)` avec la configuration detaillee.
-
-### `js/main/forest-renderer.js`
-
-Ce fichier gere l'affichage d'une foret :
-
-- choix des arbres visibles;
-- ajout d'un bloc `...` quand certains arbres sont masques;
-- placement des arbres de gauche a droite;
-- passage a la ligne quand la largeur maximale est atteinte;
-- creation du titre `Arbre X` pour chaque arbre.
-
-### `js/main/tree-depth-utils.js`
-
-Ce fichier gere la limitation de profondeur :
-
-- conservation de l'arbre complet quand aucune limite n'est demandee;
-- limitation par defaut des arbres en vue foret;
-- clonage partiel de l'arbre pour ne pas modifier le JSON original;
-- ajout du marqueur `collapsed` pour afficher `...` dans les noeuds coupes.
-
-### `js/main/interactions.js`
-
-Ce fichier gere les interactions avec les noeuds :
-
-- le tooltip au survol;
-- la selection d'un noeud;
-
-### `js/main/path-tools.js`
-
-Ce fichier gere le mode chemin :
-
-- activation ou desactivation du mode chemin;
-- ajout ou suppression d'un noeud dans le chemin;
-- effacement du chemin;
-- detection des noeuds et liens qui doivent etre colores.
-
-### `js/main/display-options.js`
-
-Ce fichier gere les cases du panneau d'affichage :
-
-- les options d'affichage pour tout l'arbre;
-- les options d'affichage pour un seul noeud selectionne.
-
-### `js/main/decision-explainer.js`
-
-Ce fichier gere l'explication d'une prediction :
-
-- creation automatique des champs correspondant aux features de l'arbre;
-- lecture d'une observation saisie par l'utilisateur;
-- coloration du chemin suivi par cette observation;
-- resume des votes quand une foret est affichee.
-
-### `js/main/export-utils.js`
-
-Ce fichier contient les fonctions d'export :
-
-```js
-exportSVG()
-exportPNG()
-exportCurrentD3Code(...)
-```
-
-L'export SVG copie le SVG affiche dans la page et ajoute les styles utiles pour
-garder les lignes, les couleurs et les textes.
-
-L'export PNG transforme d'abord le SVG en image, puis le dessine dans un
-`canvas` avant de telecharger le fichier.
-
-L'export D3.js telecharge un fichier `.js` qui contient les donnees affichees et
-un exemple de code D3 pour redessiner l'arbre ou la foret dans un autre SVG.
+- chargement JSON;
+- detection arbre / foret;
+- affichage principal;
+- options d'affichage;
+- selection des noeuds;
+- test des observations;
+- export SVG, PNG et D3.js.
 
 ### `js/construction/`
 
-Ce dossier contient le code de la page de construction pas a pas :
+Ce dossier gere la construction pas a pas :
 
-- `app.js` : point d'entree, lecture du JSON, boutons et etat courant;
-- `steps.js` : creation des etapes de construction de l'arbre;
-- `tree-renderer.js` : dessin de l'arbre a l'etape courante;
-- `decision-regions.js` : dessin des regions de decision, des points et des frontieres.
+- creation des etapes;
+- dessin de l'arbre a l'etape courante;
+- dessin des regions de decision;
+- affichage de la legende.
 
-### `data/`
+### `js/training/`
 
-Ce dossier contient des fichiers JSON pour tester l'outil.
+Ce dossier gere l'entrainement interactif :
 
-Arbres simples :
+- generation des datasets;
+- chargement de donnees JSON;
+- apprentissage des arbres;
+- prediction par vote;
+- calcul des metriques;
+- dessin de la carte collective et des cartes individuelles.
 
-- `tree-small.json` : petit arbre avec une seule condition;
-- `tree-medium.json` : arbre un peu plus complet;
-- `tree-regions-2-classes.json` : exemple pedagogique pour les regions de decision avec deux classes;
-- `tree-regions-3-classes.json` : exemple pedagogique pour les regions de decision avec trois classes;
-- `iris_tree.json` : arbre entraine sur le dataset Iris.
+## Exemples de donnees
+
+Arbres :
+
+- `data/tree-small.json`;
+- `data/tree-medium.json`;
+- `data/tree-regions-2-classes.json`;
+- `data/tree-regions-3-classes.json`;
+- `data/iris_tree.json`.
 
 Forets :
 
-- `forest-small.json` : petite foret;
-- `iris_forest.json` : foret entrainee sur Iris.
+- `data/forest-small.json`;
+- `data/forest-demo-vote.json`;
+- `data/iris_forest.json`.
 
-Ces fichiers servent surtout a verifier que le bouton `Charger JSON` fonctionne
-bien avec plusieurs formes de donnees.
+Tests :
 
-### `python/export_iris.py` et `python/export_digits.py`
+- `data/test-observations-demo.json`;
+- `data/test-observations-iris.json`.
 
-Ces scripts generent des fichiers JSON a partir de datasets fournis par
-`scikit-learn`.
+Donnees pour l'entrainement interactif :
 
-Ils creent chacun :
-
-- un arbre de decision;
-- une foret d'arbres.
-
-Les fichiers generes sont places dans `data/` et peuvent etre charges avec le
-bouton `Charger JSON`.
-
-Commandes possibles :
-
-```bash
-/opt/anaconda3/bin/python python/export_iris.py
-/opt/anaconda3/bin/python python/export_digits.py
-```
-
-Le fichier `python/sklearn_export_utils.py` contient les fonctions communes pour
-transformer un arbre sklearn en JSON.
-
-## Lancer le projet
-
-Depuis le dossier `visualisation-arbres` :
-
-```bash
-python3 -m http.server 8002
-```
-
-Puis ouvrir :
-
-```text
-http://localhost:8002
-```
-
-Il faut passer par un serveur local, car le navigateur bloque souvent le
-chargement de fichiers JSON si on ouvre seulement le fichier HTML directement.
-
-## Utilisation
-
-1. Ouvrir la page dans le navigateur.
-2. La page affiche le message `Chargez votre fichier JSON`.
-3. Cliquer sur `Charger JSON`.
-4. Choisir un fichier dans le dossier `data/`.
-5. Le programme affiche automatiquement un arbre ou une foret.
-6. Utiliser les cases pour choisir les informations visibles dans les noeuds.
-7. Utiliser `Exporter SVG`, `Exporter PNG` ou `Exporter code D3.js` si besoin.
-
-Pour la construction pas a pas :
-
-1. Ouvrir `construction.html`.
-2. Cliquer sur `Charger JSON`.
-3. Choisir par exemple `tree-regions-2-classes.json`.
-4. Utiliser `Etape suivante` pour voir les decoupes apparaitre.
-
-## Personnalisation des noeuds
-
-Le panneau d'options propose deux modes :
-
-- `tout l'arbre` : les cases s'appliquent a tous les noeuds affiches;
-- `noeud selectionne` : les cases s'appliquent seulement au noeud clique.
-
-Les informations que l'on peut afficher ou cacher sont :
-
-- `condition`;
-- `gini`;
-- `samples`;
-- `value`;
-- `class`.
-
-Cela permet de commencer avec une visualisation complete, puis de simplifier
-l'affichage si l'arbre devient trop charge.
-
-Pour les grands arbres, le menu `niveaux` permet d'afficher seulement les
-premiers niveaux de l'arbre. Par exemple, choisir `3` affiche la racine et les
-deux niveaux suivants. L'option `tous` affiche l'arbre entier.
-
-Le menu `mode` permet de changer le style d'affichage :
-
-- `detaillé` : noeuds rectangulaires avec les informations dans chaque noeud;
-- `general` : noeuds ronds, sans texte, pour voir plus facilement la structure.
-
-Le mode `chemin` permet de cliquer sur plusieurs noeuds pour les colorer. Si
-deux noeuds selectionnes sont relies directement, le lien entre eux est colore
-aussi. Le bouton `Effacer chemin` remet le chemin a zero.
+- `data/training-points-demo.json`.
 
 ## Format JSON d'un arbre
 
@@ -404,23 +207,23 @@ Un noeud interne contient une condition :
 {
   "type": "node",
   "feature": "x2",
-  "threshold": 0.85,
-  "gini": 0.48,
-  "samples": 10,
-  "value": [6, 4],
+  "threshold": 0.5,
+  "gini": 0.49,
+  "samples": 20,
+  "value": [11, 9],
   "left": {},
   "right": {}
 }
 ```
 
-Une feuille contient une classe predite :
+Une feuille contient la classe predite :
 
 ```json
 {
   "type": "leaf",
-  "gini": 0.0,
-  "samples": 3,
-  "value": [3, 0],
+  "gini": 0,
+  "samples": 6,
+  "value": [6, 0],
   "class": 0
 }
 ```
@@ -432,67 +235,71 @@ Une foret contient une liste d'arbres :
 ```json
 {
   "model_type": "random_forest",
+  "features": ["x1", "x2"],
   "classes": [0, 1],
   "trees": [
     {
       "id": 1,
-      "weight": 1,
       "root": {}
     }
   ]
 }
 ```
 
-Chaque `root` correspond a un arbre au meme format que les fichiers d'arbre
-simple.
+Chaque `root` correspond a un arbre au meme format qu'un arbre simple.
 
-## Fonctionnalites actuelles
+## Format JSON pour tester des observations
 
-- Chargement d'un fichier JSON depuis la page.
-- Detection automatique arbre / foret.
-- Affichage d'un arbre de decision.
-- Affichage d'une foret.
-- Zoom et deplacement.
-- Tooltip au survol d'un noeud.
-- Couleur des feuilles selon la classe.
-- Personnalisation globale de l'affichage.
-- Personnalisation d'un noeud selectionne.
-- Creation d'un chemin colore en selectionnant plusieurs noeuds.
-- Ajustement automatique de l'espacement selon la taille de l'arbre.
-- Affichage limite aux premiers niveaux pour les grands arbres.
-- Mode d'affichage general avec des noeuds ronds.
-- Export SVG.
-- Export PNG.
-- Export du code D3.js de la visualisation courante.
-- Construction pas a pas d'un arbre.
-- Affichage des regions de decision avec fond colore et legende.
+Un fichier de test contient une liste d'observations. Chaque observation contient
+les features attendues par le modele et, si on veut calculer l'exactitude, la
+classe attendue.
+
+```json
+{
+  "observations": [
+    { "id": 1, "x1": 0.2, "x2": 0.4, "class": 0 },
+    { "id": 2, "x1": 0.8, "x2": 0.7, "class": 1 }
+  ]
+}
+```
+
+## Export Python
+
+Les scripts Python generent des fichiers JSON depuis `scikit-learn`.
+
+```bash
+/opt/anaconda3/bin/python python/export_iris.py
+/opt/anaconda3/bin/python python/export_digits.py
+```
+
+Le fichier `python/sklearn_export_utils.py` contient les fonctions communes pour
+transformer les objets sklearn en JSON.
+
+## Comment presenter le projet
+
+Une presentation simple peut suivre cet ordre :
+
+1. Le modele est entraine en Python.
+2. Sa structure est sauvegardee en JSON.
+3. Le navigateur lit ce JSON et reconstruit l'arbre.
+4. D3.js dessine les noeuds, les liens et les couleurs.
+5. Pour une foret, plusieurs arbres sont affiches et la prediction se fait par vote.
+6. Les regions de decision montrent visuellement quelles zones appartiennent a chaque classe.
+7. La page d'entrainement montre progressivement comment la decision collective evolue.
 
 ## Limites actuelles
 
-Le projet fonctionne comme prototype, mais il reste encore plusieurs choses a
-ameliorer pour avoir une vraie librairie :
+Le projet est un prototype fonctionnel. Les limites principales sont :
 
-- l'API publique n'est pas encore definie;
-- les tres grands arbres peuvent encore necessiter des modes plus avances;
-- les forets avec beaucoup d'arbres devront avoir un systeme de filtrage;
-- l'export du code D3.js est un premier exemple, pas encore une API complete;
-- les regions de decision fonctionnent surtout pour des arbres avec deux features numeriques.
+- les tres grands arbres restent difficiles a lire;
+- l'API publique d'une vraie librairie n'est pas encore definie;
+- l'entrainement JavaScript est pedagogique, moins complet que scikit-learn;
+- les regions de decision sont surtout adaptees a deux features numeriques.
 
-## Prochaines etapes
+## Pistes d'amelioration
 
-Les prochaines ameliorations possibles sont :
-
-- separer encore plus la partie librairie et la partie demonstration;
-- creer une API simple, par exemple `TreeViz.drawTree(...)`;
-- ameliorer le mode grands arbres avec recherche, mini-carte ou focus sur une branche;
-- ajouter un champ pour choisir les indices des arbres a afficher dans une foret;
-- ameliorer les regions de decision pour les datasets plus complexes;
-- documenter le format JSON attendu;
-- preparer des exemples avec des jeux de donnees plus connus, comme Iris ou
-  Digits.
-
-## Statut
-
-Pour le moment, le projet est une base fonctionnelle. Il permet deja de tester
-le lien entre Python, JSON et D3.js, et il servira de point de depart pour une
-librairie de visualisation d'arbres de decision et de forets.
+- ajouter une recherche de noeud;
+- ajouter une mini-carte pour les grands arbres;
+- permettre de comparer deux forets;
+- ajouter plus de metriques sur les fichiers de test;
+- creer une vraie API reutilisable autour de `drawDecisionTree`.

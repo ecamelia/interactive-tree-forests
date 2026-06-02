@@ -1,0 +1,12 @@
+{
+  "observations": [
+    { "id": 1, "petal length (cm)": 1.4, "petal width (cm)": 0.2, "class": 0 },
+    { "id": 2, "petal length (cm)": 1.7, "petal width (cm)": 0.4, "class": 0 },
+    { "id": 3, "petal length (cm)": 4.5, "petal width (cm)": 1.5, "class": 1 },
+    { "id": 4, "petal length (cm)": 4.9, "petal width (cm)": 1.5, "class": 1 },
+    { "id": 5, "petal length (cm)": 5.1, "petal width (cm)": 1.8, "class": 2 },
+    { "id": 6, "petal length (cm)": 5.8, "petal width (cm)": 2.2, "class": 2 },
+    { "id": 7, "petal length (cm)": 4.8, "petal width (cm)": 1.8, "class": 2 },
+    { "id": 8, "petal length (cm)": 5.0, "petal width (cm)": 1.6, "class": 1 }
+  ]
+}

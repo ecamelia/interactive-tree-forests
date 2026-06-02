@@ -149,6 +149,11 @@ body.empty-view main {
     font-size: 13px;
 }
 
+.test-results-table-wrapper {
+    overflow: auto;
+    border: 1px solid #e2e2e2;
+}
+
 .test-results-table th,
 .test-results-table td {
     padding: 8px 9px;
@@ -160,8 +165,11 @@ body.empty-view main {
 .test-results-table th {
     position: sticky;
     top: 0;
-    background: #f7f7f7;
+    background: #f3f5f6;
     z-index: 1;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0;
 }
 
 .test-results-table tr.is-correct td {
@@ -178,6 +186,37 @@ body.empty-view main {
     padding: 2px 5px;
     border: 1px solid #bbb;
     background: white;
+    font-weight: bold;
+}
+
+.test-results-summary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.test-summary-item {
+    padding: 10px;
+    background: #f6f8f8;
+    border: 1px solid #e0e0e0;
+}
+
+.test-summary-item strong,
+.test-summary-item span {
+    display: block;
+}
+
+.test-summary-item strong {
+    margin-bottom: 3px;
+    color: #17495a;
+    font-size: 22px;
+    line-height: 1;
+}
+
+.test-summary-item span {
+    color: #555;
+    font-size: 12px;
     font-weight: bold;
 }
 

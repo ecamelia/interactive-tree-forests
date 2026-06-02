@@ -225,6 +225,11 @@ function getBestVoteClass(votes) {
 function renderTestObservationResults(results) {
     testObservationResults.innerHTML = "";
 
+    testObservationResults.appendChild(createTestResultsSummary(results));
+
+    const tableWrapper = document.createElement("div");
+    tableWrapper.className = "test-results-table-wrapper";
+
     const table = document.createElement("table");
     table.className = "test-results-table";
 
@@ -251,7 +256,56 @@ function renderTestObservationResults(results) {
     });
 
     table.appendChild(body);
-    testObservationResults.appendChild(table);
+    tableWrapper.appendChild(table);
+    testObservationResults.appendChild(tableWrapper);
+}
+
+function createTestResultsSummary(results) {
+    const summary = getTestResultsSummary(results);
+    const container = document.createElement("div");
+    container.className = "test-results-summary";
+
+    container.appendChild(createSummaryItem("Observations", summary.total));
+    container.appendChild(createSummaryItem("Correctes", summary.correct));
+    container.appendChild(createSummaryItem("Erreurs", summary.wrong));
+    container.appendChild(createSummaryItem("Exactitude", summary.accuracy));
+
+    return container;
+}
+
+function getTestResultsSummary(results) {
+    const evaluatedResults = results.filter(function(result) {
+        return result.expectedClass !== undefined;
+    });
+    const correctResults = evaluatedResults.filter(function(result) {
+        return String(result.prediction) === String(result.expectedClass);
+    });
+    const wrongCount = evaluatedResults.length - correctResults.length;
+
+    return {
+        total: results.length,
+        correct: correctResults.length,
+        wrong: wrongCount,
+        accuracy: evaluatedResults.length
+            ? Math.round((correctResults.length / evaluatedResults.length) * 100) + "%"
+            : "-"
+    };
+}
+
+function createSummaryItem(label, value) {
+    const item = document.createElement("div");
+    item.className = "test-summary-item";
+
+    const valueElement = document.createElement("strong");
+    valueElement.textContent = value;
+
+    const labelElement = document.createElement("span");
+    labelElement.textContent = label;
+
+    item.appendChild(valueElement);
+    item.appendChild(labelElement);
+
+    return item;
 }
 
 function formatExpectedClass(expectedClass) {
