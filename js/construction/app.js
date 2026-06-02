@@ -8,6 +8,11 @@ const resetBuildStepButton = document.getElementById("reset-build-step");
 const buildStepStatus = document.getElementById("build-step-status");
 const constructionSvg = d3.select("#construction-tree-view");
 const constructionLayer = constructionSvg.append("g");
+const constructionZoomBehavior = d3.zoom()
+    .scaleExtent([0.5, 3])
+    .on("zoom", function(event) {
+        constructionLayer.attr("transform", event.transform);
+    });
 const regionSvg = d3.select("#construction-region-view");
 const regionLayer = regionSvg.append("g");
 
@@ -17,6 +22,8 @@ let buildSteps = [];
 let currentBuildStep = 0;
 let demoPoints = [];
 let regionFeatureNames = ["x1", "x2"];
+
+constructionSvg.call(constructionZoomBehavior);
 
 constructionJsonFileInput.addEventListener("change", function(event) {
     const file = event.target.files[0];
@@ -57,6 +64,7 @@ function readConstructionJsonFile(file) {
 
             constructionFileStatus.textContent = "Fichier chargé : " + file.name;
             document.body.classList.add("construction-active");
+            resetConstructionZoom();
             showBuildStep(0);
         } catch (error) {
             console.error(error);
@@ -106,6 +114,10 @@ function disableBuildControls() {
     nextBuildStepButton.disabled = true;
     resetBuildStepButton.disabled = true;
     buildStepStatus.textContent = "Aucun arbre chargé";
+}
+
+function resetConstructionZoom() {
+    constructionSvg.call(constructionZoomBehavior.transform, d3.zoomIdentity);
 }
 
 function isConstructionForestModel(model) {
