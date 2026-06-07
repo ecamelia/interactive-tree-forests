@@ -1,21 +1,38 @@
 // Indicateurs affiches dans la barre du haut
 function updateTrainingStatus(decisionMap) {
     const targetTrees = getTargetTreeCount();
-
     const currentTreeCount = getCurrentTreeCount();
 
+    stepLabel.textContent = "Arbres";
     epochText.textContent = currentTreeCount + " / " + targetTrees;
 
     if (!currentTreeCount) {
         agreementText.textContent = "-";
         accuracyText.textContent = "-";
-        statusText.textContent = trainingState.pendingForest
+        statusText.textContent = isLibraryForestMode()
+            ? "Appuie sur ▶ pour entraîner avec la bibliothèque ml-random-forest."
+            : trainingState.pendingForest
             ? "Forêt JSON prête. Appuie sur ▶ pour afficher les arbres progressivement."
             : "Appuie sur ▶ pour entraîner la forêt arbre par arbre.";
         return;
     }
 
     const accuracy = getTrainingAccuracy();
+
+    if (isLibraryForestMode()) {
+        const averageConfidence = d3.mean(decisionMap, function(cell) {
+            return cell.confidence;
+        }) || 0;
+
+        agreementText.textContent = Math.round(averageConfidence * 100) + "%";
+        accuracyText.textContent = Math.round(accuracy * 100) + "%";
+        statusText.textContent = currentTreeCount + " arbres entraînés avec ml-random-forest. " +
+            trainingState.points.length + " points affichés. " +
+            "Exactitude sur les points : " + Math.round(accuracy * 100) + "%. " +
+            "Accord moyen : " + Math.round(averageConfidence * 100) + "%.";
+        return;
+    }
+
     const averageConfidence = d3.mean(decisionMap, function(cell) {
         return cell.confidence;
     }) || 0;
@@ -31,8 +48,7 @@ function updateTrainingStatus(decisionMap) {
 
 function getTrainingAccuracy() {
     const correct = trainingState.points.filter(function(point) {
-        const votes = getForestVotes(point);
-        return getMajorityClass(votes) === point.class;
+        return predictCurrentTrainingModel(point).className === point.class;
     }).length;
 
     return correct / trainingState.points.length;

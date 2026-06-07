@@ -1,9 +1,19 @@
-// Controle de l'entrainement
-function trainForestFromControls() {
+// Actions lancees depuis l'interface
+async function trainForestFromControls() {
     stopTrainingAnimation();
 
     if (!trainingState.points.length) {
         generateTrainingData();
+    }
+
+    if (isLibraryForestMode()) {
+        try {
+            await trainLibraryForestFromControls();
+        } catch (error) {
+            showLibraryError(error);
+        }
+
+        return;
     }
 
     if (trainingState.pendingForest) {
@@ -19,6 +29,7 @@ function trainForestFromControls() {
 
 function resetTrainingForest() {
     trainingState.forest = [];
+    resetLibraryForest();
     renderTrainingView();
 }
 
@@ -33,15 +44,7 @@ function startTrainingAnimation() {
 
     trainingState.playing = true;
     playButton.textContent = "❚❚";
-    addTrainingTreeStep();
-
-    trainingState.playTimer = window.setInterval(function() {
-        const finished = addTrainingTreeStep();
-
-        if (finished) {
-            stopTrainingAnimation();
-        }
-    }, 550);
+    runTrainingLoop();
 }
 
 function stopTrainingAnimation() {
@@ -49,9 +52,33 @@ function stopTrainingAnimation() {
     playButton.textContent = "▶";
 
     if (trainingState.playTimer) {
-        window.clearInterval(trainingState.playTimer);
+        window.clearTimeout(trainingState.playTimer);
         trainingState.playTimer = null;
     }
+}
+
+async function runTrainingLoop() {
+    const finished = await addTrainingStep();
+
+    if (finished || !trainingState.playing) {
+        stopTrainingAnimation();
+        return;
+    }
+
+    trainingState.playTimer = window.setTimeout(runTrainingLoop, 550);
+}
+
+async function addTrainingStep() {
+    if (isLibraryForestMode()) {
+        try {
+            return await trainLibraryForestStep();
+        } catch (error) {
+            showLibraryError(error);
+            return true;
+        }
+    }
+
+    return addTrainingTreeStep();
 }
 
 function addTrainingTreeStep() {
@@ -76,6 +103,7 @@ function addTrainingTreeStep() {
     return trainingState.forest.length >= targetTrees;
 }
 
+// Parametres communs aux deux moteurs
 function getTargetTreeCount() {
     return trainingState.pendingForest
         ? trainingState.pendingForest.length
@@ -83,6 +111,10 @@ function getTargetTreeCount() {
 }
 
 function getCurrentTreeCount() {
+    if (isLibraryForestMode()) {
+        return trainingState.libraryTreeCount;
+    }
+
     return trainingState.forest.length;
 }
 
@@ -95,7 +127,7 @@ function getTrainingOptions() {
     };
 }
 
-// Construction d'une foret
+// Construction de la foret pedagogique
 function trainRandomForest(treeCount, options) {
     return Array.from({ length: treeCount }, function(_, treeIndex) {
         return trainRandomTree(trainingState.points, options, treeIndex);
@@ -153,7 +185,7 @@ function createLeaf(points, counts, majorityClass) {
 }
 
 function findBestSplit(points, random) {
-    const features = trainingState.featureNames.slice().sort(function() {
+    const features = trainingState.modelFeatureNames.slice().sort(function() {
         return random() - 0.5;
     });
     let bestSplit = null;

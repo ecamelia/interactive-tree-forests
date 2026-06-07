@@ -9,6 +9,20 @@ function getMajorityClass(counts) {
     }));
 }
 
+function predictCurrentTrainingModel(observation) {
+    if (isLibraryForestMode()) {
+        return getLibraryPrediction(observation);
+    }
+
+    const votes = getForestVotes(observation);
+    const predictedClass = getMajorityClass(votes);
+
+    return {
+        className: predictedClass,
+        confidence: votes[predictedClass] / Math.max(1, getCurrentTreeCount())
+    };
+}
+
 function getForestVotes(observation) {
     return trainingState.forest.reduce(function(votes, tree) {
         const prediction = predictTree(tree, observation);

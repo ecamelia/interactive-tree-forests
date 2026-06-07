@@ -1,4 +1,4 @@
-// Etat de la page
+// Etat partage par les fichiers de la page
 const trainingState = {
     points: [],
     forest: [],
@@ -6,15 +6,22 @@ const trainingState = {
     playing: false,
     playTimer: null,
     pendingForest: null,
+    libraryModel: null,
+    libraryTreeCount: 0,
+    libraryClassifier: null,
+    libraryLoading: false,
+    libraryTraining: false,
     featureNames: ["x1", "x2"],
+    modelFeatureNames: ["x1", "x2"],
     classes: [0, 1]
 };
 
-// Elements HTML utilises par la page
+// Elements de l'interface
 const datasetSelect = document.getElementById("training-dataset-select");
 const pointCountInput = document.getElementById("training-point-count");
 const noiseInput = document.getElementById("training-noise-input");
 const treeCountInput = document.getElementById("training-tree-count");
+const engineSelect = document.getElementById("training-engine-select");
 const maxDepthInput = document.getElementById("training-max-depth");
 const minSamplesInput = document.getElementById("training-min-samples");
 const bootstrapRatioInput = document.getElementById("training-bootstrap-ratio");
@@ -24,17 +31,20 @@ const trainButton = document.getElementById("training-run");
 const resetButton = document.getElementById("training-reset");
 const playButton = document.getElementById("training-play");
 const stepButton = document.getElementById("training-step");
+const stepLabel = document.getElementById("training-step-label");
 const epochText = document.getElementById("training-epoch");
 const agreementText = document.getElementById("training-agreement");
 const accuracyText = document.getElementById("training-accuracy");
 const statusText = document.getElementById("training-status");
 const mapSvg = d3.select("#training-decision-map");
 const treeMapsContainer = document.getElementById("training-tree-maps");
+const mapTitle = document.getElementById("training-map-title");
+const sideTitle = document.getElementById("training-side-title");
 
-// Dimensions du graphique principal.
+// Dimensions du graphique principal
 const mapConfig = {
-    margin: { top: 22, right: 24, bottom: 46, left: 52 },
-    width: 620,
-    height: 520,
-    gridSize: 90
+    margin: { top: 26, right: 28, bottom: 54, left: 62 },
+    width: 820,
+    height: 680,
+    gridSize: 110
 };

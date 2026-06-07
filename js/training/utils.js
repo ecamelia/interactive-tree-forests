@@ -1,4 +1,4 @@
-// Petites fonctions utilitaires
+// Fonctions utilitaires
 function getTreeDepth(node) {
     if (!node || node.type === "leaf") {
         return 0;
@@ -24,6 +24,18 @@ function getTrainingColor(className) {
     const index = trainingState.classes.indexOf(Number(className));
 
     return colors[index >= 0 ? index % colors.length : 0];
+}
+
+function getConfidenceColor(className, confidence) {
+    const color = d3.color(getTrainingColor(className));
+    const opacity = 0.25 + confidence * 0.55;
+    const background = d3.color("#ffffff");
+
+    return d3.rgb(
+        background.r * (1 - opacity) + color.r * opacity,
+        background.g * (1 - opacity) + color.g * opacity,
+        background.b * (1 - opacity) + color.b * opacity
+    ).formatRgb();
 }
 
 function createSeededRandom(seed) {

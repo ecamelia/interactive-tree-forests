@@ -5,6 +5,9 @@ function generateTrainingData() {
     const datasetType = datasetSelect.value;
     const random = createSeededRandom(trainingState.seed);
     trainingState.featureNames = ["x1", "x2"];
+    trainingState.modelFeatureNames = datasetType === "circles"
+        ? ["x1", "x2", "r2"]
+        : ["x1", "x2"];
     trainingState.classes = [0, 1];
 
     trainingState.points = Array.from({ length: count }, function(_, index) {
@@ -37,6 +40,7 @@ function loadForestJsonFile(event) {
             if (dataFeatureNames.length >= 2 && Array.isArray(data.data) && data.data.length) {
                 stopTrainingAnimation();
                 trainingState.featureNames = dataFeatureNames.slice(0, 2);
+                trainingState.modelFeatureNames = dataFeatureNames.slice();
                 trainingState.pendingForest = null;
                 trainingState.forest = [];
                 trainingState.points = getJsonPoints(data);
@@ -67,6 +71,7 @@ function loadPretrainedForestJson(data, fileName) {
 
     stopTrainingAnimation();
     trainingState.featureNames = getJsonFeatureNames(data, roots);
+    trainingState.modelFeatureNames = trainingState.featureNames.slice();
     trainingState.pendingForest = roots;
     trainingState.forest = [];
     trainingState.points = getJsonPoints(data);
@@ -208,11 +213,7 @@ function createMoonPoint(index, count, noise, random) {
     x += (random() - 0.5) * noise;
     y += (random() - 0.5) * noise;
 
-    return {
-        x1: keepInUnit(x),
-        x2: keepInUnit(y),
-        class: upper ? 1 : 0
-    };
+    return createTrainingPoint(keepInUnit(x), keepInUnit(y), upper ? 1 : 0);
 }
 
 function createCirclePoint(index, count, noise, random) {
@@ -224,11 +225,7 @@ function createCirclePoint(index, count, noise, random) {
     const x = 0.5 + Math.cos(angle) * radius + (random() - 0.5) * noise;
     const y = 0.5 + Math.sin(angle) * radius + (random() - 0.5) * noise;
 
-    return {
-        x1: keepInUnit(x),
-        x2: keepInUnit(y),
-        class: inner ? 0 : 1
-    };
+    return createTrainingPoint(keepInUnit(x), keepInUnit(y), inner ? 0 : 1);
 }
 
 function createDiagonalPoint(noise, random) {
@@ -237,9 +234,21 @@ function createDiagonalPoint(noise, random) {
     const boundary = 0.48 + Math.sin(x * Math.PI * 2) * 0.12;
     const noisyY = y + (random() - 0.5) * noise;
 
+    return createTrainingPoint(keepInUnit(x), keepInUnit(noisyY), noisyY > boundary ? 1 : 0);
+}
+
+function createTrainingPoint(xValue, yValue, className) {
     return {
-        x1: keepInUnit(x),
-        x2: keepInUnit(noisyY),
-        class: noisyY > boundary ? 1 : 0
+        x1: xValue,
+        x2: yValue,
+        r2: getCenteredDistance(xValue, yValue),
+        class: className
     };
+}
+
+function getCenteredDistance(xValue, yValue) {
+    const xDistance = xValue - 0.5;
+    const yDistance = yValue - 0.5;
+
+    return xDistance * xDistance + yDistance * yDistance;
 }

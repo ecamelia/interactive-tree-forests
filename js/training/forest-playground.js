@@ -22,6 +22,8 @@ function bindTrainingEvents() {
     [treeCountInput, maxDepthInput, minSamplesInput, bootstrapRatioInput].forEach(function(input) {
         input.addEventListener("change", resetForestAfterOptionChange);
     });
+
+    engineSelect.addEventListener("change", resetTraining);
 }
 
 function regenerateData() {
@@ -48,9 +50,9 @@ function toggleTrainingAnimation() {
     startTrainingAnimation();
 }
 
-function addOneTree() {
+async function addOneTree() {
     stopTrainingAnimation();
-    addTrainingTreeStep();
+    await addTrainingStep();
 }
 
 function resetForestAfterOptionChange() {

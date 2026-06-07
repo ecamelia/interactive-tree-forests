@@ -1,0 +1,12 @@
+{
+  "name": "visualisation-arbres",
+  "version": "1.0.0",
+  "description": "Application web pour visualiser des arbres de decision et des forets.",
+  "private": true,
+  "scripts": {
+    "serve": "python3 -m http.server 8004"
+  },
+  "dependencies": {
+    "ml-random-forest": "^2.1.0"
+  }
+}

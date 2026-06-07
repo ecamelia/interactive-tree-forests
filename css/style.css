@@ -594,7 +594,7 @@ body.construction-active .region-legend {
 /* Page entrainement de foret */
 body.forest-training-page main.training-layout {
     display: grid;
-    grid-template-columns: clamp(280px, 18vw, 340px) minmax(0, 1fr);
+    grid-template-columns: clamp(280px, 17vw, 340px) minmax(0, 1fr);
     min-height: calc(100vh - 166px);
 }
 
@@ -657,10 +657,10 @@ body.forest-training-page main.training-layout {
 
 .training-workspace {
     display: grid;
-    grid-template-columns: minmax(460px, 620px) minmax(320px, 1fr);
-    gap: 16px;
+    grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
+    gap: 18px;
     align-items: start;
-    padding: 16px;
+    padding: 18px;
     min-width: 0;
 }
 
@@ -668,6 +668,7 @@ body.forest-training-page main.training-layout {
     background: white;
     border: 1px solid #ddd;
     padding: 14px;
+    min-width: 0;
 }
 
 .training-panel h2 {
@@ -676,14 +677,15 @@ body.forest-training-page main.training-layout {
 }
 
 #training-decision-map {
+    display: block;
     width: 100%;
-    max-width: 620px;
     height: auto;
+    aspect-ratio: 820 / 680;
     background: white;
 }
 
-.training-map-cell {
-    stroke: none;
+.training-map-background {
+    image-rendering: auto;
 }
 
 .training-point {
@@ -737,6 +739,18 @@ body.forest-training-page main.training-layout {
     min-height: 172px;
     color: #555;
     font-weight: bold;
+}
+
+@media (min-width: 1800px) {
+    .training-workspace {
+        grid-template-columns: minmax(0, 1.35fr) minmax(420px, 0.65fr);
+        gap: 22px;
+        padding: 22px;
+    }
+
+    .training-tree-maps {
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    }
 }
 
 /* Adaptation aux petits ecrans */

@@ -22,13 +22,14 @@ Le projet contient trois pages :
 Depuis le dossier `visualisation-arbres` :
 
 ```bash
-python3 -m http.server 8003
+npm install
+npm run serve
 ```
 
 Puis ouvrir :
 
 ```text
-http://localhost:8003/index.html
+http://localhost:8004/index.html
 ```
 
 Un serveur local est preferable, car le navigateur bloque parfois certains
@@ -114,6 +115,12 @@ Cette partie utilise un entrainement JavaScript maison inspire du principe CART 
 
 L'objectif n'est pas de remplacer scikit-learn, mais de rendre le fonctionnement
 visible et interactif dans le navigateur.
+
+La page propose aussi un moteur base sur la bibliotheque JavaScript
+`ml-random-forest`. La dependance est declaree dans `package.json`. Pour la page
+HTML statique, une copie navigateur est gardee dans
+`vendor/ml-random-forest.bundle.mjs`, car le fichier npm principal utilise
+`require(...)` et ne peut pas etre importe directement par Safari sans bundler.
 
 ## Fichiers importants
 
@@ -269,7 +276,6 @@ Les scripts Python generent des fichiers JSON depuis `scikit-learn`.
 
 ```bash
 /opt/anaconda3/bin/python python/export_iris.py
-/opt/anaconda3/bin/python python/export_digits.py
 ```
 
 Le fichier `python/sklearn_export_utils.py` contient les fonctions communes pour

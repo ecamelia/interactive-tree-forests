@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>Entraînement interactif d'une forêt</title>
-    <link rel="stylesheet" href="css/style.css?v=76">
+    <link rel="stylesheet" href="css/style.css?v=81">
 </head>
 <body class="forest-training-page">
     <header>
@@ -23,7 +23,7 @@
         <button id="training-play" class="training-play-button" title="Lancer l'entraînement">▶</button>
         <button id="training-step" class="training-icon-button" title="Ajouter un arbre">▸|</button>
         <div class="training-counter">
-            <span>Arbres</span>
+            <span id="training-step-label">Arbres</span>
             <strong id="training-epoch">0 / 12</strong>
         </div>
         <div class="training-counter">
@@ -64,6 +64,13 @@
             <section class="toolbar">
                 <h2>Forêt</h2>
                 <label>
+                    moteur
+                    <select id="training-engine-select">
+                        <option value="custom">code pédagogique</option>
+                        <option value="library">bibliothèque ml-random-forest</option>
+                    </select>
+                </label>
+                <label>
                     arbres
                     <input type="number" id="training-tree-count" min="1" max="80" step="1" value="12">
                 </label>
@@ -90,25 +97,26 @@
 
         <section class="training-workspace">
             <section class="training-panel training-output-panel">
-                <h2>Décision collective de la forêt</h2>
-                <svg id="training-decision-map" width="620" height="520"></svg>
+                <h2 id="training-map-title">Décision collective de la forêt</h2>
+                <svg id="training-decision-map" viewBox="0 0 820 680" width="820" height="680"></svg>
             </section>
 
             <section class="training-panel">
-                <h2>Cartes individuelles des arbres</h2>
+                <h2 id="training-side-title">Cartes individuelles des arbres</h2>
                 <div id="training-tree-maps" class="training-tree-maps"></div>
             </section>
         </section>
     </main>
 
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="js/training/state.js?v=1"></script>
-    <script src="js/training/data.js?v=1"></script>
-    <script src="js/training/trainer.js?v=1"></script>
-    <script src="js/training/prediction.js?v=1"></script>
-    <script src="js/training/render.js?v=1"></script>
-    <script src="js/training/metrics.js?v=1"></script>
-    <script src="js/training/utils.js?v=1"></script>
-    <script src="js/training/forest-playground.js?v=16"></script>
+    <script src="js/training/state.js?v=9"></script>
+    <script src="js/training/data.js?v=4"></script>
+    <script src="js/training/library-forest.js?v=6"></script>
+    <script src="js/training/trainer.js?v=5"></script>
+    <script src="js/training/prediction.js?v=4"></script>
+    <script src="js/training/render.js?v=8"></script>
+    <script src="js/training/metrics.js?v=4"></script>
+    <script src="js/training/utils.js?v=3"></script>
+    <script src="js/training/forest-playground.js?v=19"></script>
 </body>
 </html>
