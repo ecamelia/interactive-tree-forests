@@ -289,6 +289,9 @@ Tests :
 Donnees d'entrainement :
 
 - `training-points-demo.json`
+- `training-moons-sklearn.json`
+- `training-circles-sklearn.json`
+- `training-diagonal-sklearn.json`
 
 ## Format JSON d'un arbre
 
@@ -367,6 +370,18 @@ Commande principale :
 
 Le fichier `python/sklearn_export_utils.py` contient les fonctions communes pour
 transformer les arbres sklearn en JSON.
+
+Le fichier `python/export_training_datasets.py` genere les datasets de la page
+d'entrainement avec `scikit-learn` :
+
+```text
+make_moons          -> dataset lunes
+make_circles        -> dataset cercles
+make_classification -> dataset diagonale
+```
+
+Les resultats sont enregistres dans `data/`, puis charges par
+`js/training/data.js`.
 
 ## Bibliotheques utilisees
 

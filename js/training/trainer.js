@@ -3,7 +3,7 @@ async function trainForestFromControls() {
     stopTrainingAnimation();
 
     if (!trainingState.points.length) {
-        generateTrainingData();
+        await generateTrainingData();
     }
 
     if (isLibraryForestMode()) {
@@ -33,9 +33,9 @@ function resetTrainingForest() {
     renderTrainingView();
 }
 
-function startTrainingAnimation() {
+async function startTrainingAnimation() {
     if (!trainingState.points.length) {
-        generateTrainingData();
+        await generateTrainingData();
     }
 
     if (getCurrentTreeCount() >= getTargetTreeCount()) {

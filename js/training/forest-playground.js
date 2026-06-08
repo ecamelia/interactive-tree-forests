@@ -1,9 +1,9 @@
 // Evenements de l'interface
 initTrainingPage();
 
-function initTrainingPage() {
+async function initTrainingPage() {
     bindTrainingEvents();
-    generateTrainingData();
+    await generateTrainingData();
     resetTrainingForest();
 }
 
@@ -26,13 +26,13 @@ function bindTrainingEvents() {
     engineSelect.addEventListener("change", resetTraining);
 }
 
-function regenerateData() {
+async function regenerateData() {
     stopTrainingAnimation();
     trainingState.featureNames = ["x1", "x2"];
     trainingState.classes = [0, 1];
     trainingState.pendingForest = null;
     trainingState.seed += 1;
-    generateTrainingData();
+    await generateTrainingData();
     resetTrainingForest();
 }
 
@@ -52,6 +52,11 @@ function toggleTrainingAnimation() {
 
 async function addOneTree() {
     stopTrainingAnimation();
+
+    if (!trainingState.points.length) {
+        await generateTrainingData();
+    }
+
     await addTrainingStep();
 }
 

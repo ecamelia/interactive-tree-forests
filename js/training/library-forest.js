@@ -31,7 +31,7 @@ async function trainLibraryForest(treeCount) {
     }
 
     if (!trainingState.points.length) {
-        generateTrainingData();
+        await generateTrainingData();
     }
 
     trainingState.libraryTraining = true;

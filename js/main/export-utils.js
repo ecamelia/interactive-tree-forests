@@ -18,14 +18,19 @@ function exportPNG() {
     const image = new Image();
 
     image.onload = function() {
+        const exportWidth = Number(svgCopy.getAttribute("width"));
+        const exportHeight = Number(svgCopy.getAttribute("height"));
+        const scale = Math.max(2, Math.ceil(window.devicePixelRatio || 1));
         const canvas = document.createElement("canvas");
-        canvas.width = Number(svgCopy.getAttribute("width"));
-        canvas.height = Number(svgCopy.getAttribute("height"));
+
+        canvas.width = Math.round(exportWidth * scale);
+        canvas.height = Math.round(exportHeight * scale);
 
         const context = canvas.getContext("2d");
+        context.setTransform(scale, 0, 0, scale, 0, 0);
         context.fillStyle = "white";
-        context.fillRect(0, 0, canvas.width, canvas.height);
-        context.drawImage(image, 0, 0);
+        context.fillRect(0, 0, exportWidth, exportHeight);
+        context.drawImage(image, 0, 0, exportWidth, exportHeight);
 
         const pngUrl = canvas.toDataURL("image/png");
         downloadUrl(pngUrl, "tree_visualization.png");
@@ -300,7 +305,7 @@ function drawTreeInGroup(data, group, idPrefix) {
                 return textStartY + index * textStep;
             })
             .attr("text-anchor", "middle")
-            .attr("font-size", 16)
+            .attr("font-size", 11)
             .text(function(line) {
                 return line;
             });
@@ -523,7 +528,7 @@ function getStyledSvgCopy() {
         }
 
         .node-text {
-            font-size: 16px;
+            font-size: 11px;
             font-family: Arial, sans-serif;
         }
 

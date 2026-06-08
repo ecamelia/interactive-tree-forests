@@ -50,7 +50,7 @@
                 </label>
                 <label>
                     points
-                    <input type="number" id="training-point-count" min="40" max="1200" step="50" value="600">
+                    <input type="number" id="training-point-count" min="40" max="1200" step="50" value="1200">
                 </label>
                 <label>
                     bruit
@@ -59,6 +59,7 @@
                 <button id="training-regenerate-data">Régénérer données</button>
                 <label class="file-button" for="training-json-file-input">Charger données JSON</label>
                 <input type="file" id="training-json-file-input" accept=".json,application/json">
+                <span id="training-file-status" class="training-file-status">Dataset sklearn : lunes</span>
             </section>
 
             <section class="toolbar">
@@ -109,14 +110,14 @@
     </main>
 
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="js/training/state.js?v=9"></script>
-    <script src="js/training/data.js?v=5"></script>
-    <script src="js/training/library-forest.js?v=6"></script>
-    <script src="js/training/trainer.js?v=5"></script>
+    <script src="js/training/state.js?v=12"></script>
+    <script src="js/training/data.js?v=9"></script>
+    <script src="js/training/library-forest.js?v=7"></script>
+    <script src="js/training/trainer.js?v=6"></script>
     <script src="js/training/prediction.js?v=4"></script>
     <script src="js/training/render.js?v=8"></script>
     <script src="js/training/metrics.js?v=4"></script>
     <script src="js/training/utils.js?v=3"></script>
-    <script src="js/training/forest-playground.js?v=19"></script>
+    <script src="js/training/forest-playground.js?v=20"></script>
 </body>
 </html>

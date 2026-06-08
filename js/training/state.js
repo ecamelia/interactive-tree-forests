@@ -11,6 +11,8 @@ const trainingState = {
     libraryClassifier: null,
     libraryLoading: false,
     libraryTraining: false,
+    datasetSourcePoints: {},
+    datasetDisplayPoints: [],
     featureNames: ["x1", "x2"],
     modelFeatureNames: ["x1", "x2"],
     classes: [0, 1]
@@ -26,6 +28,7 @@ const maxDepthInput = document.getElementById("training-max-depth");
 const minSamplesInput = document.getElementById("training-min-samples");
 const bootstrapRatioInput = document.getElementById("training-bootstrap-ratio");
 const jsonFileInput = document.getElementById("training-json-file-input");
+const trainingFileStatus = document.getElementById("training-file-status");
 const regenerateButton = document.getElementById("training-regenerate-data");
 const trainButton = document.getElementById("training-run");
 const resetButton = document.getElementById("training-reset");

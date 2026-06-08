@@ -1,26 +1,117 @@
 // Donnees de la page d'entrainement
-function generateTrainingData() {
+async function generateTrainingData() {
     const count = Number(pointCountInput.value) || 160;
-    const noise = Number(noiseInput.value) || 0;
     const datasetType = datasetSelect.value;
-    const random = createSeededRandom(trainingState.seed);
     trainingState.featureNames = ["x1", "x2"];
     trainingState.modelFeatureNames = datasetType === "circles"
         ? ["x1", "x2", "r2"]
         : ["x1", "x2"];
     trainingState.classes = [0, 1];
 
+    await prepareSklearnDatasetPoints(datasetType, count);
+
+    if (!trainingState.datasetDisplayPoints.length) {
+        trainingState.points = [];
+        updateTrainingFileStatus("Aucun dataset chargé");
+        return;
+    }
+
     trainingState.points = Array.from({ length: count }, function(_, index) {
+        if (datasetType === "moons") {
+            return createMoonPoint(index);
+        }
+
         if (datasetType === "circles") {
-            return createCirclePoint(index, count, noise, random);
+            return createCirclePoint(index);
         }
 
         if (datasetType === "diagonal") {
-            return createDiagonalPoint(noise, random);
+            return createDiagonalPoint(index);
+        }
+    });
+
+    updateTrainingFileStatus(
+        "Dataset sklearn : " + getDatasetLabel(datasetType) + " (" + trainingState.points.length + " points)"
+    );
+}
+
+async function prepareSklearnDatasetPoints(datasetType, count) {
+    try {
+        if (!trainingState.datasetSourcePoints[datasetType]) {
+            const response = await fetch(getSklearnDatasetFile(datasetType));
+
+            if (!response.ok) {
+                throw new Error("Chargement impossible");
+            }
+
+            const data = await response.json();
+            trainingState.datasetSourcePoints[datasetType] = getPointsFromTrainingJson(data);
         }
 
-        return createMoonPoint(index, count, noise, random);
+        trainingState.datasetDisplayPoints = selectTrainingPoints(
+            trainingState.datasetSourcePoints[datasetType],
+            count
+        );
+    } catch (error) {
+        console.error("Dataset sklearn indisponible.", error);
+        trainingState.datasetDisplayPoints = [];
+        statusText.textContent = "Erreur : impossible de charger le dataset sklearn.";
+    }
+}
+
+function getSklearnDatasetFile(datasetType) {
+    const files = {
+        moons: "data/training-moons-sklearn.json",
+        circles: "data/training-circles-sklearn.json",
+        diagonal: "data/training-diagonal-sklearn.json"
+    };
+
+    return files[datasetType] || files.moons;
+}
+
+function getDatasetLabel(datasetType) {
+    const labels = {
+        moons: "lunes",
+        circles: "cercles",
+        diagonal: "diagonale"
+    };
+
+    return labels[datasetType] || datasetType;
+}
+
+function updateTrainingFileStatus(text) {
+    if (trainingFileStatus) {
+        trainingFileStatus.textContent = text;
+    }
+}
+
+function getPointsFromTrainingJson(data) {
+    if (!data || !Array.isArray(data.data)) {
+        return [];
+    }
+
+    return data.data.map(function(point) {
+        return createTrainingPoint(
+            Number(point.x1),
+            Number(point.x2),
+            Number(point.class)
+        );
+    }).filter(function(point) {
+        return Number.isFinite(point.x1) &&
+            Number.isFinite(point.x2) &&
+            Number.isFinite(point.class);
     });
+}
+
+function selectTrainingPoints(points, count) {
+    if (points.length <= count) {
+        return points;
+    }
+
+    const random = createSeededRandom(trainingState.seed);
+    return points.slice().sort(function() {
+        return random() - 0.5;
+    }).slice(0, count);
 }
 
 function loadForestJsonFile(event) {
@@ -46,6 +137,9 @@ function loadForestJsonFile(event) {
                 trainingState.forest = [];
                 trainingState.points = getJsonPoints(data);
                 trainingState.classes = getJsonClasses(data);
+                pointCountInput.max = Math.max(Number(pointCountInput.max) || 0, trainingState.points.length);
+                pointCountInput.value = trainingState.points.length;
+                updateTrainingFileStatus("Fichier chargé : " + file.name + " (" + trainingState.points.length + " points)");
                 renderTrainingView();
                 statusText.textContent = "Données chargées : " + file.name + ". Appuie sur ▶ pour entraîner la forêt.";
                 return;
@@ -54,6 +148,7 @@ function loadForestJsonFile(event) {
             loadPretrainedForestJson(data, file.name);
         } catch (error) {
             console.error(error);
+            updateTrainingFileStatus("Fichier JSON invalide");
             statusText.textContent = "Erreur : fichier JSON invalide.";
         }
     };
@@ -78,6 +173,7 @@ function loadPretrainedForestJson(data, fileName) {
     trainingState.forest = [];
     trainingState.points = getJsonPoints(data);
     trainingState.classes = getJsonClasses(data);
+    updateTrainingFileStatus("Forêt chargée : " + fileName);
     renderTrainingView();
     statusText.textContent = "Forêt pré-entraînée chargée : " + fileName + ". Appuie sur ▶ pour afficher les arbres progressivement.";
 }
@@ -198,52 +294,22 @@ function collectTreeClasses(node, classes) {
     collectTreeClasses(node.right, classes);
 }
 
-function createMoonPoint(index, count, noise, random) {
-    const upper = index < count / 2;
-    const angle = random() * Math.PI;
-    const thickness = 0.18;
-    const radialNoise = (random() - 0.5) * thickness;
-    const pointNoise = noise * 1.3;
-    const radius = 1 + radialNoise;
-    const xRadius = 1.25;
-    const yRadius = 1.1;
-    let x;
-    let y;
-
-    // Deux demi-lunes proches du dataset classique make_moons.
-    if (upper) {
-        x = Math.cos(angle) * radius * xRadius;
-        y = Math.sin(angle) * radius * yRadius;
-    } else {
-        x = 1 - Math.cos(angle) * radius * xRadius;
-        y = -Math.sin(angle) * radius * yRadius - 0.45;
-    }
-
-    x += (random() - 0.5) * pointNoise;
-    y += (random() - 0.5) * pointNoise;
-
-    return createTrainingPoint(round(x), round(y), upper ? 0 : 1);
+function createMoonPoint(index) {
+    return createTrainingPointFromDataset(index);
 }
 
-function createCirclePoint(index, count, noise, random) {
-    const inner = index < count / 2;
-    const angle = random() * Math.PI * 2;
-    const radius = inner
-        ? 0.16 + random() * 0.12
-        : 0.34 + random() * 0.14;
-    const x = 0.5 + Math.cos(angle) * radius + (random() - 0.5) * noise;
-    const y = 0.5 + Math.sin(angle) * radius + (random() - 0.5) * noise;
-
-    return createTrainingPoint(keepInUnit(x), keepInUnit(y), inner ? 0 : 1);
+function createCirclePoint(index) {
+    return createTrainingPointFromDataset(index);
 }
 
-function createDiagonalPoint(noise, random) {
-    const x = random();
-    const y = random();
-    const boundary = 0.48 + Math.sin(x * Math.PI * 2) * 0.12;
-    const noisyY = y + (random() - 0.5) * noise;
+function createDiagonalPoint(index) {
+    return createTrainingPointFromDataset(index);
+}
 
-    return createTrainingPoint(keepInUnit(x), keepInUnit(noisyY), noisyY > boundary ? 1 : 0);
+function createTrainingPointFromDataset(index) {
+    const point = trainingState.datasetDisplayPoints[index % trainingState.datasetDisplayPoints.length];
+
+    return createTrainingPoint(point.x1, point.x2, point.class);
 }
 
 function createTrainingPoint(xValue, yValue, className) {

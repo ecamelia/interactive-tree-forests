@@ -294,6 +294,14 @@ input[type="text"] {
     font-size: 15px;
 }
 
+.training-file-status {
+    color: #555;
+    display: block;
+    font-size: 14px;
+    line-height: 1.35;
+    margin-top: 8px;
+}
+
 #forest-total-status {
     color: #555;
     font-size: 15px;
