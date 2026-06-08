@@ -1,27 +1,28 @@
-# Visualisation d'arbres et de forets
+# Arbres et forets interactifs
 
-Ce projet est une application web pour visualiser, tester et expliquer des
-arbres de decision et des forets d'arbres. L'objectif est de faire le lien entre
-un modele appris avec Python, un format JSON lisible, et une visualisation
-interactive dans le navigateur avec D3.js.
+Ce projet est une application web interactive pour visualiser, tester et
+expliquer des arbres de decision et des forets d'arbres.
 
-Le principe general est :
+L'objectif principal est pedagogique : rendre visibles des notions souvent
+abstraites comme les noeuds, les seuils, les feuilles, le vote d'une foret et
+les regions de decision.
+
+Le projet relie trois parties :
 
 ```text
-Python / scikit-learn -> JSON -> JavaScript / D3.js -> SVG interactif
+Python / scikit-learn -> JSON -> JavaScript / D3.js
 ```
 
-Le projet contient trois pages :
-
-- `index.html` : visualisation principale d'un arbre ou d'une foret;
-- `construction.html` : construction pas a pas d'un arbre et regions de decision;
-- `entrainement-foret.html` : entrainement interactif d'une foret, arbre par arbre.
+Python sert a generer certains modeles d'exemple. Le JSON garde la structure
+des arbres sous une forme simple. JavaScript lit ces donnees et D3.js les
+affiche dans le navigateur.
 
 ## Lancer le projet
 
-Depuis le dossier `visualisation-arbres` :
+Depuis le dossier du projet :
 
 ```bash
+cd /Users/cameliaermurache/Desktop/Stage/arbres-forets-interactifs
 npm install
 npm run serve
 ```
@@ -32,179 +33,188 @@ Puis ouvrir :
 http://localhost:8004/index.html
 ```
 
-Un serveur local est preferable, car le navigateur bloque parfois certains
-chargements quand on ouvre directement les fichiers HTML.
+Le serveur local est important, car les navigateurs bloquent parfois certains
+chargements quand on ouvre directement un fichier HTML.
 
-## Methode
+## Pages du projet
 
-Le projet se base sur une separation simple :
+Le projet contient trois pages principales.
 
-- Python entraine les modeles et exporte leur structure;
-- JSON garde les arbres sous une forme independante du langage;
-- JavaScript lit le JSON, calcule le placement, puis dessine avec D3.js;
-- l'utilisateur peut ensuite explorer, tester et exporter la visualisation.
+### `index.html`
 
-Pour un arbre, chaque noeud contient une condition comme
-`petal width <= 0.8`. Les feuilles contiennent la classe predite. Pour une
-foret, le fichier contient plusieurs arbres, puis la prediction finale se fait
-par vote majoritaire.
+Page de visualisation principale.
 
-## Visualisation principale
+Elle permet de charger un fichier JSON contenant un arbre ou une foret. La page
+detecte automatiquement le type de modele :
 
-La page `index.html` permet de charger un fichier JSON. Le code detecte
-automatiquement le type de fichier :
+- un arbre simple si le fichier contient `root`;
+- une foret si le fichier contient `trees`.
 
-- si le JSON contient `trees`, il affiche une foret;
-- si le JSON contient `root` ou un noeud `type: "node"`, il affiche un arbre.
-
-Fonctionnalites principales :
+Fonctionnalites :
 
 - affichage d'un arbre ou d'une foret;
 - zoom et deplacement dans le SVG;
 - choix des informations visibles dans les noeuds;
 - limitation de la profondeur affichee;
-- selection d'un noeud et panneau de details;
-- test d'une observation saisie a la main;
-- test d'un fichier contenant plusieurs observations;
+- selection d'un noeud;
+- test d'une observation;
+- chargement d'un fichier de test;
 - export SVG, PNG et code D3.js.
 
-Les resultats de test sont affiches dans un panneau separe avec :
+### `construction.html`
 
-- le nombre d'observations;
-- le nombre de predictions correctes;
-- le nombre d'erreurs;
-- l'exactitude;
-- le detail ligne par ligne.
+Page de construction pas a pas.
 
-## Construction pas a pas
+Elle montre comment les frontieres de decision apparaissent au fur et a mesure
+que l'arbre se developpe. A chaque etape, un noeud est ajoute et la carte de
+decision est mise a jour.
 
-La page `construction.html` sert a expliquer comment un arbre construit des
-regions de decision.
-
-A chaque etape :
-
-- un nouveau noeud de l'arbre apparait;
-- la frontiere correspondante apparait dans le graphique;
-- les regions colorees montrent quelle classe est predite dans chaque zone;
-- la legende associe chaque couleur a une classe.
-
-Cette page est surtout pedagogique : elle montre que chaque condition de l'arbre
-coupe l'espace selon une feature et un seuil.
-
-## Entrainement interactif d'une foret
-
-La page `entrainement-foret.html` permet d'observer l'effet d'une foret qui se
-construit progressivement.
-
-Le bouton de lecture ajoute les arbres un par un. A chaque arbre ajoute :
-
-- une carte individuelle montre la decision de cet arbre;
-- la carte collective est recalculee;
-- chaque point de la grille recoit les votes des arbres deja entraines;
-- la classe finale est la classe qui a le plus de votes.
-
-Le bouton `Calculer directement` construit toute la foret en une seule fois.
-
-Cette partie utilise un entrainement JavaScript maison inspire du principe CART :
-
-- on cherche des seuils possibles sur les deux features;
-- on choisit la coupe qui reduit le mieux l'impurete de Gini;
-- on repete recursivement jusqu'a la profondeur maximale;
-- chaque arbre utilise un echantillon bootstrap;
-- la foret combine les arbres par vote majoritaire.
-
-L'objectif n'est pas de remplacer scikit-learn, mais de rendre le fonctionnement
-visible et interactif dans le navigateur.
-
-La page propose aussi un moteur base sur la bibliotheque JavaScript
-`ml-random-forest`. La dependance est declaree dans `package.json`. Pour la page
-HTML statique, une copie navigateur est gardee dans
-`vendor/ml-random-forest.bundle.mjs`, car le fichier npm principal utilise
-`require(...)` et ne peut pas etre importe directement par Safari sans bundler.
-
-## Fichiers importants
+Cette page permet d'expliquer qu'une condition comme :
 
 ```text
-visualisation-arbres/
+x1 <= 0.45
+```
+
+coupe l'espace en deux zones.
+
+### `entrainement-foret.html`
+
+Page d'entrainement interactif.
+
+Elle permet de generer des donnees, puis d'ajouter les arbres d'une foret un par
+un. La carte principale montre la decision collective de la foret, tandis que
+les petites cartes montrent la decision de chaque arbre.
+
+Deux moteurs sont disponibles :
+
+- `code pedagogique` : implementation JavaScript maison;
+- `bibliotheque ml-random-forest` : implementation basee sur une librairie JS.
+
+Le mode pedagogique sert a comprendre l'algorithme. Le mode bibliotheque sert a
+comparer avec une implementation existante.
+
+## Structure des dossiers
+
+```text
+arbres-forets-interactifs/
 ├── index.html
 ├── construction.html
 ├── entrainement-foret.html
 ├── css/
 │   └── style.css
+├── data/
 ├── js/
 │   ├── shared/
-│   │   ├── tree-viz.js
-│   │   └── layout-utils.js
 │   ├── main/
 │   ├── construction/
 │   └── training/
-├── data/
-└── python/
+├── python/
+├── vendor/
+├── package.json
+└── package-lock.json
 ```
+
+## Role des dossiers JavaScript
 
 ### `js/shared/`
 
-Ce dossier contient les fonctions communes :
+Code commun reutilise par plusieurs pages.
 
-- `tree-viz.js` dessine les noeuds, les liens, les textes et les couleurs;
-- `layout-utils.js` calcule la profondeur, le nombre de feuilles et les espacements.
+- `tree-viz.js` dessine les noeuds, les liens, les textes et les couleurs.
+- `layout-utils.js` calcule la profondeur, les feuilles et les espacements.
 
 ### `js/main/`
 
-Ce dossier gere la page principale :
+Code de la page `index.html`.
 
-- chargement JSON;
-- detection arbre / foret;
-- affichage principal;
-- options d'affichage;
-- selection des noeuds;
-- test des observations;
-- export SVG, PNG et D3.js.
+Il gere le chargement JSON, l'affichage des arbres et forets, les interactions,
+les options d'affichage, les tests d'observations et les exports.
 
 ### `js/construction/`
 
-Ce dossier gere la construction pas a pas :
+Code de la page `construction.html`.
 
-- creation des etapes;
-- dessin de l'arbre a l'etape courante;
-- dessin des regions de decision;
-- affichage de la legende.
+Il gere les etapes de construction, le dessin de l'arbre courant et les regions
+de decision associees.
 
 ### `js/training/`
 
-Ce dossier gere l'entrainement interactif :
+Code de la page `entrainement-foret.html`.
 
-- generation des datasets;
-- chargement de donnees JSON;
-- apprentissage des arbres;
-- prediction par vote;
-- calcul des metriques;
-- dessin de la carte collective et des cartes individuelles.
+- `state.js` contient l'etat partage de la page.
+- `data.js` genere ou charge les donnees.
+- `trainer.js` contient l'entrainement pedagogique.
+- `library-forest.js` utilise `ml-random-forest`.
+- `prediction.js` centralise les predictions.
+- `render.js` dessine la carte principale et les cartes individuelles.
+- `metrics.js` calcule l'exactitude et l'accord moyen.
+- `utils.js` contient les fonctions utilitaires.
+- `forest-playground.js` branche les boutons de l'interface.
 
-## Exemples de donnees
+## Entrainement pedagogique
+
+Le fichier `js/training/trainer.js` construit une foret d'arbres directement en
+JavaScript.
+
+Le principe est le suivant :
+
+1. On cree un echantillon bootstrap pour chaque arbre.
+2. On cherche plusieurs seuils possibles sur les features.
+3. On calcule l'impurete de Gini pour chaque separation.
+4. On garde la separation qui reduit le mieux l'impurete.
+5. On recommence recursivement jusqu'a la profondeur maximale.
+6. Les feuilles predisent la classe majoritaire.
+7. La foret combine les arbres avec un vote majoritaire.
+
+Ce moteur est moins complet que scikit-learn, mais il est utile pour expliquer
+le fonctionnement interne d'une foret.
+
+## Entrainement avec bibliotheque
+
+Le fichier `js/training/library-forest.js` utilise la bibliotheque
+`ml-random-forest`.
+
+La dependance est declaree dans `package.json` :
+
+```json
+"ml-random-forest": "^2.1.0"
+```
+
+Pour la page HTML statique, une version navigateur est gardee dans :
+
+```text
+vendor/ml-random-forest.bundle.mjs
+```
+
+Cette copie est utilisee car le fichier npm principal repose sur `require(...)`,
+qui n'est pas directement utilisable dans Safari sans outil de build.
+
+## Donnees d'exemple
+
+Le dossier `data/` contient plusieurs fichiers utiles pour tester le projet.
 
 Arbres :
 
-- `data/tree-small.json`;
-- `data/tree-medium.json`;
-- `data/tree-regions-2-classes.json`;
-- `data/tree-regions-3-classes.json`;
-- `data/iris_tree.json`.
+- `tree-small.json`
+- `tree-medium.json`
+- `tree-regions-2-classes.json`
+- `tree-regions-3-classes.json`
+- `iris_tree.json`
 
 Forets :
 
-- `data/forest-small.json`;
-- `data/forest-demo-vote.json`;
-- `data/iris_forest.json`.
+- `forest-small.json`
+- `forest-demo-vote.json`
+- `iris_forest.json`
 
 Tests :
 
-- `data/test-observations-demo.json`;
-- `data/test-observations-iris.json`.
+- `test-observations-demo.json`
+- `test-observations-iris.json`
 
-Donnees pour l'entrainement interactif :
+Donnees d'entrainement :
 
-- `data/training-points-demo.json`.
+- `training-points-demo.json`
 
 ## Format JSON d'un arbre
 
@@ -255,11 +265,9 @@ Une foret contient une liste d'arbres :
 
 Chaque `root` correspond a un arbre au meme format qu'un arbre simple.
 
-## Format JSON pour tester des observations
+## Format JSON pour les tests
 
-Un fichier de test contient une liste d'observations. Chaque observation contient
-les features attendues par le modele et, si on veut calculer l'exactitude, la
-classe attendue.
+Un fichier de test contient une liste d'observations :
 
 ```json
 {
@@ -270,42 +278,43 @@ classe attendue.
 }
 ```
 
-## Export Python
+La classe attendue est optionnelle, mais elle permet de calculer l'exactitude.
 
-Les scripts Python generent des fichiers JSON depuis `scikit-learn`.
+## Scripts Python
+
+Le dossier `python/` contient les scripts qui exportent des modeles
+`scikit-learn` vers JSON.
+
+Commande principale :
 
 ```bash
 /opt/anaconda3/bin/python python/export_iris.py
 ```
 
 Le fichier `python/sklearn_export_utils.py` contient les fonctions communes pour
-transformer les objets sklearn en JSON.
+transformer les arbres sklearn en JSON.
 
-## Comment presenter le projet
+## Bibliotheques utilisees
 
-Une presentation simple peut suivre cet ordre :
+- D3.js : dessin SVG, axes, points, liens et cartes.
+- ml-random-forest : entrainement Random Forest en JavaScript.
+- scikit-learn : generation de certains modeles JSON avec Python.
 
-1. Le modele est entraine en Python.
-2. Sa structure est sauvegardee en JSON.
-3. Le navigateur lit ce JSON et reconstruit l'arbre.
-4. D3.js dessine les noeuds, les liens et les couleurs.
-5. Pour une foret, plusieurs arbres sont affiches et la prediction se fait par vote.
-6. Les regions de decision montrent visuellement quelles zones appartiennent a chaque classe.
-7. La page d'entrainement montre progressivement comment la decision collective evolue.
+## Points a presenter
 
-## Limites actuelles
+Pour une soutenance, l'explication peut suivre cet ordre :
 
-Le projet est un prototype fonctionnel. Les limites principales sont :
+1. Le modele peut venir de Python ou etre entraine dans le navigateur.
+2. La structure est representee en JSON.
+3. Le navigateur reconstruit les arbres a partir du JSON.
+4. D3.js dessine la visualisation.
+5. Une foret combine plusieurs arbres par vote majoritaire.
+6. Les regions de decision montrent visuellement la classe predite.
+7. La page training compare une implementation pedagogique avec une bibliotheque.
 
-- les tres grands arbres restent difficiles a lire;
-- l'API publique d'une vraie librairie n'est pas encore definie;
-- l'entrainement JavaScript est pedagogique, moins complet que scikit-learn;
-- les regions de decision sont surtout adaptees a deux features numeriques.
+## Limites
 
-## Pistes d'amelioration
-
-- ajouter une recherche de noeud;
-- ajouter une mini-carte pour les grands arbres;
-- permettre de comparer deux forets;
-- ajouter plus de metriques sur les fichiers de test;
-- creer une vraie API reutilisable autour de `drawDecisionTree`.
+- Les tres grands arbres restent difficiles a lire.
+- Les regions de decision sont surtout adaptees a deux features.
+- Le mode pedagogique ne remplace pas une bibliotheque complete.
+- Le bundle dans `vendor/` sert a garder la page utilisable sans outil de build.

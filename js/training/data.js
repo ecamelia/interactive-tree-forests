@@ -1,4 +1,4 @@
-// Donnees : generation et chargement JSON
+// Donnees de la page d'entrainement
 function generateTrainingData() {
     const count = Number(pointCountInput.value) || 160;
     const noise = Number(noiseInput.value) || 0;
@@ -196,24 +196,31 @@ function collectTreeClasses(node, classes) {
     collectTreeClasses(node.right, classes);
 }
 
-// Jeux de donnees de demonstration
 function createMoonPoint(index, count, noise, random) {
     const upper = index < count / 2;
     const angle = random() * Math.PI;
-    const radius = 0.34 + random() * 0.08;
-    let x = 0.5 + Math.cos(angle) * radius;
-    let y = upper
-        ? 0.54 + Math.sin(angle) * radius * 0.62
-        : 0.43 - Math.sin(angle) * radius * 0.62;
+    const thickness = 0.18;
+    const radialNoise = (random() - 0.5) * thickness;
+    const pointNoise = noise * 1.3;
+    const radius = 1 + radialNoise;
+    const xRadius = 1.25;
+    const yRadius = 1.1;
+    let x;
+    let y;
 
-    if (!upper) {
-        x += 0.18;
+    // Deux demi-lunes proches du dataset classique make_moons.
+    if (upper) {
+        x = Math.cos(angle) * radius * xRadius;
+        y = Math.sin(angle) * radius * yRadius;
+    } else {
+        x = 1 - Math.cos(angle) * radius * xRadius;
+        y = -Math.sin(angle) * radius * yRadius - 0.45;
     }
 
-    x += (random() - 0.5) * noise;
-    y += (random() - 0.5) * noise;
+    x += (random() - 0.5) * pointNoise;
+    y += (random() - 0.5) * pointNoise;
 
-    return createTrainingPoint(keepInUnit(x), keepInUnit(y), upper ? 1 : 0);
+    return createTrainingPoint(round(x), round(y), upper ? 0 : 1);
 }
 
 function createCirclePoint(index, count, noise, random) {
@@ -241,6 +248,7 @@ function createTrainingPoint(xValue, yValue, className) {
     return {
         x1: xValue,
         x2: yValue,
+        // r2 aide les arbres a separer le dataset "cercles".
         r2: getCenteredDistance(xValue, yValue),
         class: className
     };

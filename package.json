@@ -1,7 +1,7 @@
 {
-  "name": "visualisation-arbres",
+  "name": "arbres-forets-interactifs",
   "version": "1.0.0",
-  "description": "Application web pour visualiser des arbres de decision et des forets.",
+  "description": "Application web interactive pour explorer des arbres de decision et des forets.",
   "private": true,
   "scripts": {
     "serve": "python3 -m http.server 8004"

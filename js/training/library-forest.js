@@ -61,6 +61,7 @@ async function getRandomForestClassifier() {
     trainingState.libraryLoading = true;
     statusText.textContent = "Chargement de la bibliothèque ml-random-forest...";
 
+    // Bundle local pour garder la page compatible avec un simple serveur statique.
     const module = await import("../../vendor/ml-random-forest.bundle.mjs?v=1");
 
     trainingState.libraryClassifier = module.RandomForestClassifier;
@@ -76,6 +77,7 @@ function getLibraryOptions(treeCount) {
         nEstimators: treeCount,
         maxFeatures: Math.max(1, Math.round(Math.sqrt(featureCount))),
         replacement: Number(bootstrapRatioInput.value) > 0,
+        // L'OOB de la librairie n'est pas necessaire pour notre affichage.
         noOOB: true,
         treeOptions: {
             maxDepth: Number(maxDepthInput.value) || 4,

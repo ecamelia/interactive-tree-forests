@@ -50,11 +50,11 @@
                 </label>
                 <label>
                     points
-                    <input type="number" id="training-point-count" min="40" max="400" step="20" value="160">
+                    <input type="number" id="training-point-count" min="40" max="1200" step="50" value="600">
                 </label>
                 <label>
                     bruit
-                    <input type="number" id="training-noise-input" min="0" max="0.5" step="0.02" value="0.08">
+                    <input type="number" id="training-noise-input" min="0" max="0.5" step="0.02" value="0.16">
                 </label>
                 <button id="training-regenerate-data">Régénérer données</button>
                 <label class="file-button" for="training-json-file-input">Charger données JSON</label>
@@ -110,7 +110,7 @@
 
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="js/training/state.js?v=9"></script>
-    <script src="js/training/data.js?v=4"></script>
+    <script src="js/training/data.js?v=5"></script>
     <script src="js/training/library-forest.js?v=6"></script>
     <script src="js/training/trainer.js?v=5"></script>
     <script src="js/training/prediction.js?v=4"></script>

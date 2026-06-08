@@ -137,6 +137,8 @@ function trainRandomForest(treeCount, options) {
 function trainRandomTree(points, options, treeIndex) {
     const random = createSeededRandom(trainingState.seed + treeIndex * 97 + 13);
     const sampleSize = Math.max(1, Math.round(points.length * options.bootstrapRatio));
+
+    // Chaque arbre voit un echantillon different des donnees.
     const sampledPoints = Array.from({ length: sampleSize }, function() {
         return points[Math.floor(random() * points.length)];
     });
@@ -190,6 +192,7 @@ function findBestSplit(points, random) {
     });
     let bestSplit = null;
 
+    // On teste les seuils possibles et on garde celui avec le meilleur Gini.
     features.forEach(function(feature) {
         const values = Array.from(new Set(points.map(function(point) {
             return getPointFeatureValue(point, feature);

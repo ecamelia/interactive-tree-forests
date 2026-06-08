@@ -74,7 +74,7 @@ function buildD3CodeExport(visualization) {
     const exportedForestTreeLimit = visualization.forestTreeLimit || 3;
     const exportedMaxVisibleDepth = visualization.maxVisibleDepth || null;
 
-    return `// Code D3.js exporte depuis le projet visualisation-arbres.
+    return `// Code D3.js exporte depuis le projet arbres-forets-interactifs.
 // Pour l'utiliser, il faut charger D3.js dans la page HTML :
 // <script src="https://d3js.org/d3.v7.min.js"></script>
 // Puis ajouter un SVG :

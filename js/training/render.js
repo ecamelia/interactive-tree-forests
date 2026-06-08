@@ -169,6 +169,7 @@ function drawDecisionBackground(xScale, yScale, domains, pixelWidth, pixelHeight
     const imageData = context.createImageData(pixelWidth, pixelHeight);
     const data = imageData.data;
 
+    // Chaque pixel est classe par le modele pour former la carte de decision.
     for (let xIndex = 0; xIndex < pixelWidth; xIndex += 1) {
         for (let yIndex = 0; yIndex < pixelHeight; yIndex += 1) {
             const x = interpolateDomain(domains.xDomain, (xIndex + 0.5) / pixelWidth);
