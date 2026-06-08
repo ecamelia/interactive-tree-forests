@@ -150,6 +150,7 @@ function buildTree(points, depth, options, random) {
     const counts = countClasses(points);
     const majorityClass = getMajorityClass(counts);
 
+    // Une feuille est creee quand on ne peut plus separer utilement les points.
     if (
         depth >= options.maxDepth ||
         points.length < options.minSamples ||
@@ -234,6 +235,8 @@ function findBestSplit(points, random) {
 
 function weightedGini(leftPoints, rightPoints) {
     const total = leftPoints.length + rightPoints.length;
+
+    // Chaque branche pese selon le nombre de points qu'elle contient.
     return (leftPoints.length / total) * giniImpurity(leftPoints) +
         (rightPoints.length / total) * giniImpurity(rightPoints);
 }
@@ -244,6 +247,8 @@ function giniImpurity(points) {
     }
 
     const counts = countClasses(points);
+
+    // Gini proche de 0 : les points appartiennent presque tous a la meme classe.
     return 1 - Object.keys(counts).reduce(function(sum, className) {
         const probability = counts[className] / points.length;
         return sum + probability * probability;

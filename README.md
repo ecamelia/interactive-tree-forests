@@ -151,6 +151,41 @@ Code de la page `entrainement-foret.html`.
 - `utils.js` contient les fonctions utilitaires.
 - `forest-playground.js` branche les boutons de l'interface.
 
+## Comment les fichiers travaillent ensemble
+
+Le projet est separe par page, mais le principe reste le meme :
+
+1. Une page HTML contient les zones visibles : boutons, panneaux, SVG.
+2. Un fichier JavaScript lit les elements HTML et garde l'etat courant.
+3. Les donnees viennent soit d'un JSON, soit d'un generateur JavaScript.
+4. Les fonctions de prediction calculent la classe d'une observation.
+5. Les fonctions de rendu dessinent le resultat avec D3.js.
+
+Pour la page principale, le chemin est :
+
+```text
+index.html
+-> js/main/renderer.js
+-> js/shared/tree-viz.js
+-> js/main/interactions.js
+-> js/main/decision-explainer.js
+```
+
+Pour la page d'entrainement, le chemin est :
+
+```text
+entrainement-foret.html
+-> js/training/forest-playground.js
+-> js/training/data.js
+-> js/training/trainer.js ou js/training/library-forest.js
+-> js/training/prediction.js
+-> js/training/render.js
+```
+
+Cette separation evite d'avoir tout le projet dans un seul gros fichier. Chaque
+fichier a un role precis : donnees, entrainement, prediction, rendu ou
+interaction.
+
 ## Entrainement pedagogique
 
 Le fichier `js/training/trainer.js` construit une foret d'arbres directement en
@@ -168,6 +203,17 @@ Le principe est le suivant :
 
 Ce moteur est moins complet que scikit-learn, mais il est utile pour expliquer
 le fonctionnement interne d'une foret.
+
+Les fonctions importantes sont :
+
+- `trainRandomTree()` : cree un arbre avec un echantillon bootstrap.
+- `buildTree()` : construit recursivement les noeuds et les feuilles.
+- `findBestSplit()` : cherche la meilleure condition de separation.
+- `giniImpurity()` : mesure si un groupe contient des classes melangees.
+
+Ce code sert surtout a montrer la methode : on voit comment un arbre choisit une
+condition, comment il se divise, puis comment plusieurs arbres forment une
+foret.
 
 ## Entrainement avec bibliotheque
 
@@ -188,6 +234,34 @@ vendor/ml-random-forest.bundle.mjs
 
 Cette copie est utilisee car le fichier npm principal repose sur `require(...)`,
 qui n'est pas directement utilisable dans Safari sans outil de build.
+
+Les fonctions importantes sont :
+
+- `getRandomForestClassifier()` : charge la bibliotheque depuis `vendor/`.
+- `trainLibraryForest()` : cree le modele et lance `model.train(X, y)`.
+- `getLibraryTrainingMatrix()` : transforme les points en matrice `X`.
+- `getLibraryLabels()` : transforme les classes en tableau `y`.
+- `getLibraryPrediction()` : recupere la classe predite et la confiance.
+
+Ce mode montre une version plus proche d'un usage reel : on confie
+l'entrainement a une bibliotheque, puis le projet se concentre sur
+l'affichage, les cartes de decision et l'interaction.
+
+## Comment expliquer la carte de decision
+
+La carte de decision est calculee comme une grille. Pour chaque petite zone du
+graphique, le programme cree une observation fictive :
+
+```text
+observation = { x1: valeur_x, x2: valeur_y }
+```
+
+Ensuite le modele predit une classe pour cette observation. La couleur de la
+zone correspond a la classe predite. Dans une foret, la couleur vient du vote
+majoritaire des arbres.
+
+La carte principale montre donc la decision collective. Les petites cartes de
+droite montrent les decisions individuelles des arbres.
 
 ## Donnees d'exemple
 
@@ -299,6 +373,17 @@ transformer les arbres sklearn en JSON.
 - D3.js : dessin SVG, axes, points, liens et cartes.
 - ml-random-forest : entrainement Random Forest en JavaScript.
 - scikit-learn : generation de certains modeles JSON avec Python.
+
+Le projet n'utilise pas `node_modules/` directement dans GitHub. Ce dossier est
+regenere avec :
+
+```bash
+npm install
+```
+
+Le fichier `vendor/ml-random-forest.bundle.mjs` est garde dans le depot car il
+permet d'utiliser la bibliotheque dans le navigateur sans configuration de
+build.
 
 ## Points a presenter
 

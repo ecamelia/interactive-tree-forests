@@ -15,6 +15,7 @@ function createDecisionMap() {
     const xDomain = domains.xDomain;
     const yDomain = domains.yDomain;
 
+    // La carte est une grille : chaque cellule reçoit la classe predite par le modele.
     for (let xIndex = 0; xIndex < gridSize; xIndex += 1) {
         for (let yIndex = 0; yIndex < gridSize; yIndex += 1) {
             const x = interpolateDomain(xDomain, (xIndex + 0.5) / gridSize);
@@ -68,6 +69,7 @@ function getFeatureDomain(featureName) {
         .filter(Number.isFinite);
     const thresholds = [];
 
+    // Les seuils des arbres sont inclus pour que la carte couvre bien les coupures.
     trainingState.forest.forEach(function(tree) {
         collectFeatureThresholds(tree, featureName, thresholds);
     });
@@ -224,6 +226,7 @@ function drawTreeMaps() {
     treeMapsContainer.innerHTML = "";
     sideTitle.textContent = "Cartes individuelles des arbres";
 
+    // Les cartes de droite montrent chaque arbre avant le vote collectif.
     if (isLibraryForestMode()) {
         drawLibraryForestMaps();
         return;

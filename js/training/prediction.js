@@ -14,6 +14,7 @@ function predictCurrentTrainingModel(observation) {
         return getLibraryPrediction(observation);
     }
 
+    // En mode pedagogique, la foret predit par vote majoritaire.
     const votes = getForestVotes(observation);
     const predictedClass = getMajorityClass(votes);
 
@@ -34,6 +35,7 @@ function getForestVotes(observation) {
 function predictTree(tree, observation) {
     let node = tree;
 
+    // On descend dans l'arbre en suivant les conditions jusqu'a une feuille.
     while (node && node.type !== "leaf") {
         node = observation[node.feature] <= node.threshold ? node.left : node.right;
     }

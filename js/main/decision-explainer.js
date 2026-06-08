@@ -82,6 +82,7 @@ function explainForestObservation(observation) {
     const votes = {};
     const visibleTrees = getVisibleForestTreeItems(currentForest);
 
+    // Tous les arbres votent, meme si seulement une partie est visible a l'ecran.
     currentForest.trees.forEach(function(tree, index) {
         const treeId = tree.id || index + 1;
         const isVisibleTree = visibleTrees.some(function(item) {
@@ -115,6 +116,7 @@ function loadTestObservationsFile(event) {
                 return;
             }
 
+            // Chaque ligne du fichier test passe dans le modele courant.
             const results = observations.map(predictObservationFromCurrentModel);
             observationResult.textContent = "Fichier test : " + results.length + " observations";
             renderTestObservationResults(results);
@@ -193,6 +195,7 @@ function predictObservationFromCurrentModel(testCase) {
 function predictTreeObservation(tree, observation) {
     let currentNode = tree;
 
+    // Meme logique que pendant l'affichage du chemin : condition apres condition.
     while (currentNode && currentNode.type !== "leaf") {
         const featureValue = observation[currentNode.feature];
         currentNode = featureValue <= currentNode.threshold ? currentNode.left : currentNode.right;

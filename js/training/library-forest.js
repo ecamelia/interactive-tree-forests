@@ -41,6 +41,7 @@ async function trainLibraryForest(treeCount) {
         const RandomForestClassifier = await getRandomForestClassifier();
         const model = new RandomForestClassifier(getLibraryOptions(treeCount));
 
+        // La librairie attend une matrice X et un tableau y, comme en machine learning classique.
         model.train(getLibraryTrainingMatrix(), getLibraryLabels());
 
         trainingState.libraryModel = model;
@@ -110,6 +111,7 @@ function getLibraryPrediction(observation) {
     }
 
     const votes = getLibraryVotes(observation);
+    // Si les votes individuels sont disponibles, on les utilise pour calculer la confiance.
     const predictedClass = Object.keys(votes).length
         ? getMajorityClass(votes)
         : predictLibraryForest(observation);
@@ -163,6 +165,7 @@ function getLibraryEstimatorPredictions(observation) {
         return [];
     }
 
+    // Selon le format retourne par la librairie, on normalise vers un simple tableau.
     const values = trainingState.libraryModel.predictionValues([getLibraryRow(observation)]);
 
     if (Array.isArray(values)) {

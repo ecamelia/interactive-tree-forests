@@ -69,6 +69,7 @@ function drawForestDecisionMap(forest, xScale, yScale, xDomain, yDomain) {
     lastForestDecisionMaps = createForestDecisionMaps(forest, xDomain, yDomain);
     window.lastForestDecisionMaps = lastForestDecisionMaps;
 
+    // Pour une foret, chaque case est coloree avec le vote majoritaire des arbres.
     regionLayer.selectAll(".forest-vote-cell")
         .data(lastForestDecisionMaps.forestMap)
         .enter()
@@ -96,6 +97,8 @@ function drawForestDecisionMap(forest, xScale, yScale, xDomain, yDomain) {
 
 function createForestDecisionMaps(forest, xDomain, yDomain) {
     const grid = createDecisionGrid(xDomain, yDomain, 80);
+
+    // On calcule d'abord la carte de chaque arbre, puis on les superpose par vote.
     const treeMaps = forest.trees.map(function(tree) {
         return createTreeDecisionMap(tree.root || tree, grid);
     });
@@ -149,6 +152,7 @@ function createForestVoteMap(grid, treeMaps) {
     return grid.map(function(cell, cellIndex) {
         const votes = {};
 
+        // Une cellule garde les votes pour pouvoir expliquer la decision finale.
         treeMaps.forEach(function(treeMap) {
             const className = treeMap[cellIndex].className;
             votes[className] = (votes[className] || 0) + 1;

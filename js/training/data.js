@@ -37,6 +37,7 @@ function loadForestJsonFile(event) {
             const data = JSON.parse(loadEvent.target.result);
             const dataFeatureNames = getDataFeatureNamesFromJson(data);
 
+            // Un JSON avec `data` sert de dataset a entrainer dans la page.
             if (dataFeatureNames.length >= 2 && Array.isArray(data.data) && data.data.length) {
                 stopTrainingAnimation();
                 trainingState.featureNames = dataFeatureNames.slice(0, 2);
@@ -72,6 +73,7 @@ function loadPretrainedForestJson(data, fileName) {
     stopTrainingAnimation();
     trainingState.featureNames = getJsonFeatureNames(data, roots);
     trainingState.modelFeatureNames = trainingState.featureNames.slice();
+    // La foret est deja entrainee : le bouton play affiche ses arbres un par un.
     trainingState.pendingForest = roots;
     trainingState.forest = [];
     trainingState.points = getJsonPoints(data);
