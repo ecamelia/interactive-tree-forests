@@ -1,4 +1,3 @@
-// Donnees de la page d'entrainement
 async function generateTrainingData() {
     const count = Number(pointCountInput.value) || 160;
     const datasetType = datasetSelect.value;
@@ -10,7 +9,7 @@ async function generateTrainingData() {
 
     await prepareSklearnDatasetPoints(datasetType, count);
 
-    if (!trainingState.datasetDisplayPoints.length) {
+    if (trainingState.datasetDisplayPoints.length === 0) {
         trainingState.points = [];
         updateTrainingFileStatus("Aucun dataset chargé");
         return;
@@ -37,10 +36,10 @@ async function generateTrainingData() {
 
 async function prepareSklearnDatasetPoints(datasetType, count) {
     try {
-        if (!trainingState.datasetSourcePoints[datasetType]) {
+        if (trainingState.datasetSourcePoints[datasetType] === undefined) {
             const response = await fetch(getSklearnDatasetFile(datasetType));
 
-            if (!response.ok) {
+            if (response.ok === false) {
                 throw new Error("Chargement impossible");
             }
 
@@ -86,7 +85,7 @@ function updateTrainingFileStatus(text) {
 }
 
 function getPointsFromTrainingJson(data) {
-    if (!data || !Array.isArray(data.data)) {
+    if (data === null || data === undefined || !Array.isArray(data.data)) {
         return [];
     }
 
@@ -117,7 +116,7 @@ function selectTrainingPoints(points, count) {
 function loadForestJsonFile(event) {
     const file = event.target.files[0];
 
-    if (!file) {
+    if (file === undefined) {
         return;
     }
 
@@ -128,7 +127,6 @@ function loadForestJsonFile(event) {
             const data = JSON.parse(loadEvent.target.result);
             const dataFeatureNames = getDataFeatureNamesFromJson(data);
 
-            // Un JSON avec `data` sert de dataset a entrainer dans la page.
             if (dataFeatureNames.length >= 2 && Array.isArray(data.data) && data.data.length) {
                 stopTrainingAnimation();
                 trainingState.featureNames = dataFeatureNames.slice(0, 2);
@@ -160,7 +158,7 @@ function loadForestJsonFile(event) {
 function loadPretrainedForestJson(data, fileName) {
     const roots = getForestRootsFromJson(data);
 
-    if (!roots.length) {
+    if (roots.length === 0) {
         statusText.textContent = "Le fichier JSON ne contient ni data entraînable ni forêt valide.";
         return;
     }
@@ -168,7 +166,6 @@ function loadPretrainedForestJson(data, fileName) {
     stopTrainingAnimation();
     trainingState.featureNames = getJsonFeatureNames(data, roots);
     trainingState.modelFeatureNames = trainingState.featureNames.slice();
-    // La foret est deja entrainee : le bouton play affiche ses arbres un par un.
     trainingState.pendingForest = roots;
     trainingState.forest = [];
     trainingState.points = getJsonPoints(data);
@@ -225,7 +222,7 @@ function getJsonFeatureNames(data, roots) {
 }
 
 function collectTreeFeatures(node, features) {
-    if (!node || node.type === "leaf") {
+    if (node === null || node === undefined || node.type === "leaf") {
         return;
     }
 
@@ -238,7 +235,7 @@ function collectTreeFeatures(node, features) {
 }
 
 function getJsonPoints(data) {
-    if (!data || !Array.isArray(data.data)) {
+    if (data === null || data === undefined || !Array.isArray(data.data)) {
         return [];
     }
 
@@ -282,7 +279,7 @@ function getJsonClasses(data) {
 }
 
 function collectTreeClasses(node, classes) {
-    if (!node) {
+    if (node === null || node === undefined) {
         return;
     }
 
@@ -316,7 +313,6 @@ function createTrainingPoint(xValue, yValue, className) {
     return {
         x1: xValue,
         x2: yValue,
-        // r2 aide les arbres a separer le dataset "cercles".
         r2: getCenteredDistance(xValue, yValue),
         class: className
     };

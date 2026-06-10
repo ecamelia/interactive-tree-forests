@@ -1,8 +1,7 @@
-// Actions lancees depuis l'interface
 async function trainForestFromControls() {
     stopTrainingAnimation();
 
-    if (!trainingState.points.length) {
+    if (trainingState.points.length === 0) {
         await generateTrainingData();
     }
 
@@ -34,7 +33,7 @@ function resetTrainingForest() {
 }
 
 async function startTrainingAnimation() {
-    if (!trainingState.points.length) {
+    if (trainingState.points.length === 0) {
         await generateTrainingData();
     }
 
@@ -103,7 +102,6 @@ function addTrainingTreeStep() {
     return trainingState.forest.length >= targetTrees;
 }
 
-// Parametres communs aux deux moteurs
 function getTargetTreeCount() {
     return trainingState.pendingForest
         ? trainingState.pendingForest.length
@@ -127,7 +125,6 @@ function getTrainingOptions() {
     };
 }
 
-// Construction de la foret pedagogique
 function trainRandomForest(treeCount, options) {
     return Array.from({ length: treeCount }, function(_, treeIndex) {
         return trainRandomTree(trainingState.points, options, treeIndex);
@@ -138,7 +135,6 @@ function trainRandomTree(points, options, treeIndex) {
     const random = createSeededRandom(trainingState.seed + treeIndex * 97 + 13);
     const sampleSize = Math.max(1, Math.round(points.length * options.bootstrapRatio));
 
-    // Chaque arbre voit un echantillon different des donnees.
     const sampledPoints = Array.from({ length: sampleSize }, function() {
         return points[Math.floor(random() * points.length)];
     });
@@ -150,7 +146,6 @@ function buildTree(points, depth, options, random) {
     const counts = countClasses(points);
     const majorityClass = getMajorityClass(counts);
 
-    // Une feuille est creee quand on ne peut plus separer utilement les points.
     if (
         depth >= options.maxDepth ||
         points.length < options.minSamples ||
@@ -161,7 +156,7 @@ function buildTree(points, depth, options, random) {
 
     const split = findBestSplit(points, random);
 
-    if (!split) {
+    if (split === null) {
         return createLeaf(points, counts, majorityClass);
     }
 
@@ -193,7 +188,6 @@ function findBestSplit(points, random) {
     });
     let bestSplit = null;
 
-    // On teste les seuils possibles et on garde celui avec le meilleur Gini.
     features.forEach(function(feature) {
         const values = Array.from(new Set(points.map(function(point) {
             return getPointFeatureValue(point, feature);
@@ -212,13 +206,13 @@ function findBestSplit(points, random) {
                 return getPointFeatureValue(point, feature) > threshold;
             });
 
-            if (!leftPoints.length || !rightPoints.length) {
+            if (leftPoints.length === 0 || rightPoints.length === 0) {
                 continue;
             }
 
             const score = weightedGini(leftPoints, rightPoints);
 
-            if (!bestSplit || score < bestSplit.score) {
+            if (bestSplit === null || score < bestSplit.score) {
                 bestSplit = {
                     feature: feature,
                     threshold: threshold,
@@ -236,19 +230,17 @@ function findBestSplit(points, random) {
 function weightedGini(leftPoints, rightPoints) {
     const total = leftPoints.length + rightPoints.length;
 
-    // Chaque branche pese selon le nombre de points qu'elle contient.
     return (leftPoints.length / total) * giniImpurity(leftPoints) +
         (rightPoints.length / total) * giniImpurity(rightPoints);
 }
 
 function giniImpurity(points) {
-    if (!points.length) {
+    if (points.length === 0) {
         return 0;
     }
 
     const counts = countClasses(points);
 
-    // Gini proche de 0 : les points appartiennent presque tous a la meme classe.
     return 1 - Object.keys(counts).reduce(function(sum, className) {
         const probability = counts[className] / points.length;
         return sum + probability * probability;

@@ -30,7 +30,7 @@ async function trainLibraryForest(treeCount) {
         return false;
     }
 
-    if (!trainingState.points.length) {
+    if (trainingState.points.length === 0) {
         await generateTrainingData();
     }
 
@@ -41,7 +41,6 @@ async function trainLibraryForest(treeCount) {
         const RandomForestClassifier = await getRandomForestClassifier();
         const model = new RandomForestClassifier(getLibraryOptions(treeCount));
 
-        // La librairie attend une matrice X et un tableau y, comme en machine learning classique.
         model.train(getLibraryTrainingMatrix(), getLibraryLabels());
 
         trainingState.libraryModel = model;
@@ -62,7 +61,6 @@ async function getRandomForestClassifier() {
     trainingState.libraryLoading = true;
     statusText.textContent = "Chargement de la bibliothèque ml-random-forest...";
 
-    // Bundle local pour garder la page compatible avec un simple serveur statique.
     const module = await import("../../vendor/ml-random-forest.bundle.mjs?v=1");
 
     trainingState.libraryClassifier = module.RandomForestClassifier;
@@ -78,7 +76,6 @@ function getLibraryOptions(treeCount) {
         nEstimators: treeCount,
         maxFeatures: Math.max(1, Math.round(Math.sqrt(featureCount))),
         replacement: Number(bootstrapRatioInput.value) > 0,
-        // L'OOB de la librairie n'est pas necessaire pour notre affichage.
         noOOB: true,
         treeOptions: {
             maxDepth: Number(maxDepthInput.value) || 4,
@@ -103,7 +100,7 @@ function getLibraryLabels() {
 }
 
 function getLibraryPrediction(observation) {
-    if (!trainingState.libraryModel) {
+    if (trainingState.libraryModel === null) {
         return {
             className: 0,
             confidence: 0
@@ -111,7 +108,6 @@ function getLibraryPrediction(observation) {
     }
 
     const votes = getLibraryVotes(observation);
-    // Si les votes individuels sont disponibles, on les utilise pour calculer la confiance.
     const predictedClass = Object.keys(votes).length
         ? getMajorityClass(votes)
         : predictLibraryForest(observation);
@@ -134,7 +130,7 @@ function predictLibraryTree(treeIndex, observation) {
 }
 
 function predictLibraryForest(observation) {
-    if (!trainingState.libraryModel) {
+    if (trainingState.libraryModel === null) {
         return 0;
     }
 
@@ -161,11 +157,10 @@ function getLibraryVotes(observation) {
 }
 
 function getLibraryEstimatorPredictions(observation) {
-    if (!trainingState.libraryModel || typeof trainingState.libraryModel.predictionValues !== "function") {
+    if (trainingState.libraryModel === null || typeof trainingState.libraryModel.predictionValues !== "function") {
         return [];
     }
 
-    // Selon le format retourne par la librairie, on normalise vers un simple tableau.
     const values = trainingState.libraryModel.predictionValues([getLibraryRow(observation)]);
 
     if (Array.isArray(values)) {

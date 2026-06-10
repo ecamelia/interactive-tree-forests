@@ -3,9 +3,9 @@
 Ce projet est une application web interactive pour visualiser, tester et
 expliquer des arbres de decision et des forets d'arbres.
 
-L'objectif principal est pedagogique : rendre visibles des notions souvent
-abstraites comme les noeuds, les seuils, les feuilles, le vote d'une foret et
-les regions de decision.
+Il a ete developpe dans le cadre de mon stage. Le but est surtout pedagogique :
+rendre plus visibles les notions de noeud, seuil, feuille, vote de foret et
+region de decision.
 
 Le projet relie trois parties :
 
@@ -13,9 +13,9 @@ Le projet relie trois parties :
 Python / scikit-learn -> JSON -> JavaScript / D3.js
 ```
 
-Python sert a generer certains modeles d'exemple. Le JSON garde la structure
-des arbres sous une forme simple. JavaScript lit ces donnees et D3.js les
-affiche dans le navigateur.
+Python sert a generer certains modeles et datasets d'exemple. Le JSON garde la
+structure des arbres sous une forme simple. JavaScript lit ces donnees et D3.js
+les affiche dans le navigateur.
 
 ## Lancer le projet
 
@@ -81,9 +81,9 @@ coupe l'espace en deux zones.
 
 Page d'entrainement interactif.
 
-Elle permet de generer des donnees, puis d'ajouter les arbres d'une foret un par
-un. La carte principale montre la decision collective de la foret, tandis que
-les petites cartes montrent la decision de chaque arbre.
+Elle permet de charger des datasets d'exemple, puis d'ajouter les arbres d'une
+foret un par un. La carte principale montre la decision collective de la foret,
+tandis que les petites cartes montrent la decision de chaque arbre.
 
 Deux moteurs sont disponibles :
 
@@ -114,6 +114,20 @@ arbres-forets-interactifs/
 └── package-lock.json
 ```
 
+## Choix techniques
+
+Le projet utilise des fichiers JSON comme format d'echange, car ils sont faciles
+a produire avec Python et faciles a lire avec JavaScript. Cela permet de garder
+une separation claire entre la generation des modeles et leur visualisation.
+
+D3.js est utilise pour le dessin SVG : arbres, liens, axes, points et cartes de
+decision. Ce choix donne plus de controle sur le placement des noeuds et sur les
+interactions.
+
+Pour l'entrainement des forets dans le navigateur, deux approches sont gardees :
+un code pedagogique ecrit en JavaScript pour comprendre les etapes, et
+`ml-random-forest` pour comparer avec une bibliotheque existante.
+
 ## Role des dossiers JavaScript
 
 ### `js/shared/`
@@ -142,7 +156,7 @@ de decision associees.
 Code de la page `entrainement-foret.html`.
 
 - `state.js` contient l'etat partage de la page.
-- `data.js` genere ou charge les donnees.
+- `data.js` charge les datasets d'exemple ou un JSON donne par l'utilisateur.
 - `trainer.js` contient l'entrainement pedagogique.
 - `library-forest.js` utilise `ml-random-forest`.
 - `prediction.js` centralise les predictions.
@@ -157,7 +171,8 @@ Le projet est separe par page, mais le principe reste le meme :
 
 1. Une page HTML contient les zones visibles : boutons, panneaux, SVG.
 2. Un fichier JavaScript lit les elements HTML et garde l'etat courant.
-3. Les donnees viennent soit d'un JSON, soit d'un generateur JavaScript.
+3. Les donnees viennent soit d'un JSON charge par l'utilisateur, soit de fichiers
+   JSON prepares avec `scikit-learn`.
 4. Les fonctions de prediction calculent la classe d'une observation.
 5. Les fonctions de rendu dessinent le resultat avec D3.js.
 
@@ -201,8 +216,9 @@ Le principe est le suivant :
 6. Les feuilles predisent la classe majoritaire.
 7. La foret combine les arbres avec un vote majoritaire.
 
-Ce moteur est moins complet que scikit-learn, mais il est utile pour expliquer
-le fonctionnement interne d'une foret.
+Ce moteur ne cherche pas a remplacer une vraie bibliotheque comme scikit-learn.
+Je l'ai garde pour pouvoir expliquer le fonctionnement interne d'une foret,
+et pour montrer l'ajout progressif des arbres dans l'interface.
 
 Les fonctions importantes sont :
 
@@ -212,8 +228,8 @@ Les fonctions importantes sont :
 - `giniImpurity()` : mesure si un groupe contient des classes melangees.
 
 Ce code sert surtout a montrer la methode : on voit comment un arbre choisit une
-condition, comment il se divise, puis comment plusieurs arbres forment une
-foret.
+condition, comment il se divise, puis comment plusieurs arbres peuvent ensuite
+voter ensemble.
 
 ## Entrainement avec bibliotheque
 
@@ -243,9 +259,9 @@ Les fonctions importantes sont :
 - `getLibraryLabels()` : transforme les classes en tableau `y`.
 - `getLibraryPrediction()` : recupere la classe predite et la confiance.
 
-Ce mode montre une version plus proche d'un usage reel : on confie
-l'entrainement a une bibliotheque, puis le projet se concentre sur
-l'affichage, les cartes de decision et l'interaction.
+Ce mode montre une version plus proche d'un usage reel : l'entrainement est
+confie a une bibliotheque, et le reste du projet se concentre sur l'affichage,
+les cartes de decision et l'interaction.
 
 ## Comment expliquer la carte de decision
 
@@ -261,7 +277,8 @@ zone correspond a la classe predite. Dans une foret, la couleur vient du vote
 majoritaire des arbres.
 
 La carte principale montre donc la decision collective. Les petites cartes de
-droite montrent les decisions individuelles des arbres.
+droite permettent de comparer cette decision avec les decisions individuelles
+des arbres.
 
 ## Donnees d'exemple
 
