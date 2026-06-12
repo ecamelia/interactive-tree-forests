@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <title>Arbres et forêts interactifs</title>
+    <link rel="stylesheet" href="css/style.css?v=83">
+</head>
+<body>
+    <header>
+        <div class="app-header-title">
+            <h1>Arbres et forêts interactifs</h1>
+            <span>Explorer, tester et entraîner des modèles</span>
+        </div>
+        <nav class="top-nav" aria-label="Navigation principale">
+            <a href="index.html">Accueil</a>
+            <a class="is-active" href="visualisation.html">Visualisation</a>
+            <a href="construction.html">Construction</a>
+            <a href="entrainement-foret.html">Entraînement forêt</a>
+        </nav>
+    </header>
+
+    <main>
+        <aside class="sidebar">
+            <section class="toolbar">
+                <h2>Données</h2>
+                <label class="file-button" for="json-file-input">Charger JSON</label>
+                <input type="file" id="json-file-input" accept=".json,application/json">
+
+                <div class="export-actions">
+                    <button id="export-tree-button">Exporter SVG</button>
+                    <button id="export-tree-png">Exporter PNG</button>
+                    <button id="export-d3-code-button">Exporter code D3.js</button>
+                </div>
+
+                <span id="file-status">Aucun fichier chargé</span>
+            </section>
+
+            <section id="node-options-panel">
+                <h2>Affichage</h2>
+
+                <label>
+                    <input type="radio" name="display-scope" id="scope-tree" value="tree" checked>
+                    tout l'arbre
+                </label>
+                <label>
+                    <input type="radio" name="display-scope" id="scope-node" value="node">
+                    noeud sélectionné
+                </label>
+
+                <div class="option-grid">
+                    <label>
+                        <input type="checkbox" id="node-show-condition">
+                        condition
+                    </label>
+                    <label>
+                        <input type="checkbox" id="node-show-gini">
+                        gini
+                    </label>
+                    <label>
+                        <input type="checkbox" id="node-show-samples">
+                        samples
+                    </label>
+                    <label>
+                        <input type="checkbox" id="node-show-value">
+                        value
+                    </label>
+                    <label>
+                        <input type="checkbox" id="node-show-class">
+                        class
+                    </label>
+                </div>
+
+                <label>
+                    mode
+                    <select id="display-mode-select">
+                        <option value="detail">détaillé</option>
+                        <option value="overview">général</option>
+                    </select>
+                </label>
+
+                <label>
+                    profondeur
+                    <input type="number" id="max-depth-input" min="1" placeholder="tous">
+                </label>
+
+                <label>
+                    arbres foret
+                    <input type="number" id="forest-tree-limit-input" min="1" value="3">
+                </label>
+
+                <label>
+                    indices arbres
+                    <input type="text" id="forest-tree-indices-input" placeholder="ex :1,2,3">
+                </label>
+
+                <span id="forest-total-status">Aucune foret chargee</span>
+
+                <label>
+                    <input type="checkbox" id="path-mode-checkbox">
+                    mode chemin
+                </label>
+                <button id="clear-path-button">Effacer chemin</button>
+            </section>
+
+            <section id="node-details-panel">
+                <h2>Noeud sélectionné</h2>
+                <p id="node-details-content">Aucun noeud sélectionné.</p>
+            </section>
+
+            <section id="observation-panel">
+                <h2>Tester une observation</h2>
+                <div id="observation-inputs"></div>
+                <button id="run-observation-button">Colorer le chemin</button>
+                <button id="clear-observation-button">Effacer</button>
+                <label class="file-button" for="test-observations-file-input">Charger fichier test</label>
+                <input type="file" id="test-observations-file-input" accept=".json,application/json">
+                <span id="observation-result">Chargez un arbre ou une foret.</span>
+            </section>
+        </aside>
+
+        <section class="visualization-area">
+            <div class="visualization-content">
+                <section class="tree-canvas">
+                    <section id="empty-state">
+                        <h2>Chargez votre fichier JSON</h2>
+                        <p>L'outil affichera automatiquement un arbre ou une foret.</p>
+                    </section>
+
+                    <svg id="tree-view" width="3000" height="900"></svg>
+                </section>
+
+                <aside class="test-results-panel">
+                    <h2>Résultats du test</h2>
+                    <div id="test-observation-results">
+                        <p class="test-results-empty">Chargez un fichier test pour voir les prédictions.</p>
+                    </div>
+                </aside>
+            </div>
+        </section>
+
+        <div id="tooltip"></div>
+    </main>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="js/shared/tree-viz.js?v=53"></script>
+    <script src="js/shared/layout-utils.js?v=60"></script>
+    <script src="js/main/export-utils.js?v=55"></script>
+    <script src="js/main/app-state.js?v=54"></script>
+    <script src="js/main/tree-depth-utils.js?v=50"></script>
+    <script src="js/main/tree-renderer.js?v=50"></script>
+    <script src="js/main/forest-renderer.js?v=50"></script>
+    <script src="js/main/renderer.js?v=51"></script>
+    <script src="js/main/path-tools.js?v=50"></script>
+    <script src="js/main/interactions.js?v=50"></script>
+    <script src="js/main/display-options.js?v=50"></script>
+    <script src="js/main/decision-explainer.js?v=54"></script>
+    <script src="js/main/data-loader.js?v=51"></script>
+    <script src="js/main/app.js?v=51"></script>
+</body>
+</html>

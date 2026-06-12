@@ -78,6 +78,77 @@ body.empty-view main {
     overflow-x: hidden;
 }
 
+/* Page d'accueil */
+body.home-page main.home-main {
+    display: block;
+    height: auto;
+    min-height: calc(100vh - 72px);
+    overflow: visible;
+    padding: 44px 32px;
+    box-sizing: border-box;
+}
+
+body.home-page header {
+    justify-content: flex-start;
+}
+
+.home-intro {
+    max-width: 900px;
+    margin: 0 auto 28px;
+    padding: 0;
+}
+
+.home-intro h2 {
+    margin: 0 0 12px;
+    font-size: 30px;
+}
+
+.home-intro p {
+    margin: 0;
+    color: #444;
+    font-size: 17px;
+    line-height: 1.55;
+}
+
+.home-cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.home-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-height: 190px;
+    padding: 20px;
+    background: white;
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+}
+
+.home-card h3 {
+    margin: 0 0 10px;
+    font-size: 22px;
+}
+
+.home-card p {
+    margin: 0 0 18px;
+    color: #444;
+    line-height: 1.45;
+}
+
+.home-card a {
+    margin-top: auto;
+    padding: 9px 16px;
+    background: #17495a;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
 /* Panneaux lateraux et controles */
 .toolbar {
     display: flex;
@@ -775,6 +846,11 @@ body.forest-training-page main.training-layout {
     .construction-workspace,
     .training-workspace {
         grid-template-columns: 1fr;
+    }
+
+    .home-cards {
+        grid-template-columns: 1fr;
+        max-width: 760px;
     }
 
     .test-results-panel {

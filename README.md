@@ -38,9 +38,19 @@ chargements quand on ouvre directement un fichier HTML.
 
 ## Pages du projet
 
-Le projet contient trois pages principales.
+Le projet contient une page d'accueil et trois pages principales.
 
 ### `index.html`
+
+Page d'accueil du projet.
+
+Elle presente rapidement l'application et donne acces aux trois parties :
+
+- visualisation;
+- construction pas a pas;
+- entrainement interactif d'une foret.
+
+### `visualisation.html`
 
 Page de visualisation principale.
 
@@ -98,6 +108,7 @@ comparer avec une implementation existante.
 ```text
 arbres-forets-interactifs/
 ├── index.html
+├── visualisation.html
 ├── construction.html
 ├── entrainement-foret.html
 ├── css/
@@ -139,7 +150,7 @@ Code commun reutilise par plusieurs pages.
 
 ### `js/main/`
 
-Code de la page `index.html`.
+Code de la page `visualisation.html`.
 
 Il gere le chargement JSON, l'affichage des arbres et forets, les interactions,
 les options d'affichage, les tests d'observations et les exports.
@@ -179,7 +190,7 @@ Le projet est separe par page, mais le principe reste le meme :
 Pour la page principale, le chemin est :
 
 ```text
-index.html
+visualisation.html
 -> js/main/renderer.js
 -> js/shared/tree-viz.js
 -> js/main/interactions.js
