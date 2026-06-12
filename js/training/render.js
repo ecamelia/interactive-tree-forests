@@ -1,3 +1,5 @@
+const MAX_VISIBLE_TREE_CARDS = 5;
+
 // Rendu general
 function renderTrainingView() {
     mapTitle.textContent = "Décision collective de la forêt";
@@ -232,7 +234,7 @@ function drawTreeMaps() {
         return;
     }
 
-    trainingState.forest.slice(0, 8).forEach(function(tree, index) {
+    trainingState.forest.slice(0, MAX_VISIBLE_TREE_CARDS).forEach(function(tree, index) {
         const card = document.createElement("article");
         card.className = "training-tree-card";
 
@@ -253,10 +255,10 @@ function drawTreeMaps() {
         treeMapsContainer.appendChild(card);
     });
 
-    if (trainingState.forest.length > 8) {
+    if (trainingState.forest.length > MAX_VISIBLE_TREE_CARDS) {
         const extra = document.createElement("article");
         extra.className = "training-tree-card training-tree-card-extra";
-        extra.textContent = "... " + (trainingState.forest.length - 8) + " arbres en plus";
+        extra.textContent = "... " + (trainingState.forest.length - MAX_VISIBLE_TREE_CARDS) + " arbres restants";
         treeMapsContainer.appendChild(extra);
     }
 }
@@ -267,7 +269,7 @@ function drawLibraryForestMaps() {
         return;
     }
 
-    const visibleTrees = Math.min(trainingState.libraryTreeCount, 8);
+    const visibleTrees = Math.min(trainingState.libraryTreeCount, MAX_VISIBLE_TREE_CARDS);
 
     for (let index = 0; index < visibleTrees; index += 1) {
         const card = document.createElement("article");
@@ -290,10 +292,10 @@ function drawLibraryForestMaps() {
         treeMapsContainer.appendChild(card);
     }
 
-    if (trainingState.libraryTreeCount > 8) {
+    if (trainingState.libraryTreeCount > MAX_VISIBLE_TREE_CARDS) {
         const extra = document.createElement("article");
         extra.className = "training-tree-card training-tree-card-extra";
-        extra.textContent = "... " + (trainingState.libraryTreeCount - 8) + " arbres en plus";
+        extra.textContent = "... " + (trainingState.libraryTreeCount - MAX_VISIBLE_TREE_CARDS) + " arbres restants";
         treeMapsContainer.appendChild(extra);
     }
 }
