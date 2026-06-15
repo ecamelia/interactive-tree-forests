@@ -17,6 +17,10 @@ const emptyState = document.getElementById("empty-state");
 const exportSvgButton = d3.select("#export-tree-button");
 const exportPngButton = d3.select("#export-tree-png");
 const exportD3CodeButton = d3.select("#export-d3-code-button");
+const zoomOutButton = document.getElementById("zoom-out-button");
+const zoomInButton = document.getElementById("zoom-in-button");
+const zoomResetButton = document.getElementById("zoom-reset-button");
+const zoomRangeInput = document.getElementById("zoom-range-input");
 const jsonFileInput = document.getElementById("json-file-input");
 const fileStatus = document.getElementById("file-status");
 const displayModeSelect = document.getElementById("display-mode-select");
@@ -96,9 +100,10 @@ const pathNodeIds = new Set();
 // Couche qui contient le dessin. Le zoom agit sur cette couche entiere.
 const zoomLayer = svg.append("g");
 const zoomBehavior = d3.zoom()
-    .scaleExtent([0.6, 3])
+    .scaleExtent([0.2, 3])
     .on("zoom", function(event) {
         zoomLayer.attr("transform", event.transform);
+        updateZoomControls(event.transform.k);
     });
 
 // Etat courant garde en memoire pendant l'utilisation.
@@ -106,6 +111,7 @@ let selectedNode = null;
 let currentView = null;
 let currentForest = null;
 let currentTree = null;
+let currentLoadedFilename = "";
 let optionScope = OPTION_SCOPE.TREE;
 let displayMode = "detail";
 let maxVisibleDepth = null;

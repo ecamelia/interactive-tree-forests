@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>Construction d'un arbre</title>
-    <link rel="stylesheet" href="css/style.css?v=83">
+    <link rel="stylesheet" href="css/style.css?v=86">
 </head>
 
 <body>
@@ -34,6 +34,23 @@
                 <button id="prev-build-step" disabled>Étape précédente</button>
                 <button id="next-build-step" disabled>Étape suivante</button>
                 <button id="reset-build-step" disabled>Recommencer</button>
+                <div class="zoom-controls-panel">
+                    <span class="zoom-controls-title">Zoom arbre</span>
+                    <div class="zoom-controls-buttons">
+                        <button id="construction-zoom-out-button" type="button">-</button>
+                        <button id="construction-zoom-reset-button" type="button">100%</button>
+                        <button id="construction-zoom-in-button" type="button">+</button>
+                    </div>
+                    <input
+                        type="range"
+                        id="construction-zoom-range-input"
+                        min="20"
+                        max="300"
+                        step="5"
+                        value="100"
+                        aria-label="Niveau de zoom de l'arbre"
+                    >
+                </div>
                 <span id="build-step-status">Aucun arbre chargé</span>
             </section>
 
@@ -66,7 +83,7 @@
     <script src="js/construction/steps.js?v=15"></script>
     <script src="js/construction/tree-renderer.js?v=19"></script>
     <script src="js/construction/decision-regions.js?v=22"></script>
-    <script src="js/construction/app.js?v=22"></script>
+    <script src="js/construction/app.js?v=24"></script>
 
 </body>
 

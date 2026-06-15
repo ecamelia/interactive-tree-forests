@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>Entraînement interactif d'une forêt</title>
-    <link rel="stylesheet" href="css/style.css?v=83">
+    <link rel="stylesheet" href="css/style.css?v=86">
 </head>
 <body class="forest-training-page">
     <header>
@@ -66,13 +66,6 @@
             <section class="toolbar">
                 <h2>Forêt</h2>
                 <label>
-                    moteur
-                    <select id="training-engine-select">
-                        <option value="custom">code pédagogique</option>
-                        <option value="library">bibliothèque ml-random-forest</option>
-                    </select>
-                </label>
-                <label>
                     arbres
                     <input type="number" id="training-tree-count" min="1" step="1" value="12">
                 </label>
@@ -113,12 +106,12 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="js/training/state.js?v=12"></script>
     <script src="js/training/data.js?v=10"></script>
-    <script src="js/training/library-forest.js?v=8"></script>
+    <script src="js/training/library-forest.js?v=9"></script>
     <script src="js/training/trainer.js?v=7"></script>
     <script src="js/training/prediction.js?v=4"></script>
     <script src="js/training/render.js?v=9"></script>
-    <script src="js/training/metrics.js?v=4"></script>
+    <script src="js/training/metrics.js?v=5"></script>
     <script src="js/training/utils.js?v=3"></script>
-    <script src="js/training/forest-playground.js?v=20"></script>
+    <script src="js/training/forest-playground.js?v=21"></script>
 </body>
 </html>

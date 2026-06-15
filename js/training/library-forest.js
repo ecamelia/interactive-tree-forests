@@ -1,5 +1,5 @@
 function isLibraryForestMode() {
-    return engineSelect && engineSelect.value === "library";
+    return false;
 }
 
 function resetLibraryForest() {

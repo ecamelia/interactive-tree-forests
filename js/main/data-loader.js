@@ -10,9 +10,11 @@ function handleJsonFile(event) {
         try {
             resetNodeSelection();
             renderJsonData(data);
+            currentLoadedFilename = file.name;
             fileStatus.textContent = "Fichier charge : " + file.name;
         } catch (error) {
             console.error(error);
+            currentLoadedFilename = "";
             fileStatus.textContent = "Format non reconnu";
             alert("Le JSON est valide, mais son format ne correspond pas encore au visualiseur.");
         }
@@ -31,6 +33,7 @@ function readJsonFile(file, onSuccess) {
             onSuccess(data);
         } catch (error) {
             console.error(error);
+            currentLoadedFilename = "";
             fileStatus.textContent = "Erreur JSON";
             alert("Le fichier choisi n'est pas un JSON valide.");
         }

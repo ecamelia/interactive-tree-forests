@@ -5,13 +5,18 @@ const constructionFileStatus = document.getElementById("construction-file-status
 const prevBuildStepButton = document.getElementById("prev-build-step");
 const nextBuildStepButton = document.getElementById("next-build-step");
 const resetBuildStepButton = document.getElementById("reset-build-step");
+const constructionZoomOutButton = document.getElementById("construction-zoom-out-button");
+const constructionZoomInButton = document.getElementById("construction-zoom-in-button");
+const constructionZoomResetButton = document.getElementById("construction-zoom-reset-button");
+const constructionZoomRangeInput = document.getElementById("construction-zoom-range-input");
 const buildStepStatus = document.getElementById("build-step-status");
 const constructionSvg = d3.select("#construction-tree-view");
 const constructionLayer = constructionSvg.append("g");
 const constructionZoomBehavior = d3.zoom()
-    .scaleExtent([0.5, 3])
+    .scaleExtent([0.2, 3])
     .on("zoom", function(event) {
         constructionLayer.attr("transform", event.transform);
+        updateConstructionZoomControls(event.transform.k);
     });
 const regionSvg = d3.select("#construction-region-view");
 const regionLayer = regionSvg.append("g");
@@ -24,6 +29,7 @@ let demoPoints = [];
 let regionFeatureNames = ["x1", "x2"];
 
 constructionSvg.call(constructionZoomBehavior);
+updateConstructionZoomControls(1);
 
 constructionJsonFileInput.addEventListener("change", function(event) {
     const file = event.target.files[0];
@@ -48,6 +54,22 @@ resetBuildStepButton.addEventListener("click", function() {
     showBuildStep(0);
 });
 
+constructionZoomOutButton.addEventListener("click", function() {
+    changeConstructionZoomByFactor(0.8);
+});
+
+constructionZoomInButton.addEventListener("click", function() {
+    changeConstructionZoomByFactor(1.25);
+});
+
+constructionZoomResetButton.addEventListener("click", function() {
+    resetConstructionZoom();
+});
+
+constructionZoomRangeInput.addEventListener("input", function(event) {
+    setConstructionZoomScale(Number(event.target.value) / 100);
+});
+
 function readConstructionJsonFile(file) {
     const reader = new FileReader();
 
@@ -57,7 +79,7 @@ function readConstructionJsonFile(file) {
             originalBuildModel = data;
             originalBuildTree = getConstructionTreeRoot(data);
             buildSteps = isConstructionForestModel(data)
-                ? [{ tree: originalBuildTree, activePath: null }]
+                ? createForestBuildSteps(data)
                 : createBuildSteps(originalBuildTree);
             regionFeatureNames = getRegionFeatureNames(data, originalBuildTree);
             demoPoints = getRegionPoints(data, originalBuildTree);
@@ -85,21 +107,23 @@ function showBuildStep(stepIndex) {
     currentBuildStep = Math.max(0, Math.min(stepIndex, buildSteps.length - 1));
 
     const step = buildSteps[currentBuildStep];
-    if (isConstructionForestModel(originalBuildModel)) {
-        drawConstructionForest(originalBuildModel);
+    if (isConstructionForestModel(step.model || originalBuildModel)) {
+        drawConstructionForest(step.model || originalBuildModel);
     } else {
         drawConstructionTree(step.tree, step.activePath);
     }
-    drawDecisionRegions(step.tree, step.activePath, originalBuildModel);
+    drawDecisionRegions(step.tree, step.activePath, step.model || originalBuildModel);
     updateBuildControls();
 }
 
 function updateBuildControls() {
     if (isConstructionForestModel(originalBuildModel)) {
-        prevBuildStepButton.disabled = true;
-        nextBuildStepButton.disabled = true;
-        resetBuildStepButton.disabled = true;
-        buildStepStatus.textContent = "Forêt : " + originalBuildModel.trees.length + " arbres";
+        prevBuildStepButton.disabled = currentBuildStep <= 0;
+        nextBuildStepButton.disabled = currentBuildStep >= buildSteps.length - 1;
+        resetBuildStepButton.disabled = currentBuildStep === 0;
+        buildStepStatus.textContent =
+            "Étape " + (currentBuildStep + 1) + " / " + buildSteps.length +
+            " - " + (currentBuildStep + 1) + " arbre(s) affiche(s)";
         return;
     }
 
@@ -120,6 +144,40 @@ function resetConstructionZoom() {
     constructionSvg.call(constructionZoomBehavior.transform, d3.zoomIdentity);
 }
 
+function changeConstructionZoomByFactor(factor) {
+    const currentTransform = d3.zoomTransform(constructionSvg.node());
+    setConstructionZoomScale(currentTransform.k * factor);
+}
+
+function setConstructionZoomScale(scale) {
+    const extent = constructionZoomBehavior.scaleExtent();
+    const clampedScale = Math.max(extent[0], Math.min(extent[1], scale));
+
+    constructionSvg.call(constructionZoomBehavior.scaleTo, clampedScale);
+}
+
+function updateConstructionZoomControls(scale) {
+    const zoomPercent = Math.round(scale * 100);
+
+    constructionZoomRangeInput.value = String(zoomPercent);
+    constructionZoomResetButton.textContent = zoomPercent + "%";
+}
+
 function isConstructionForestModel(model) {
     return model && Array.isArray(model.trees) && model.trees.length;
+}
+
+function createForestBuildSteps(forest) {
+    return forest.trees.map(function(_, index) {
+        const visibleTrees = forest.trees.slice(0, index + 1);
+
+        return {
+            tree: visibleTrees[visibleTrees.length - 1].root || visibleTrees[visibleTrees.length - 1],
+            activePath: null,
+            model: {
+                ...forest,
+                trees: visibleTrees
+            }
+        };
+    });
 }

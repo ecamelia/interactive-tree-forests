@@ -8,6 +8,7 @@ function showEmptyState() {
     currentView = null;
     currentForest = null;
     currentTree = null;
+    currentLoadedFilename = "";
 
     // On nettoie l'ancien dessin et on remet le zoom a sa position de depart.
     clearTreeView();

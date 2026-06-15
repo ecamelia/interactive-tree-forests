@@ -4,7 +4,7 @@ function exportSVG() {
     const svgString = serializer.serializeToString(getStyledSvgCopy());
     const blob = new Blob([svgString], { type: "image/svg+xml" });
 
-    downloadBlob(blob, "tree_visualization.svg");
+    downloadBlob(blob, getExportFilename("svg"));
 }
 
 // Convertit le SVG courant en image PNG via un canvas.
@@ -33,7 +33,7 @@ function exportPNG() {
         context.drawImage(image, 0, 0, exportWidth, exportHeight);
 
         const pngUrl = canvas.toDataURL("image/png");
-        downloadUrl(pngUrl, "tree_visualization.png");
+        downloadUrl(pngUrl, getExportFilename("png"));
 
         URL.revokeObjectURL(url);
     };
@@ -46,7 +46,32 @@ function exportCurrentD3Code(visualization) {
     const code = buildD3CodeExport(visualization);
     const blob = new Blob([code], { type: "text/plain" });
 
-    downloadBlob(blob, "tree_d3_export.js");
+    downloadBlob(blob, getExportFilename("js", "d3-export"));
+}
+
+function getExportFilename(extension, suffix = "visualization") {
+    const viewLabel = currentView === VIEW_TYPE.FOREST ? "forest" : "tree";
+    const sourceName = getSanitizedSourceName();
+
+    if (sourceName) {
+        return sourceName + "-" + suffix + "." + extension;
+    }
+
+    return viewLabel + "_" + suffix + "." + extension;
+}
+
+function getSanitizedSourceName() {
+    if (!currentLoadedFilename) {
+        return "";
+    }
+
+    return currentLoadedFilename
+        .replace(/\.[^/.]+$/, "")
+        .trim()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-zA-Z0-9_-]/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
 }
 
 // Telecharge un Blob en laissant le temps au navigateur de demarrer le download.

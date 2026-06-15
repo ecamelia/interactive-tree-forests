@@ -1,0 +1,75 @@
+{
+  "dataset": "construction_clear_tree",
+  "features": ["x1", "x2"],
+  "classes": [0, 1],
+  "root": {
+    "type": "node",
+    "feature": "x1",
+    "threshold": 0.5,
+    "gini": 0.5,
+    "samples": 16,
+    "value": [8, 8],
+    "left": {
+      "type": "node",
+      "feature": "x2",
+      "threshold": 0.5,
+      "gini": 0.375,
+      "samples": 8,
+      "value": [6, 2],
+      "left": {
+        "type": "leaf",
+        "gini": 0.0,
+        "samples": 4,
+        "value": [4, 0],
+        "class": 0
+      },
+      "right": {
+        "type": "leaf",
+        "gini": 0.0,
+        "samples": 4,
+        "value": [1, 3],
+        "class": 1
+      }
+    },
+    "right": {
+      "type": "node",
+      "feature": "x2",
+      "threshold": 0.5,
+      "gini": 0.375,
+      "samples": 8,
+      "value": [2, 6],
+      "left": {
+        "type": "leaf",
+        "gini": 0.0,
+        "samples": 4,
+        "value": [0, 4],
+        "class": 1
+      },
+      "right": {
+        "type": "leaf",
+        "gini": 0.0,
+        "samples": 4,
+        "value": [3, 1],
+        "class": 0
+      }
+    }
+  },
+  "data": [
+    { "x1": 0.10, "x2": 0.12, "class": 0 },
+    { "x1": 0.18, "x2": 0.22, "class": 0 },
+    { "x1": 0.26, "x2": 0.34, "class": 0 },
+    { "x1": 0.42, "x2": 0.18, "class": 0 },
+    { "x1": 0.14, "x2": 0.64, "class": 1 },
+    { "x1": 0.22, "x2": 0.76, "class": 1 },
+    { "x1": 0.34, "x2": 0.88, "class": 1 },
+    { "x1": 0.46, "x2": 0.58, "class": 1 },
+    { "x1": 0.56, "x2": 0.14, "class": 1 },
+    { "x1": 0.64, "x2": 0.22, "class": 1 },
+    { "x1": 0.78, "x2": 0.30, "class": 1 },
+    { "x1": 0.92, "x2": 0.44, "class": 1 },
+    { "x1": 0.58, "x2": 0.66, "class": 0 },
+    { "x1": 0.70, "x2": 0.74, "class": 0 },
+    { "x1": 0.82, "x2": 0.86, "class": 0 },
+    { "x1": 0.94, "x2": 0.60, "class": 0 }
+  ]
+}

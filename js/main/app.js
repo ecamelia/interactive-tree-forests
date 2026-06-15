@@ -5,6 +5,7 @@ function startApp() {
     // On prepare les controles avant d'afficher l'ecran d'accueil.
     svg.call(zoomBehavior);
     setupEvents();
+    updateZoomControls(1);
     updateOptionsPanel(globalDisplayOptions);
     updateOptionInputsState();
     syncNodeDetailsPanelWithSelection();
@@ -26,6 +27,8 @@ function setupEvents() {
     exportD3CodeButton.on("click", function(){
         handleD3CodeExport();
     });
+
+    setupZoomControls();
 
     forestTreeIndicesInput.addEventListener("change", function(event){
         forestTreeIndices = parseForestTreeIndices(event.target.value);
@@ -64,6 +67,43 @@ function setupEvents() {
     setupOptionScopeInputs();
     setupPathControls();
     setupObservationControls();
+}
+
+function setupZoomControls() {
+    zoomOutButton.addEventListener("click", function() {
+        changeZoomByFactor(0.8);
+    });
+
+    zoomInButton.addEventListener("click", function() {
+        changeZoomByFactor(1.25);
+    });
+
+    zoomResetButton.addEventListener("click", function() {
+        resetZoom();
+    });
+
+    zoomRangeInput.addEventListener("input", function(event) {
+        setZoomScale(Number(event.target.value) / 100);
+    });
+}
+
+function changeZoomByFactor(factor) {
+    const currentTransform = d3.zoomTransform(svg.node());
+    setZoomScale(currentTransform.k * factor);
+}
+
+function setZoomScale(scale) {
+    const extent = zoomBehavior.scaleExtent();
+    const clampedScale = Math.max(extent[0], Math.min(extent[1], scale));
+
+    svg.call(zoomBehavior.scaleTo, clampedScale);
+}
+
+function updateZoomControls(scale) {
+    const zoomPercent = Math.round(scale * 100);
+
+    zoomRangeInput.value = String(zoomPercent);
+    zoomResetButton.textContent = zoomPercent + "%";
 }
 
 // Indique combien d'arbres sont visibles par rapport au total de la foret.

@@ -237,7 +237,7 @@ function renderTestObservationResults(results) {
     table.className = "test-results-table";
 
     const header = document.createElement("thead");
-    header.innerHTML = "<tr><th>#</th><th>Prédit</th><th>Attendu</th><th>Statut</th><th>Votes</th></tr>";
+    header.innerHTML = "<tr><th>#</th><th>Pred.</th><th>Att.</th><th>Statut</th><th>Votes</th></tr>";
     table.appendChild(header);
 
     const body = document.createElement("tbody");
@@ -250,7 +250,7 @@ function renderTestObservationResults(results) {
         row.className = isCorrect ? "is-correct" : "is-wrong";
         row.innerHTML =
             "<td>" + result.index + "</td>" +
-            "<td>Classe " + result.prediction + "</td>" +
+            "<td>" + formatCompactClass(result.prediction) + "</td>" +
             "<td>" + formatExpectedClass(result.expectedClass) + "</td>" +
             "<td>" + formatResultStatus(result.expectedClass, isCorrect) + "</td>" +
             "<td>" + formatVoteBadges(result.votes) + "</td>";
@@ -312,7 +312,7 @@ function createSummaryItem(label, value) {
 }
 
 function formatExpectedClass(expectedClass) {
-    return expectedClass === undefined ? "-" : "Classe " + expectedClass;
+    return expectedClass === undefined ? "-" : formatCompactClass(expectedClass);
 }
 
 function formatResultStatus(expectedClass, isCorrect) {
@@ -321,6 +321,10 @@ function formatResultStatus(expectedClass, isCorrect) {
     }
 
     return isCorrect ? "OK" : "Erreur";
+}
+
+function formatCompactClass(classValue) {
+    return "C" + classValue;
 }
 
 function formatVoteBadges(votes) {

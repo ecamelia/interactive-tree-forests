@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>Arbres et forêts interactifs</title>
-    <link rel="stylesheet" href="css/style.css?v=83">
+    <link rel="stylesheet" href="css/style.css?v=87">
 </head>
 <body>
     <header>
@@ -30,6 +30,24 @@
                     <button id="export-tree-button">Exporter SVG</button>
                     <button id="export-tree-png">Exporter PNG</button>
                     <button id="export-d3-code-button">Exporter code D3.js</button>
+                </div>
+
+                <div class="zoom-controls-panel">
+                    <span class="zoom-controls-title">Zoom</span>
+                    <div class="zoom-controls-buttons">
+                        <button id="zoom-out-button" type="button">-</button>
+                        <button id="zoom-reset-button" type="button">100%</button>
+                        <button id="zoom-in-button" type="button">+</button>
+                    </div>
+                    <input
+                        type="range"
+                        id="zoom-range-input"
+                        min="20"
+                        max="300"
+                        step="5"
+                        value="100"
+                        aria-label="Niveau de zoom"
+                    >
                 </div>
 
                 <span id="file-status">Aucun fichier chargé</span>
@@ -144,17 +162,17 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="js/shared/tree-viz.js?v=53"></script>
     <script src="js/shared/layout-utils.js?v=60"></script>
-    <script src="js/main/export-utils.js?v=55"></script>
-    <script src="js/main/app-state.js?v=54"></script>
+    <script src="js/main/export-utils.js?v=56"></script>
+    <script src="js/main/app-state.js?v=56"></script>
     <script src="js/main/tree-depth-utils.js?v=50"></script>
     <script src="js/main/tree-renderer.js?v=50"></script>
     <script src="js/main/forest-renderer.js?v=50"></script>
-    <script src="js/main/renderer.js?v=51"></script>
+    <script src="js/main/renderer.js?v=52"></script>
     <script src="js/main/path-tools.js?v=50"></script>
     <script src="js/main/interactions.js?v=50"></script>
     <script src="js/main/display-options.js?v=50"></script>
-    <script src="js/main/decision-explainer.js?v=54"></script>
-    <script src="js/main/data-loader.js?v=51"></script>
-    <script src="js/main/app.js?v=51"></script>
+    <script src="js/main/decision-explainer.js?v=55"></script>
+    <script src="js/main/data-loader.js?v=52"></script>
+    <script src="js/main/app.js?v=52"></script>
 </body>
 </html>

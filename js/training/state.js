@@ -23,7 +23,6 @@ const datasetSelect = document.getElementById("training-dataset-select");
 const pointCountInput = document.getElementById("training-point-count");
 const noiseInput = document.getElementById("training-noise-input");
 const treeCountInput = document.getElementById("training-tree-count");
-const engineSelect = document.getElementById("training-engine-select");
 const maxDepthInput = document.getElementById("training-max-depth");
 const minSamplesInput = document.getElementById("training-min-samples");
 const bootstrapRatioInput = document.getElementById("training-bootstrap-ratio");
