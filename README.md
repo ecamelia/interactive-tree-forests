@@ -19,10 +19,9 @@ les affiche dans le navigateur.
 
 ## Lancer le projet
 
-Depuis le dossier du projet :
+Depuis le dossier `arbres-forets-interactifs` :
 
 ```bash
-cd /Users/cameliaermurache/Desktop/Stage/arbres-forets-interactifs
 npm install
 npm run serve
 ```

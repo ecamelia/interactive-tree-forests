@@ -1,0 +1,22 @@
+{
+  "type": "node",
+  "feature": "age",
+  "threshold": 30,
+  "gini": 0.5,
+  "samples": 8,
+  "value": [4, 4],
+  "left": {
+    "type": "leaf",
+    "gini": 0.0,
+    "samples": 4,
+    "value": [4, 0],
+    "class": 0
+  },
+  "right": {
+    "type": "leaf",
+    "gini": 0.0,
+    "samples": 4,
+    "value": [0, 4],
+    "class": 1
+  }
+}
